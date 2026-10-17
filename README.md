@@ -127,6 +127,7 @@
 # 1. 在 local.properties 中配置 sdk.dir（该文件不属于源码）
 # 2. 同步后运行 app 模块
 
+./gradlew :app:assembleRelease                                 # 打包 APK
 ./gradlew :app:assembleDebug                                   # 打包 Debug APK
 ./gradlew :app:testDebugUnitTest :app:lintDebug                # 单元测试与静态检查
 ./gradlew :app:connectedDebugAndroidTest                       # 设备端验收测试
