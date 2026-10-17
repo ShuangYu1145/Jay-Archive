@@ -82,7 +82,7 @@ fun AboutScreen(
                     LinkRow("Miuix UI", "开源组件库 · Apache-2.0 · 0.9.3", "https://github.com/compose-miuix-ui/miuix")
                     LinkRow("官方专辑资料", "名称、发行信息、曲序与封面", AlbumRepository.albumSource)
                     LinkRow("周杰伦介绍与图片", "杰威尔音乐 · QQ音乐", AlbumRepository.artistSource)
-                    LinkRow("本项目开源代码", "GitHub", "https://github.com")
+                    LinkRow("本项目开源代码", "GitHub", "https://github.com/ShuangYu1145/Jay-Archive")
 
                 }
             }
