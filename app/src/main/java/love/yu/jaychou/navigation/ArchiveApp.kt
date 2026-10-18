@@ -88,6 +88,7 @@ fun ArchiveApp(
     var hostSize by remember { mutableStateOf(IntSize.Zero) }
     val expansion = remember { Animatable(if (detailId != null) 1f else 0f) }
     val backProgress = remember { Animatable(0f) }
+    var concertDetailOpen by remember { mutableStateOf(false) }
     var lyricNumber by rememberSaveable { mutableStateOf<Int?>(null) }
     var lastLyricNumber by rememberSaveable { mutableStateOf<Int?>(null) }
     var lyricOrigin by rememberSaveable { mutableStateOf(listOf(.1f, .4f, .8f, .08f)) }
@@ -98,7 +99,9 @@ fun ArchiveApp(
     val lyricTrack = detail?.tracks?.find { it.number == lastLyricNumber }
     var swipeDirection by remember { mutableFloatStateOf(1f) }
     val detailShown by remember { derivedStateOf { detailId != null || expansion.value > 0f } }
-    val navigationVisible by remember { derivedStateOf { detailId == null || expansion.value < .999f } }
+    val navigationVisible by remember {
+        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen }
+    }
     val predictiveSupported = Build.VERSION.SDK_INT >= 34 && settings.predictiveBack
     val dark = settings.isDark()
     val background = MiuixTheme.colorScheme.background
@@ -174,7 +177,7 @@ fun ArchiveApp(
                 }.then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier)) {
                     HorizontalPager(
                         state = pager, beyondViewportPageCount = 1,
-                        userScrollEnabled = !detailShown,
+                        userScrollEnabled = !detailShown && !concertDetailOpen,
                         modifier = Modifier.fillMaxSize().testTag("root-pager"),
                         key = { RootPage.entries[it].name },
                     ) { page ->
@@ -186,7 +189,8 @@ fun ArchiveApp(
                                     AlbumsScreen(catalog, settings.albumLayout, albumState, bottom, ::openAlbum,
                                         categories, { categories = it })
                                 }
-                                RootPage.CONCERTS -> ArchiveScaffold("演唱会") { }
+                                RootPage.CONCERTS -> ConcertsScreen(bottom,
+                                    onDetailVisibility = { concertDetailOpen = it })
                                 RootPage.SETTINGS -> SettingsScreen(settings, settingsState, bottom,
                                     onTheme, onMonet, onBlur, onPredictive, onAlbumLayout, onCustomColor)
                                 RootPage.ABOUT -> AboutScreen(aboutState, bottom)
@@ -229,7 +233,7 @@ fun ArchiveApp(
                     selectedIndex = pager.currentPage,
                     pagePosition = { pager.currentPage + pager.currentPageOffsetFraction },
                     onSelect = pageMotion::select, onScrub = pageMotion::scrub,
-                    glass = glass, enabled = !detailShown,
+                    glass = glass, enabled = !detailShown && !concertDetailOpen,
                     modifier = Modifier.align(Alignment.BottomCenter)
                         .padding(start = 28.dp, end = 28.dp, bottom = navInset + 12.dp)
                         .widthIn(max = 460.dp).fillMaxWidth().onSizeChanged { navHeightPx = it.height }

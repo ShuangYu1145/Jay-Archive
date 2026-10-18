@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -121,8 +122,14 @@ fun SectionTitle(title: String, subtitle: String? = null, modifier: Modifier = M
 }
 
 @Composable
-fun QuietText(text: String, modifier: Modifier = Modifier) {
-    Text(text, modifier, fontSize = 13.sp, lineHeight = 20.sp, color = MiuixTheme.colorScheme.onBackgroundVariant)
+fun QuietText(
+    text: String,
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+) {
+    Text(text, modifier, fontSize = 13.sp, lineHeight = 20.sp, maxLines = maxLines, overflow = overflow,
+        color = MiuixTheme.colorScheme.onBackgroundVariant)
 }
 
 /** Network loading, explicit progress/error states, retry, and a bundled offline fallback. */

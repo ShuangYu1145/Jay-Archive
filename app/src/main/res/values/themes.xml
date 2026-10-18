@@ -7,5 +7,9 @@
         <item name="android:windowActionModeOverlay">true</item>
         <item name="android:windowBackground">#F6F6F8</item>
     </style>
+
+    <style name="Theme.JayChou.Starting" parent="Theme.JayChou">
+        <item name="android:windowBackground">@drawable/splash_window</item>
+    </style>
 </resources>
 

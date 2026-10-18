@@ -74,11 +74,21 @@
   <tr>
     <td width="50%" valign="top">
       <b>🎧 歌词阅读</b><br />
-      按需读取 LRCLIB 社区歌词并列出多个版本供核对；支持离线导入 LRC / TXT，也可删除本地文件。
+      按需调用落月 API 的 QQ 音乐歌词接口，自动匹配周杰伦版本；单卡片呈现原文与翻译，支持离线导入 LRC / TXT。
     </td>
     <td width="50%" valign="top">
       <b>🎨 主题与配色</b><br />
       深浅色跟随系统，支持 Monet 动态取色（Android 12+）与自定义种子色，自动生成 Miuix 调色板。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <b>🎤 巡演现场</b><br />
+      最近场次倒计时、巡演日历按国家/城市/状态筛选；详情包含当地时间与时区、场馆地址、地图导航、票务入口与来源。
+    </td>
+    <td width="50%" valign="top">
+      <b>🔄 官方行程刷新</b><br />
+      启动时向 JVR 官方行程核对最新场次，离线时使用核对快照；不虚构票价、开票时间或售票状态。
     </td>
   </tr>
   <tr>
@@ -226,7 +236,8 @@ JayChou/
 
 - 目录、封面与日期取自官方数字版元数据（Apple Music 等），逐条保存 `sourceUrl` 与原始时间戳，核对日期为 **2026-10-17**。日期存在来源分歧时在详情中明确说明，不默默拼接不同版本的曲目。
 - 封面与人物照通过 Coil 联网加载，显示加载状态；失败时显示占位素材与「离线图片 · 点此重试」。文字与完整目录本身完全离线可用。
-- 歌词来自 [LRCLIB](https://lrclib.net) 社区版本，联网按需读取，请自行核对歌曲、专辑及现场/录音室版本；**未预装任何商业歌曲歌词**，也不承诺所有歌曲都有在线歌词。
+- 在线歌词来自[落月 API](https://doc.vkeys.cn/v2/%E9%9F%B3%E4%B9%90%E6%A8%A1%E5%9D%97/QQ%E9%9F%B3%E4%B9%90/8-lyric.html)的 QQ 音乐歌词接口：先按歌名与专辑匹配周杰伦版本，再读取原文与翻译；匹配会区分现场与录音室版本，请自行核对。**未预装任何商业歌曲歌词**，也不承诺所有歌曲都有在线歌词。
+- 演唱会日期与场馆来自 [JVR 官方行程](https://www.jvrmusic.com/activity/list/1150822038412333056)、[维基百科](https://zh.wikipedia.org/wiki/%E5%98%89%E5%B9%B4%E8%8F%AFII%E4%B8%96%E7%95%8C%E5%B7%A1%E8%BF%B4%E6%BC%94%E5%94%B1%E6%9C%83)及各站票务公告；应用启动时会核对 JVR 的当月官方行程，网络不可用时使用随包快照。票价与售票状态仅在来源明确公布时显示，**最终以主办方和票务平台为准**。
 - 本项目为**非官方粉丝档案**，与周杰伦本人、杰威尔音乐及任何唱片公司均无关联。所有专辑封面、人物照片、歌词与商标版权归各自权利人所有，仅作资料展示用途。
 
 ## 📝 更新日志
@@ -236,19 +247,22 @@ JayChou/
 
 <br />
 
-- 五页悬浮导航：首页、专辑、演唱会、设置、关于。演唱会页按要求仅保留标题与导航，内容为空，未虚构演出。
+- 五页悬浮导航：首页、专辑、演唱会、设置、关于。演唱会页已接入最近场次、巡演日历与演出详情，不再留空。
 - 专辑页「分类」使用原生 Miuix `WindowBottomSheet` 与 `CheckboxPreference`，支持多选，取消不生效、确定才应用，至少保留一项；分类及滚动状态可在 Activity 重建后恢复。
 - 保留横向列表 / 双列网格 / 大封面卡片三种布局，通过设置选择并持久化；统一顶部说明与大标题的 24dp 起点。
 - 修复卡片展开时椭圆一帧：投影圆角按 X/Y 各自缩放补偿，横向卡片与窄曲目行也维持屏幕上的圆角矩形；歌词页从曲目行按同一动画展开。
 - 所有一级页、专辑详情与歌词页统一顶栏：用 Miuix Blur 采样实际滚动内容，顶栏与状态栏区域为高不透明度的模糊材质；API 26–32 或关闭模糊时实色降级。
 - 设置新增「自定义颜色」：原生 Miuix `ColorPicker` 任选种子色，另有快捷色与恢复预设；Monet 开启且系统支持时优先使用壁纸调色板。
 - 修复专辑详情缓慢起手拖动时偶尔不能滚动：移除详情父容器对 Final 阶段触摸事件的无条件消费，改为详情后方的独立全屏触摸隔离层，展开与收回动画期间也覆盖卡片之外区域。参考 [Compose 事件命中与传播规则](https://developer.android.com/develop/ui/compose/touch-input/pointer-input/understand-gestures#event-dispatching)。
+- 歌词获取改为落月 API 的 QQ 音乐搜索 + 歌词接口，按标题、歌手、专辑及 Live 状态评分匹配；歌词页重做为单一 Miuix 卡片，支持原文/双语切换、加载与失败状态，并保留本地导入与删除。
+- 演唱会页新增最近场次倒计时、按国家/城市/状态筛选的巡演日历，以及带当地时间、时区、场馆地址、地图导航、票务与来源的演出详情；启动时自动核对 JVR 官方行程，网络不可用时回退到核对快照。
+- 新增图标启动动画：系统启动窗口与 Compose 启动画面使用同一枚圆形应用图标，等待设置与专辑目录就绪后再淡入主界面，避免首帧空白或页面突然卡顿。
 
 </details>
 
 ## ⚖️ 许可与致谢
 
-代码以 [Apache License 2.0](LICENSE) 开源。界面组件来自 [Miuix UI](https://github.com/compose-miuix-ui/miuix)（Apache-2.0），歌词服务来自 [LRCLIB](https://lrclib.net)，构建于 [Jetpack Compose](https://developer.android.com/jetpack/compose) 之上。
+代码以 [Apache License 2.0](LICENSE) 开源。界面组件来自 [Miuix UI](https://github.com/compose-miuix-ui/miuix)（Apache-2.0），在线歌词服务来自 [落月 API](https://doc.vkeys.cn/v2/%E9%9F%B3%E4%B9%90%E6%A8%A1%E5%9D%97/QQ%E9%9F%B3%E4%B9%90/8-lyric.html)（QQ 音乐），构建于 [Jetpack Compose](https://developer.android.com/jetpack/compose) 之上。
 
 <div align="center">
 

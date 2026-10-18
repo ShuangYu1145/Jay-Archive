@@ -8,7 +8,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/feature_graphic" android:label="杰作 · Jay Archive"
         android:supportsRtl="true" android:enableOnBackInvokedCallback="true"
-        android:theme="@style/Theme.JayChou">
+        android:theme="@style/Theme.JayChou.Starting">
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

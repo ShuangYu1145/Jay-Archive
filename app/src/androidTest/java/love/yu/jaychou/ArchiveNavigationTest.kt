@@ -384,7 +384,24 @@ class ArchiveNavigationTest {
         fixture.delete()
     }
 
-    @Test fun headersCoverStatusInsetAndConcertPageIsEmpty() {
+    @Test fun concertCalendarOpensDetailAndHidesNavigation() {
+        ready()
+        app.onNodeWithTag("tab-CONCERTS").performClick()
+        app.waitUntil(15_000) { app.onAllNodesWithTag("concert-featured").fetchSemanticsNodes().isNotEmpty() }
+        app.onNodeWithTag("concert-featured").performScrollTo().assertIsDisplayed()
+        app.onNodeWithText("巡演日历").performScrollTo().assertIsDisplayed()
+        app.onNodeWithTag("concert-featured").performScrollTo().performClick()
+        app.waitUntil(8_000) { app.onAllNodesWithTag("concert-detail").fetchSemanticsNodes().isNotEmpty() }
+        app.onNodeWithTag("concert-detail").assertIsDisplayed()
+        assertTrue("Root navigation must hide behind concert details",
+            app.onAllNodesWithTag("tab-CONCERTS").fetchSemanticsNodes().isEmpty())
+        app.onNodeWithContentDescription("返回演唱会").performClick()
+        app.waitUntil(5_000) { app.onAllNodesWithTag("concert-detail").fetchSemanticsNodes().isEmpty() }
+        app.onNodeWithTag("concert-featured").assertIsDisplayed()
+        app.onNodeWithTag("tab-CONCERTS").assertIsSelected()
+    }
+
+    @Test fun headersCoverStatusInsetAndTabPagesAreDistinct() {
         app.onNodeWithTag("top-bar-首页").assertIsDisplayed()
         assertTrue("Header surface includes the status bar", app.onNodeWithTag("top-bar-首页").fetchSemanticsNode().boundsInRoot.top < 1f)
         app.onNodeWithTag("tab-ALBUMS").performClick()
