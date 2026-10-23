@@ -1,5 +1,7 @@
 package love.yu.jaychou.ui
 
+import love.yu.jaychou.data.AppText
+import love.yu.jaychou.R
 import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,17 +28,33 @@ fun SettingsScreen(
 ) {
     var colorPicker by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     val behavior = MiuixScrollBehavior()
-    ArchiveScaffold("设置", behavior = behavior) { padding ->
+    ArchiveScaffold(AppText.get(R.string.ui_settings), behavior = behavior) { padding ->
         LazyColumn(
             state = state,
             modifier = Modifier.fillMaxSize().nestedScroll(behavior.nestedScrollConnection).testTag("settings-list"),
             contentPadding = PaddingValues(12.dp, padding.calculateTopPadding() + 8.dp, 12.dp, bottom),
         ) {
-            item("album-title") { PreferenceTitle("专辑浏览") }
+            item("language") {
+                PreferenceCard {
+                    OverlayDropdownPreference(
+                        title = AppText.fromOriginal("语言 / Language"),
+                        summary = AppText.fromOriginal("选择应用显示语言"),
+                        items = AppLanguage.entries.map {
+                            if (it == AppLanguage.SYSTEM) AppText.fromOriginal("跟随系统") else it.nativeName
+                        },
+                        selectedIndex = AppLanguage.current().ordinal,
+                        onSelectedIndexChange = { AppLanguage.entries[it].select() },
+                        modifier = Modifier.testTag("app-language"),
+                    )
+                }
+            }
+            item("album-title") { PreferenceTitle(AppText.get(R.string.ui_album_browsing)) }
+
+            // 第一个卡片保持不变
             item("album-layout") {
                 PreferenceCard {
                     OverlayDropdownPreference(
-                        title = "专辑列表样式", summary = settings.albumLayout.description,
+                        title = AppText.get(R.string.ui_album_layout), summary = settings.albumLayout.description,
                         items = AlbumLayout.entries.map { it.label },
                         selectedIndex = settings.albumLayout.ordinal,
                         onSelectedIndexChange = { onAlbumLayout(AlbumLayout.entries[it]) },
@@ -44,42 +62,45 @@ fun SettingsScreen(
                     )
                 }
             }
-            item("style-title") { PreferenceTitle("主题风格") }
+
+            item("style-title") { PreferenceTitle(AppText.get(R.string.ui_appearance)) }
             item("style") {
                 PreferenceCard {
-                    BasicComponent(title = "UI 引擎", endActions = { PreferenceValue("Miuix") })
-                    BasicComponent(title = "悬浮底栏", summary = "沿底栏左右拖动，松手切换页面",
-                        endActions = { PreferenceValue("已启用") })
+                    BasicComponent(title = AppText.get(R.string.ui_ui_engine), endActions = { PreferenceValue("Miuix") })
+                    BasicComponent(title = AppText.get(R.string.ui_floating_navigation_bar), summary = AppText.get(R.string.ui_drag_along_the_bar_and_release_to_switch_pages),
+                        endActions = { PreferenceValue(AppText.get(R.string.ui_enabled)) })
                 }
             }
+
             item("miuix-title") { PreferenceTitle("Miuix") }
             item("theme") {
                 PreferenceCard {
                     OverlayDropdownPreference(
-                        title = "主题模式", items = ThemeMode.entries.map { it.label },
+                        title = AppText.get(R.string.ui_theme_mode), items = ThemeMode.entries.map { it.label },
                         selectedIndex = settings.theme.ordinal,
                         onSelectedIndexChange = { onTheme(ThemeMode.entries[it]) },
                         modifier = Modifier.testTag("theme-mode"),
                     )
-                    SettingSwitch("启用 Monet 动态配色",
-                        if (Build.VERSION.SDK_INT >= 31) "使用系统壁纸配色" else "Android 12 起支持；当前使用应用主题色",
+                    SettingSwitch(AppText.get(R.string.ui_enable_monet_dynamic_colors),
+                        if (Build.VERSION.SDK_INT >= 31) AppText.get(R.string.ui_use_colors_from_your_wallpaper) else AppText.get(R.string.ui_requires_android_12_using_the_app_theme_color_on_this_device),
                         settings.monet, onMonet, Build.VERSION.SDK_INT >= 31)
-                    SettingSwitch("启用模糊",
-                        if (Build.VERSION.SDK_INT >= 33) "模糊所有顶部栏与悬浮底栏后方的内容" else "需要 Android 13；当前使用实色材质",
+                    SettingSwitch(AppText.get(R.string.ui_enable_blur),
+                        if (Build.VERSION.SDK_INT >= 33) AppText.get(R.string.ui_blur_content_behind_top_bars_and_the_floating_navigation_bar) else AppText.get(R.string.ui_requires_android_13_using_solid_surfaces_on_this_device),
                         settings.blur, onBlur, Build.VERSION.SDK_INT >= 33)
-                    ArrowPreference(title = "自定义颜色",
-                        summary = if (settings.monet && Build.VERSION.SDK_INT >= 31) "Monet 已开启，当前优先使用系统颜色" else "选择种子色，自动生成深浅色 Miuix 调色板",
-                        endActions = { PreferenceValue(settings.customColor?.let { "#%06X".format(it and 0xFFFFFF) } ?: "预设蓝色") },
+                    ArrowPreference(title = AppText.get(R.string.ui_custom_color),
+                        summary = if (settings.monet && Build.VERSION.SDK_INT >= 31) AppText.get(R.string.ui_monet_is_enabled_system_colors_take_priority) else AppText.get(R.string.ui_choose_a_seed_color_for_light_and_dark_miuix_palettes),
+                        endActions = { PreferenceValue(settings.customColor?.let { "#%06X".format(it and 0xFFFFFF) } ?: AppText.get(R.string.ui_default_blue)) },
                         onClick = { colorPicker = true }, modifier = Modifier.testTag("custom-color"))
                 }
             }
-            item("motion-title") { PreferenceTitle("动画与手势") }
+
+            item("motion-title") { PreferenceTitle(AppText.get(R.string.ui_animations_and_gestures)) }
             item("motion") {
                 PreferenceCard {
-                    BasicComponent(title = "页面切换", summary = "横向滑动与底栏拖动联动", endActions = { PreferenceValue("滑动") })
-                    BasicComponent(title = "专辑展开", summary = "从卡片展开，返回时收回原位", endActions = { PreferenceValue("缩放") })
-                    SettingSwitch("预测性返回手势",
-                        if (Build.VERSION.SDK_INT >= 34) "滑动预览列表，取消后留在详情" else "Android 14 起支持进度；当前使用常规返回",
+                    BasicComponent(title = AppText.get(R.string.ui_page_transitions), summary = AppText.get(R.string.ui_swipe_pages_or_drag_the_navigation_bar), endActions = { PreferenceValue(AppText.get(R.string.ui_swipe)) })
+                    BasicComponent(title = AppText.get(R.string.ui_album_transition), summary = AppText.get(R.string.ui_artwork_moves_independently_as_details_appear_background_blur_in), endActions = { PreferenceValue(AppText.get(R.string.ui_zoom)) })
+                    SettingSwitch(AppText.get(R.string.ui_predictive_back_gesture),
+                        if (Build.VERSION.SDK_INT >= 34) AppText.get(R.string.ui_preview_the_list_while_swiping_cancel_to_stay_on_details) else AppText.get(R.string.ui_requires_android_14_for_progress_previews_using_standard_back_na),
                         settings.predictiveBack, onPredictive, Build.VERSION.SDK_INT >= 34)
                 }
             }

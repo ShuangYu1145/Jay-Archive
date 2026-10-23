@@ -113,20 +113,20 @@ object LyricsRepository {
 
     suspend fun removeLocal(context: Context, album: Album, track: Track): Unit = withContext(Dispatchers.IO) {
         val target = file(context, album, track)
-        if (target.exists() && !target.delete()) throw IOException("无法删除本地歌词")
+        if (target.exists() && !target.delete()) throw IOException(AppText.fromOriginal("无法删除本地歌词"))
     }
 
     suspend fun import(context: Context, album: Album, track: Track, uri: Uri): String = withContext(Dispatchers.IO) {
         val bytes = context.contentResolver.openInputStream(uri)?.use { it.boundedBytes(maxBytes) }
-            ?: throw IOException("无法读取所选文件")
-        require(bytes.size <= maxBytes) { "歌词文件不能超过 1 MB" }
+            ?: throw IOException(AppText.fromOriginal("无法读取所选文件"))
+        require(bytes.size <= maxBytes) { AppText.fromOriginal("歌词文件不能超过 1 MB") }
         val text = try {
             Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
                 .decode(ByteBuffer.wrap(bytes)).toString()
         } catch (_: CharacterCodingException) {
             bytes.toString(charset("GB18030"))
         }
-        require(text.isNotBlank() && !text.contains('\u0000')) { "请选择 UTF-8 或 GB18030 编码的 LRC/TXT 文本" }
+        require(text.isNotBlank() && !text.contains('\u0000')) { AppText.fromOriginal("请选择 UTF-8 或 GB18030 编码的 LRC/TXT 文本") }
         file(context, album, track).also { it.parentFile!!.mkdirs() }.writeText(text)
         text
     }
@@ -136,12 +136,12 @@ object LyricsRepository {
         val key = "${album.id}:${track.number}"
         synchronized(cache) { cache[key] }?.let { return@withContext it }
 
-        val title = cleanTitle(track.title)
-        val precise = searchTracks(readJson(searchUrl("$artist $title ${album.title}")))
+        val title = cleanTitle(track.originalTitle)
+        val precise = searchTracks(readJson(searchUrl("$artist $title ${album.originalTitle}")))
         val matched = chooseTrack(album, track, precise) ?: run {
             val broad = searchTracks(readJson(searchUrl("$artist $title")))
             chooseTrack(album, track, broad)
-        } ?: throw LyricsUnavailableException("QQ 音乐中没有找到与《${track.title}》匹配的周杰伦版本。")
+        } ?: throw LyricsUnavailableException(AppText.fromOriginal("QQ 音乐中没有找到与《%1\$s》匹配的周杰伦版本。", track.originalTitle))
 
         val lyrics = parseLyric(readJson("$lyricEndpoint?mid=${encode(matched.mid)}"), matched)
         synchronized(cache) { cache[key] = lyrics }
@@ -163,7 +163,7 @@ object LyricsRepository {
             val status = connection.responseCode
             val stream = if (status in 200..299) connection.inputStream else connection.errorStream
             val body = stream?.use { it.boundedBytes(maxBytes) } ?: ByteArray(0)
-            if (body.size > maxBytes) throw LyricsUnavailableException("歌词服务返回内容过大")
+            if (body.size > maxBytes) throw LyricsUnavailableException(AppText.fromOriginal("歌词服务返回内容过大"))
             val text = body.toString(Charsets.UTF_8)
             if (status !in 200..299) {
                 val message = runCatching { JSONObject(text).optString("message") }.getOrNull()
@@ -174,7 +174,7 @@ object LyricsRepository {
             return try {
                 JSONObject(text)
             } catch (failure: JSONException) {
-                throw LyricsUnavailableException("歌词服务返回了无法解析的数据", failure)
+                throw LyricsUnavailableException(AppText.fromOriginal("歌词服务返回了无法解析的数据"), failure)
             }
         } finally {
             connection.disconnect()
@@ -184,7 +184,7 @@ object LyricsRepository {
     private fun JSONObject.requireSuccess(): JSONObject {
         if (optInt("code", -1) != 200) {
             val message = optString("message").takeUnless { it == "null" }.orEmpty()
-            throw LyricsUnavailableException(message.ifBlank { "歌词服务暂不可用" })
+            throw LyricsUnavailableException(message.ifBlank { AppText.fromOriginal("歌词服务暂不可用") })
         }
         return this
     }
@@ -219,7 +219,7 @@ object LyricsRepository {
             ?.first
 
     private fun scoreCandidate(album: Album, track: Track, candidate: QQTrack, index: Int): Int {
-        val wantedTitle = comparable(cleanTitle(track.title))
+        val wantedTitle = comparable(cleanTitle(track.originalTitle))
         val offeredTitle = comparable(cleanTitle(candidate.title))
         if (wantedTitle.isEmpty() || offeredTitle.isEmpty()) return -1
         val titleScore = when {
@@ -233,7 +233,7 @@ object LyricsRepository {
         if (listOf("周杰伦", "周杰倫", "jaychou").none { it in singer }) return -1
 
         var score = titleScore + 8
-        val wantedAlbum = comparable(album.title)
+        val wantedAlbum = comparable(album.originalTitle)
         val offeredAlbum = comparable(candidate.album)
         when {
             offeredAlbum.isNotEmpty() && offeredAlbum == wantedAlbum -> score += 12
@@ -241,7 +241,7 @@ object LyricsRepository {
                 (offeredAlbum.contains(wantedAlbum) || wantedAlbum.contains(offeredAlbum)) -> score += 6
         }
 
-        val wantedLive = album.category == ReleaseCategory.LIVE || isLiveText(track.title)
+        val wantedLive = album.category == ReleaseCategory.LIVE || isLiveText(track.originalTitle)
         val offeredLive = isLiveText(candidate.title) || isLiveText(candidate.album)
         if (wantedLive == offeredLive) {
             score += 4
@@ -256,7 +256,7 @@ object LyricsRepository {
             else if (kotlin.math.abs(wantedYear - offeredYear) <= 1) score += 1
         }
 
-        val wantedMarked = hasUnwantedMark("${track.title}${album.title}")
+        val wantedMarked = hasUnwantedMark("${track.originalTitle}${album.originalTitle}")
         if (hasUnwantedMark("${candidate.title}${candidate.album}") && !wantedMarked) score -= 15
 
         if (index < 10) score += 5 - index / 3
@@ -273,7 +273,7 @@ object LyricsRepository {
 
     private fun parseLyric(root: JSONObject, matched: QQTrack): OnlineLyrics {
         val data = root.requireSuccess().optJSONObject("data")
-            ?: throw LyricsUnavailableException("QQ 音乐没有返回歌词内容")
+            ?: throw LyricsUnavailableException(AppText.fromOriginal("QQ 音乐没有返回歌词内容"))
         val lrc = data.plainText("lrc")
         val translation = data.plainText("trans")
         val yrc = data.plainText("yrc")
@@ -281,7 +281,7 @@ object LyricsRepository {
         val original = timedLines(lrc).ifEmpty { yrcLines(yrc) }
             .filterNot { technicalCredit.containsMatchIn(it.second) }
             .filterNot { isTitleLine(it.second, matched) }
-        if (original.isEmpty()) throw LyricsUnavailableException("QQ 音乐没有收录这首歌的歌词。")
+        if (original.isEmpty()) throw LyricsUnavailableException(AppText.fromOriginal("QQ 音乐没有收录这首歌的歌词。"))
 
         val translated = timedLines(translation)
             .filterNot { (_, text) ->

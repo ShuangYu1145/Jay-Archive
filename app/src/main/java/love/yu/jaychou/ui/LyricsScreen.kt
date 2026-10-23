@@ -1,5 +1,7 @@
 package love.yu.jaychou.ui
 
+import love.yu.jaychou.data.AppText
+import love.yu.jaychou.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -7,12 +9,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -59,8 +59,8 @@ fun LyricsScreen(album: Album, track: Track, onBack: () -> Unit) {
             // Diagnostic types only: never write lyrics or user-imported text to Logcat.
             android.util.Log.w("JayLyrics", "${failure.javaClass.simpleName}; cause=${failure.cause?.javaClass?.simpleName}")
             error = when (failure) {
-                is LyricsUnavailableException -> failure.message ?: "未能获取歌词，请稍后重试。"
-                else -> "未能连接歌词服务，请检查网络后重试。"
+                is LyricsUnavailableException -> failure.message ?: AppText.get(R.string.ui_unable_to_get_lyrics_please_try_again_later)
+                else -> AppText.get(R.string.ui_unable_to_connect_to_the_lyrics_service_check_your_connection_an)
             }
         } finally {
             loading = false
@@ -74,7 +74,7 @@ fun LyricsScreen(album: Album, track: Track, onBack: () -> Unit) {
                 online = null
                 error = null
             } catch (_: Exception) {
-                error = "导入失败：请使用不超过 1 MB 的 UTF-8 / GB18030 LRC 或 TXT 文件。"
+                error = AppText.get(R.string.ui_import_failed_use_a_utf_8_or_gb18030_lrc_txt_file_no_larger_than)
             }
         }
     }
@@ -91,17 +91,17 @@ fun LyricsScreen(album: Album, track: Track, onBack: () -> Unit) {
     }
     val translationAvailable = localText == null && online?.hasTranslation == true
     val sourceLabel = when {
-        localText != null -> "本地歌词 · 已保存到应用私有目录"
-        loading -> "正在匹配 QQ 音乐歌词"
-        online != null -> "QQ 音乐歌词 · 已匹配"
-        else -> "QQ 音乐 · 暂未匹配"
+        localText != null -> AppText.get(R.string.ui_local_lyrics_saved_in_app_storage)
+        loading -> AppText.get(R.string.ui_matching_qq_music_lyrics)
+        online != null -> AppText.get(R.string.ui_qq_music_lyrics_matched)
+        else -> AppText.get(R.string.ui_qq_music_no_match_yet)
     }
 
     ArchiveScaffold(
-        "歌词", small = true,
-        navigationIcon = { BackButton(onBack, "返回专辑详情") },
+        AppText.get(R.string.ui_lyrics), small = true,
+        navigationIcon = { BackButton(onBack, AppText.get(R.string.ui_back_to_album_details)) },
         actions = {
-            TextButton("导入", onClick = pickFile, modifier = Modifier.testTag("lyrics-import"))
+            TextButton(AppText.get(R.string.ui_import), onClick = pickFile, modifier = Modifier.testTag("lyrics-import"))
         },
     ) { padding ->
         Box(
@@ -115,7 +115,6 @@ fun LyricsScreen(album: Album, track: Track, onBack: () -> Unit) {
             Card(
                 modifier = Modifier.align(Alignment.TopCenter).widthIn(max = 600.dp).fillMaxWidth()
                     .fillMaxHeight().testTag("lyrics-card"),
-                cornerRadius = 30.dp,
                 insideMargin = PaddingValues(0.dp),
             ) {
                 Column(Modifier.fillMaxSize()) {
@@ -129,10 +128,10 @@ fun LyricsScreen(album: Album, track: Track, onBack: () -> Unit) {
                         loading -> LyricsLoading()
                         error != null -> LyricsError(error!!, onRetry = { retry++ }, onImport = pickFile)
                         lines.isEmpty() -> LyricsError(
-                            if (localText != null) "本地歌词文件里没有可显示的文本行。"
-                            else "QQ 音乐没有收录这首歌的歌词。",
+                            if (localText != null) AppText.get(R.string.ui_the_local_lyrics_file_has_no_displayable_lines)
+                            else AppText.get(R.string.ui_qq_music_has_no_lyrics_for_this_song),
                             onRetry = { retry++ }, onImport = pickFile,
-                            title = "还没有歌词",
+                            title = AppText.get(R.string.ui_no_lyrics_yet),
                         )
                         else -> LazyColumn(
                             state = listState,
@@ -153,7 +152,7 @@ fun LyricsScreen(album: Album, track: Track, onBack: () -> Unit) {
                                                 online = null
                                                 retry++
                                             } catch (_: Exception) {
-                                                error = "删除失败，请重试。"
+                                                error = AppText.get(R.string.ui_unable_to_delete_please_try_again)
                                             }
                                         }
                                     },
@@ -178,7 +177,7 @@ private fun LyricsHeader(
 ) {
     Column(Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, top = 20.dp, bottom = 18.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("歌词", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 2.sp,
+            Text(AppText.get(R.string.ui_lyrics), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 2.sp,
                 color = MiuixTheme.colorScheme.primary)
             Spacer(Modifier.weight(1f))
             if (translationAvailable) {
@@ -194,7 +193,7 @@ private fun LyricsHeader(
                     maxLines = 2, overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.semantics { heading() },
                 )
-                QuietText("周杰伦 · ${album.title}", maxLines = 2, overflow = TextOverflow.Ellipsis)
+                QuietText(AppText.get(R.string.ui_jay_chou_184, album.title), maxLines = 2, overflow = TextOverflow.Ellipsis)
                 Text(sourceLabel, fontSize = 12.sp, color = MiuixTheme.colorScheme.primary,
                     maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
@@ -207,9 +206,9 @@ private fun AlbumThumbnail(album: Album) {
     val context = LocalContext.current
     SubcomposeAsyncImage(
         model = ImageRequest.Builder(context).data(album.coverUrl).crossfade(true).build(),
-        contentDescription = "《${album.title}》专辑封面",
+        contentDescription = AppText.get(R.string.ui_album_artwork_185, album.title),
         contentScale = ContentScale.Crop,
-        modifier = Modifier.size(64.dp).clip(RoundedCornerShape(20.dp))
+        modifier = Modifier.size(64.dp)
             .background(MiuixTheme.colorScheme.surfaceContainerHigh),
         loading = { AlbumThumbnailFallback(album) },
         error = { AlbumThumbnailFallback(album) },
@@ -228,14 +227,13 @@ private fun TranslationChip(active: Boolean, onClick: () -> Unit) {
     val foreground = if (active) MiuixTheme.colorScheme.onPrimaryContainer else MiuixTheme.colorScheme.onSurfaceContainerVariant
     Card(
         onClick = onClick,
-        cornerRadius = 50.dp,
         insideMargin = PaddingValues(horizontal = 13.dp, vertical = 7.dp),
         colors = CardDefaults.defaultColors(color = background, contentColor = foreground),
         pressFeedbackType = PressFeedbackType.Sink,
     ) {
         Text(
-            if (active) "双语" else "原文", fontSize = 12.sp, fontWeight = FontWeight.Medium,
-            modifier = Modifier.semantics { contentDescription = "切换歌词翻译显示" },
+            if (active) AppText.get(R.string.ui_bilingual) else AppText.get(R.string.ui_original), fontSize = 12.sp, fontWeight = FontWeight.Medium,
+            modifier = Modifier.semantics { contentDescription = AppText.get(R.string.ui_toggle_lyric_translations) },
         )
     }
 }
@@ -249,10 +247,10 @@ private fun LyricsLoading() {
     ) {
         CircularProgressIndicator()
         Spacer(Modifier.height(18.dp))
-        Text("正在匹配歌词", fontSize = 18.sp, fontWeight = FontWeight.SemiBold,
+        Text(AppText.get(R.string.ui_finding_lyrics), fontSize = 18.sp, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.testTag("lyrics-loading"))
         Spacer(Modifier.height(6.dp))
-        Text("通过 QQ 音乐歌词接口查找周杰伦版本", fontSize = 13.sp, lineHeight = 20.sp,
+        Text(AppText.get(R.string.ui_finding_jay_chou_recordings_through_the_qq_music_lyrics_service), fontSize = 13.sp, lineHeight = 20.sp,
             color = MiuixTheme.colorScheme.onSurfaceContainerVariant, textAlign = TextAlign.Center)
     }
 }
@@ -262,7 +260,7 @@ private fun LyricsError(
     message: String,
     onRetry: () -> Unit,
     onImport: () -> Unit,
-    title: String = "暂时没有拿到歌词",
+    title: String = AppText.get(R.string.ui_lyrics_unavailable),
 ) {
     Column(
         Modifier.fillMaxSize().padding(horizontal = 30.dp, vertical = 24.dp),
@@ -275,8 +273,8 @@ private fun LyricsError(
             color = MiuixTheme.colorScheme.onSurfaceContainerVariant, textAlign = TextAlign.Center)
         Spacer(Modifier.height(22.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = onRetry, modifier = Modifier.testTag("lyrics-retry")) { Text("重试") }
-            TextButton("导入本地", onClick = onImport)
+            Button(onClick = onRetry, modifier = Modifier.testTag("lyrics-retry")) { Text(AppText.get(R.string.ui_retry)) }
+            TextButton(AppText.get(R.string.ui_import_local_file), onClick = onImport)
         }
     }
 }
@@ -303,25 +301,25 @@ private fun LyricsFooter(local: Boolean, online: OnlineLyrics?, onRemoveLocal: (
         HorizontalDivider(color = MiuixTheme.colorScheme.dividerLine)
         Spacer(Modifier.height(14.dp))
         Text(
-            if (local) "本地歌词 · 已保存在应用私有目录" else "QQ 音乐歌词 · 逐行读取自歌词接口",
+            if (local) AppText.get(R.string.ui_local_lyrics_saved_in_app_storage_193) else AppText.get(R.string.ui_qq_music_lyrics_read_from_the_lyrics_service),
             fontSize = 13.sp, lineHeight = 20.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
         )
         if (!local && online != null) {
             Spacer(Modifier.height(3.dp))
             Text(
-                "QQ 音乐标注：${online.album.ifBlank { "未标注专辑" }}" +
+                AppText.get(R.string.ui_qq_music_album, online.album.ifBlank { AppText.get(R.string.ui_album_not_listed) }) +
                     if (online.releaseDate.isBlank()) "" else " · ${online.releaseDate}",
                 fontSize = 12.sp, lineHeight = 19.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
             )
         }
-        SourceLink("歌词接口：落月 API · QQ 音乐", LyricsRepository.source)
+        SourceLink(AppText.get(R.string.ui_lyrics_service_vkeys_api_qq_music), LyricsRepository.source)
         Text(
-            "歌词版权归原权利人所有；此页仅供静态阅读，不播放或下载音乐。",
+            AppText.get(R.string.ui_lyrics_belong_to_their_rights_holders_this_page_is_for_reading_o),
             fontSize = 12.sp, lineHeight = 19.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
         )
         if (local) {
             Spacer(Modifier.height(4.dp))
-            TextButton("删除本地歌词", onClick = onRemoveLocal)
+            TextButton(AppText.get(R.string.ui_delete_local_lyrics), onClick = onRemoveLocal)
         }
     }
 }

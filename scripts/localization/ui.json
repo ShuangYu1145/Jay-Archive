@@ -1,0 +1,2378 @@
+[
+  {
+    "key": "ui_about",
+    "zh-Hans": "关于",
+    "zh-Hant": "關於",
+    "en": "About",
+    "ja": "このアプリについて",
+    "ko": "정보"
+  },
+  {
+    "key": "ui_jay_archive_icon_blue_record_archive",
+    "zh-Hans": "杰作应用图标：蓝色唱片档案",
+    "zh-Hant": "傑作應用圖示：藍色唱片檔案",
+    "en": "Jay Archive icon: blue record archive",
+    "ja": "Jay Archive のアイコン：青いレコード",
+    "ko": "Jay Archive 아이콘: 파란 레코드"
+  },
+  {
+    "key": "ui_jay_archive",
+    "zh-Hans": "杰作",
+    "zh-Hant": "傑作",
+    "en": "Jay Archive",
+    "ja": "Jay Archive",
+    "ko": "Jay Archive"
+  },
+  {
+    "key": "ui_beta_version",
+    "zh-Hans": "版本 Beta %1$s",
+    "zh-Hant": "版本 Beta %1$s",
+    "en": "Beta version %1$s",
+    "ja": "ベータ版 %1$s",
+    "ko": "베타 버전 %1$s"
+  },
+  {
+    "key": "ui_a_pocket_archive_of_jay_chou_and_his_music_nexplore_his_releases",
+    "zh-Hans": "一本关于周杰伦与音乐作品的口袋档案。\\n按年代翻阅作品，让熟悉的旋律有迹可循。",
+    "zh-Hant": "一本關於周杰倫與音樂作品的口袋檔案。\\n按年代翻閱作品，讓熟悉的旋律有跡可循。",
+    "en": "A pocket archive of Jay Chou and his music.\\nExplore his releases through the years and rediscover familiar melodies.",
+    "ja": "ジェイ・チョウとその音楽のポケットアーカイブ。\\n年代順に作品をたどり、懐かしいメロディーに再会しましょう。",
+    "ko": "주걸륜과 그의 음악을 담은 작은 아카이브입니다.\\n시대별 작품을 살펴보며 익숙한 멜로디를 다시 만나 보세요."
+  },
+  {
+    "key": "ui_project_and_sources",
+    "zh-Hans": "项目与来源",
+    "zh-Hant": "專案與來源",
+    "en": "Project and sources",
+    "ja": "プロジェクトと出典",
+    "ko": "프로젝트 및 출처"
+  },
+  {
+    "key": "ui_open_source_ui_library_apache_2_0_0_9_3",
+    "zh-Hans": "开源组件库 · Apache-2.0 · 0.9.3",
+    "zh-Hant": "開源元件庫 · Apache-2.0 · 0.9.3",
+    "en": "Open-source UI library · Apache-2.0 · 0.9.3",
+    "ja": "オープンソース UI ライブラリ · Apache-2.0 · 0.9.3",
+    "ko": "오픈 소스 UI 라이브러리 · Apache-2.0 · 0.9.3"
+  },
+  {
+    "key": "ui_official_album_information",
+    "zh-Hans": "官方专辑资料",
+    "zh-Hant": "官方專輯資料",
+    "en": "Official album information",
+    "ja": "公式アルバム情報",
+    "ko": "공식 앨범 정보"
+  },
+  {
+    "key": "ui_titles_release_information_track_order_and_artwork",
+    "zh-Hans": "名称、发行信息、曲序与封面",
+    "zh-Hant": "名稱、發行資訊、曲序與封面",
+    "en": "Titles, release information, track order and artwork",
+    "ja": "作品名、発売情報、曲順、ジャケット",
+    "ko": "작품명, 발매 정보, 트랙 순서 및 커버"
+  },
+  {
+    "key": "ui_jay_chou_biography_and_photos",
+    "zh-Hans": "周杰伦介绍与图片",
+    "zh-Hant": "周杰倫介紹與圖片",
+    "en": "Jay Chou biography and photos",
+    "ja": "ジェイ・チョウの紹介と写真",
+    "ko": "주걸륜 소개 및 사진"
+  },
+  {
+    "key": "ui_jvr_music_qq_music",
+    "zh-Hans": "杰威尔音乐 · QQ音乐",
+    "zh-Hant": "傑威爾音樂 · QQ音樂",
+    "en": "JVR Music · QQ Music",
+    "ja": "JVR Music · QQ Music",
+    "ko": "JVR Music · QQ Music"
+  },
+  {
+    "key": "ui_project_source_code",
+    "zh-Hans": "本项目开源代码",
+    "zh-Hant": "本專案開原始碼",
+    "en": "Project source code",
+    "ja": "ソースコード",
+    "ko": "프로젝트 소스 코드"
+  },
+  {
+    "key": "ui_beta_release",
+    "zh-Hans": "测试版本",
+    "zh-Hant": "測試版本",
+    "en": "Beta release",
+    "ja": "ベータ版",
+    "ko": "베타 버전"
+  },
+  {
+    "key": "ui_notice",
+    "zh-Hans": "⚠️说明",
+    "zh-Hant": "⚠️說明",
+    "en": "⚠️ Notice",
+    "ja": "⚠️ お知らせ",
+    "ko": "⚠️ 안내"
+  },
+  {
+    "key": "ui_this_project_is_in_beta_some_features_may_not_work_as_expected",
+    "zh-Hans": "本项目处于测试阶段 无法保证所有功能正常",
+    "zh-Hant": "本專案處於測試階段 無法保證所有功能正常",
+    "en": "This project is in beta. Some features may not work as expected.",
+    "ja": "本プロジェクトはベータ版です。一部の機能が正常に動作しない場合があります。",
+    "ko": "이 프로젝트는 베타 버전이며 일부 기능이 정상적으로 작동하지 않을 수 있습니다."
+  },
+  {
+    "key": "ui_song_information_artwork_and_lyrics_come_from_online_sources_ple",
+    "zh-Hans": "歌曲信息，封面，歌词均来自于网络，如有侵权，请联系删除。",
+    "zh-Hant": "歌曲資訊，封面，歌詞均來自於網路，如有侵權，請聯絡刪除。",
+    "en": "Song information, artwork and lyrics come from online sources. Please contact us for removal if any content infringes your rights.",
+    "ja": "楽曲情報、ジャケット、歌詞はオンラインの情報源に基づきます。権利侵害がある場合は削除をご連絡ください。",
+    "ko": "곡 정보, 커버 및 가사는 온라인 출처에서 가져옵니다. 권리 침해가 있는 경우 삭제를 요청해 주세요."
+  },
+  {
+    "key": "ui_for_the_music_of_our_youth",
+    "zh-Hans": "献给我们的青春。",
+    "zh-Hant": "獻給我們的青春。",
+    "en": "For the music of our youth.",
+    "ja": "あの頃の私たちに捧ぐ。",
+    "ko": "우리의 청춘을 추억하며."
+  },
+  {
+    "key": "ui_open_source_reference",
+    "zh-Hans": "打开资料来源",
+    "zh-Hant": "開啟資料來源",
+    "en": "Open source reference",
+    "ja": "出典を開く",
+    "ko": "출처 열기"
+  },
+  {
+    "key": "ui_albums",
+    "zh-Hans": "专辑",
+    "zh-Hant": "專輯",
+    "en": "Albums",
+    "ja": "アルバム",
+    "ko": "앨범"
+  },
+  {
+    "key": "ui_search_albums_or_songs",
+    "zh-Hans": "搜索专辑或歌曲",
+    "zh-Hant": "搜尋專輯或歌曲",
+    "en": "Search albums or songs",
+    "ja": "アルバムや楽曲を検索",
+    "ko": "앨범 또는 노래 검색"
+  },
+  {
+    "key": "ui_filter_album_categories",
+    "zh-Hans": "筛选专辑分类",
+    "zh-Hant": "篩選專輯分類",
+    "en": "Filter album categories",
+    "ja": "アルバムの種類を絞り込む",
+    "ko": "앨범 종류 필터"
+  },
+  {
+    "key": "ui_releases",
+    "zh-Hans": "%1$s 张发行作品 · %2$s",
+    "zh-Hant": "%1$s 張發行作品 · %2$s",
+    "en": "%1$s releases · %2$s",
+    "ja": "%1$s 作品 · %2$s",
+    "ko": "발매작 %1$s개 · %2$s",
+    "countArg": 0,
+    "enOne": "%1$s release · %2$s"
+  },
+  {
+    "key": "ui_newest_releases_first_updated_nlive_albums_eps_and_singles_are_l",
+    "zh-Hans": "按发行时间倒序 · 更新日期 %1$s\\n演唱会、EP 与单曲分开归类；日期与曲序依所注版本。",
+    "zh-Hant": "按發行時間倒序 · 更新日期 %1$s\\n演唱會、EP 與單曲分開歸類；日期與曲序依所注版本。",
+    "en": "Newest releases first · Updated %1$s\\nLive albums, EPs and singles are listed separately. Dates and track order refer to the stated edition.",
+    "ja": "発売日の新しい順 · 更新日 %1$s\\nライブ盤、EP、シングルは別の種類です。日付と曲順は記載の版に基づきます。",
+    "ko": "최신 발매순 · 업데이트 %1$s\\n라이브 앨범, EP, 싱글은 별도 분류됩니다. 날짜와 트랙 순서는 표기된 버전을 기준으로 합니다."
+  },
+  {
+    "key": "ui_sources_jvr_music_qq_music_apple_music",
+    "zh-Hans": "来源：jvrmusic，QQ Music，Apple Music",
+    "zh-Hant": "來源：jvrmusic，QQ Music，Apple Music",
+    "en": "Sources: JVR Music, QQ Music, Apple Music",
+    "ja": "出典：JVR Music、QQ Music、Apple Music",
+    "ko": "출처: JVR Music, QQ Music, Apple Music"
+  },
+  {
+    "key": "ui_album_artwork_source",
+    "zh-Hans": "《%1$s》专辑封面，来源：%2$s",
+    "zh-Hant": "《%1$s》專輯封面，來源：%2$s",
+    "en": "%1$s album artwork. Source: %2$s",
+    "ja": "『%1$s』のジャケット。出典：%2$s",
+    "ko": "%1$s 앨범 커버. 출처: %2$s"
+  },
+  {
+    "key": "ui_tracks",
+    "zh-Hans": "%1$s 首曲目",
+    "zh-Hant": "%1$s 首曲目",
+    "en": "%1$s tracks",
+    "ja": "%1$s 曲",
+    "ko": "%1$s곡",
+    "countArg": 0,
+    "enOne": "%1$s track"
+  },
+  {
+    "key": "ui_tracks_26",
+    "zh-Hans": "%1$s 首  ·  %2$s",
+    "zh-Hant": "%1$s 首  ·  %2$s",
+    "en": "%1$s tracks · %2$s",
+    "ja": "%1$s 曲 · %2$s",
+    "ko": "%1$s곡 · %2$s",
+    "countArg": 0,
+    "enOne": "%1$s track · %2$s"
+  },
+  {
+    "key": "ui_album_archive",
+    "zh-Hans": "专辑档案",
+    "zh-Hant": "專輯檔案",
+    "en": "Album archive",
+    "ja": "アルバム情報",
+    "ko": "앨범 기록"
+  },
+  {
+    "key": "ui_artwork_source",
+    "zh-Hans": "《%1$s》封面，来源：%2$s",
+    "zh-Hant": "《%1$s》封面，來源：%2$s",
+    "en": "%1$s artwork. Source: %2$s",
+    "ja": "『%1$s』のジャケット。出典：%2$s",
+    "ko": "%1$s 커버. 출처: %2$s"
+  },
+  {
+    "key": "ui_tracks_29",
+    "zh-Hans": "%1$s  ·  %2$s 首曲目",
+    "zh-Hant": "%1$s  ·  %2$s 首曲目",
+    "en": "%1$s · %2$s tracks",
+    "ja": "%1$s · %2$s 曲",
+    "ko": "%1$s · %2$s곡",
+    "countArg": 1,
+    "enOne": "%1$s · %2$s track"
+  },
+  {
+    "key": "ui_about_this_album",
+    "zh-Hans": "关于这张专辑",
+    "zh-Hant": "關於這張專輯",
+    "en": "About this album",
+    "ja": "このアルバムについて",
+    "ko": "앨범 소개"
+  },
+  {
+    "key": "ui_track_list",
+    "zh-Hans": "完整曲目",
+    "zh-Hant": "完整曲目",
+    "en": "Track list",
+    "ja": "収録曲",
+    "ko": "수록곡"
+  },
+  {
+    "key": "ui_original_track_order_tap_a_song_to_read_its_lyrics",
+    "zh-Hans": "原始曲序 · 点击歌曲查看歌词",
+    "zh-Hant": "原始曲序 · 點選歌曲檢視歌詞",
+    "en": "Original track order · Tap a song to read its lyrics",
+    "ja": "オリジナルの曲順 · 楽曲をタップすると歌詞を表示",
+    "ko": "원래 트랙 순서 · 노래를 누르면 가사 표시"
+  },
+  {
+    "key": "ui_information_track_order_and_artwork_nrelease_type",
+    "zh-Hans": "资料、曲序与封面：%1$s\\n专辑类型 · %2$s",
+    "zh-Hant": "資料、曲序與封面：%1$s\\n專輯型別 · %2$s",
+    "en": "Information, track order and artwork: %1$s\\nRelease type · %2$s",
+    "ja": "情報、曲順、ジャケット：%1$s\\n作品の種類 · %2$s",
+    "ko": "정보, 트랙 순서 및 커버: %1$s\\n발매 유형 · %2$s"
+  },
+  {
+    "key": "ui_view_website",
+    "zh-Hans": "查看网页",
+    "zh-Hant": "檢視網頁",
+    "en": "View website",
+    "ja": "ウェブページを開く",
+    "ko": "웹사이트 보기"
+  },
+  {
+    "key": "ui_close_search",
+    "zh-Hans": "退出搜索",
+    "zh-Hant": "退出搜尋",
+    "en": "Close search",
+    "ja": "検索を閉じる",
+    "ko": "검색 닫기"
+  },
+  {
+    "key": "ui_clear_search",
+    "zh-Hans": "清除关键词",
+    "zh-Hant": "清除關鍵詞",
+    "en": "Clear search",
+    "ja": "検索語を消去",
+    "ko": "검색어 지우기"
+  },
+  {
+    "key": "ui_find_an_album_or_a_favorite_song",
+    "zh-Hans": "找一张专辑，或一首喜欢的歌",
+    "zh-Hant": "找一張專輯，或一首喜歡的歌",
+    "en": "Find an album or a favorite song",
+    "ja": "アルバムやお気に入りの曲を探す",
+    "ko": "앨범이나 좋아하는 노래를 찾아보세요"
+  },
+  {
+    "key": "ui_no_matching_albums_or_songs",
+    "zh-Hans": "没有找到相关专辑或歌曲",
+    "zh-Hant": "沒有找到相關專輯或歌曲",
+    "en": "No matching albums or songs",
+    "ja": "一致するアルバムや楽曲がありません",
+    "ko": "일치하는 앨범이나 노래가 없습니다"
+  },
+  {
+    "key": "ui_search_original_titles_localized_titles_and_song_names_nall_rele",
+    "zh-Hans": "支持专辑中文名、英文名和歌曲名\\n搜索范围包含全部发行分类",
+    "zh-Hant": "支援專輯中文名、英文名和歌曲名\\n搜尋範圍包含全部發行分類",
+    "en": "Search original titles, localized titles and song names.\\nAll release categories are included.",
+    "ja": "原題、翻訳された作品名、楽曲名で検索できます。\\nすべての作品の種類が対象です。",
+    "ko": "원제, 번역된 작품명, 노래 제목으로 검색할 수 있습니다.\\n모든 발매 유형을 검색합니다."
+  },
+  {
+    "key": "ui_try_a_shorter_keyword_or_check_the_song_title",
+    "zh-Hans": "试试更短的关键词，或检查歌名是否正确",
+    "zh-Hant": "試試更短的關鍵詞，或檢查歌名是否正確",
+    "en": "Try a shorter keyword or check the song title.",
+    "ja": "短いキーワードにするか、曲名を確認してください。",
+    "ko": "더 짧은 검색어를 사용하거나 노래 제목을 확인해 보세요."
+  },
+  {
+    "key": "ui_albums_songs",
+    "zh-Hans": "%1$s · %2$s",
+    "zh-Hant": "%1$s · %2$s",
+    "en": "%1$s · %2$s",
+    "ja": "%1$s · %2$s",
+    "ko": "%1$s · %2$s"
+  },
+  {
+    "key": "ui_tracks_42",
+    "zh-Hans": "%1$s · %2$s · %3$s 首",
+    "zh-Hant": "%1$s · %2$s · %3$s 首",
+    "en": "%1$s · %2$s · %3$s tracks",
+    "ja": "%1$s · %2$s · %3$s 曲",
+    "ko": "%1$s · %2$s · %3$s곡",
+    "countArg": 2,
+    "enOne": "%1$s · %2$s · %3$s track"
+  },
+  {
+    "key": "ui_songs",
+    "zh-Hans": "歌曲",
+    "zh-Hant": "歌曲",
+    "en": "Songs",
+    "ja": "楽曲",
+    "ko": "노래"
+  },
+  {
+    "key": "ui_open_the_album_at_this_song",
+    "zh-Hans": "打开所属专辑，定位到这首歌",
+    "zh-Hant": "開啟所屬專輯，定位到這首歌",
+    "en": "Open the album at this song",
+    "ja": "アルバムを開いてこの曲を表示",
+    "ko": "해당 앨범에서 이 노래로 이동"
+  },
+  {
+    "key": "ui_artwork",
+    "zh-Hans": "%1$s封面",
+    "zh-Hant": "%1$s封面",
+    "en": "%1$s artwork",
+    "ja": "『%1$s』のジャケット",
+    "ko": "%1$s 커버"
+  },
+  {
+    "key": "ui_loading_online_image",
+    "zh-Hans": "正在加载网络图片…",
+    "zh-Hant": "正在載入網路圖片…",
+    "en": "Loading online image…",
+    "ja": "画像を読み込み中…",
+    "ko": "온라인 이미지 불러오는 중…"
+  },
+  {
+    "key": "ui_offline_image_tap_to_retry",
+    "zh-Hans": "离线图片 · 点此重试",
+    "zh-Hant": "離線圖片 · 點此重試",
+    "en": "Offline image · Tap to retry",
+    "ja": "オフライン画像 · タップして再試行",
+    "ko": "오프라인 이미지 · 눌러서 다시 시도"
+  },
+  {
+    "key": "ui_retry_online_image",
+    "zh-Hans": "重试加载网络图片",
+    "zh-Hant": "重試載入網路圖片",
+    "en": "Retry online image",
+    "ja": "画像の読み込みを再試行",
+    "ko": "온라인 이미지 다시 불러오기"
+  },
+  {
+    "key": "ui_back_to_albums",
+    "zh-Hans": "返回专辑列表",
+    "zh-Hant": "返回專輯列表",
+    "en": "Back to albums",
+    "ja": "アルバム一覧に戻る",
+    "ko": "앨범 목록으로 돌아가기"
+  },
+  {
+    "key": "ui_upcoming",
+    "zh-Hans": "即将举行",
+    "zh-Hant": "即將舉行",
+    "en": "Upcoming",
+    "ja": "開催予定",
+    "ko": "예정"
+  },
+  {
+    "key": "ui_all",
+    "zh-Hans": "全部",
+    "zh-Hant": "全部",
+    "en": "All",
+    "ja": "すべて",
+    "ko": "전체"
+  },
+  {
+    "key": "ui_all_cities",
+    "zh-Hans": "全部城市",
+    "zh-Hant": "全部城市",
+    "en": "All cities",
+    "ja": "すべての都市",
+    "ko": "모든 도시"
+  },
+  {
+    "key": "ui_unable_to_connect_to_the_official_schedule_check_your_connection",
+    "zh-Hans": "无法连接官方行程，请检查网络后重试。",
+    "zh-Hant": "無法連線官方行程，請檢查網路後重試。",
+    "en": "Unable to connect to the official schedule. Check your connection and try again.",
+    "ja": "公式スケジュールに接続できません。ネットワークを確認して再試行してください。",
+    "ko": "공식 일정에 연결할 수 없습니다. 네트워크 연결을 확인한 후 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_update_failed_the_loaded_schedule_is_still_available_please_try",
+    "zh-Hans": "更新失败，保留本次已加载的行程，请稍后重试。",
+    "zh-Hant": "更新失敗，保留本次已載入的行程，請稍後重試。",
+    "en": "Update failed. The loaded schedule is still available. Please try again later.",
+    "ja": "更新できませんでした。読み込み済みの予定を表示しています。後でもう一度お試しください。",
+    "ko": "업데이트하지 못했습니다. 이미 불러온 일정을 유지합니다. 나중에 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_concerts",
+    "zh-Hans": "演唱会",
+    "zh-Hant": "演唱會",
+    "en": "Concerts",
+    "ja": "ライブ",
+    "ko": "콘서트"
+  },
+  {
+    "key": "ui_updating",
+    "zh-Hans": "更新中…",
+    "zh-Hant": "更新中…",
+    "en": "Updating…",
+    "ja": "更新中…",
+    "ko": "업데이트 중…"
+  },
+  {
+    "key": "ui_loading",
+    "zh-Hans": "加载中…",
+    "zh-Hant": "載入中…",
+    "en": "Loading…",
+    "ja": "読み込み中…",
+    "ko": "불러오는 중…"
+  },
+  {
+    "key": "ui_refresh",
+    "zh-Hans": "刷新",
+    "zh-Hant": "重新整理",
+    "en": "Refresh",
+    "ja": "更新",
+    "ko": "새로고침"
+  },
+  {
+    "key": "ui_loading_concert_schedule",
+    "zh-Hans": "正在读取演唱会日程…",
+    "zh-Hant": "正在讀取演唱會日程…",
+    "en": "Loading concert schedule…",
+    "ja": "ライブ日程を読み込み中…",
+    "ko": "콘서트 일정 불러오는 중…"
+  },
+  {
+    "key": "ui_connecting_to_the_official_jvr_schedule_please_wait",
+    "zh-Hans": "正在连接 JVR 官方行程，请稍候。",
+    "zh-Hant": "正在連線 JVR 官方行程，請稍候。",
+    "en": "Connecting to the official JVR schedule. Please wait.",
+    "ja": "JVR 公式スケジュールに接続中です。しばらくお待ちください。",
+    "ko": "JVR 공식 일정에 연결 중입니다. 잠시 기다려 주세요."
+  },
+  {
+    "key": "ui_schedule_unavailable",
+    "zh-Hans": "日程暂时不可用",
+    "zh-Hant": "日程暫時不可用",
+    "en": "Schedule unavailable",
+    "ja": "日程を取得できません",
+    "ko": "일정을 불러올 수 없습니다"
+  },
+  {
+    "key": "ui_retry",
+    "zh-Hans": "重试",
+    "zh-Hant": "重試",
+    "en": "Retry",
+    "ja": "再試行",
+    "ko": "다시 시도"
+  },
+  {
+    "key": "ui_no_announced_shows",
+    "zh-Hans": "暂无已公布场次",
+    "zh-Hant": "暫無已公佈場次",
+    "en": "No announced shows",
+    "ja": "発表済みの公演はありません",
+    "ko": "발표된 공연이 없습니다"
+  },
+  {
+    "key": "ui_new_shows_will_appear_after_you_refresh_once_they_are_officially",
+    "zh-Hans": "官方公开新的巡演场次后，可在刷新后自动显示。",
+    "zh-Hant": "官方公開新的巡演場次後，可在重新整理後自動顯示。",
+    "en": "New shows will appear after you refresh once they are officially announced.",
+    "ja": "新しい公演が公式発表された後、更新すると表示されます。",
+    "ko": "새 공연이 공식 발표되면 새로고침하여 확인할 수 있습니다."
+  },
+  {
+    "key": "ui_tour_calendar",
+    "zh-Hans": "巡演日历",
+    "zh-Hant": "巡演日曆",
+    "en": "Tour calendar",
+    "ja": "ツアーカレンダー",
+    "ko": "투어 일정"
+  },
+  {
+    "key": "ui_announced_shows_by_date_tap_for_details",
+    "zh-Hans": "按日期排列已公布场次 · 点击查看演出详情",
+    "zh-Hant": "按日期排列已公佈場次 · 點選檢視演出詳情",
+    "en": "Announced shows by date · Tap for details",
+    "ja": "発表済みの公演を日付順に表示 · タップして詳細を見る",
+    "ko": "발표된 공연 날짜순 · 눌러서 상세 정보 보기"
+  },
+  {
+    "key": "ui_shows",
+    "zh-Hans": "场次",
+    "zh-Hant": "場次",
+    "en": "Shows",
+    "ja": "公演",
+    "ko": "공연"
+  },
+  {
+    "key": "ui_ended",
+    "zh-Hans": "已结束",
+    "zh-Hant": "已結束",
+    "en": "Ended",
+    "ja": "終了",
+    "ko": "종료"
+  },
+  {
+    "key": "ui_country_region",
+    "zh-Hans": "国家 / 地区",
+    "zh-Hant": "國家 / 地區",
+    "en": "Country / region",
+    "ja": "国・地域",
+    "ko": "국가 / 지역"
+  },
+  {
+    "key": "ui_city",
+    "zh-Hans": "城市",
+    "zh-Hant": "城市",
+    "en": "City",
+    "ja": "都市",
+    "ko": "도시"
+  },
+  {
+    "key": "ui_no_shows_match_these_filters",
+    "zh-Hans": "没有符合筛选的场次",
+    "zh-Hant": "沒有符合篩選的場次",
+    "en": "No shows match these filters",
+    "ja": "条件に一致する公演はありません",
+    "ko": "필터와 일치하는 공연이 없습니다"
+  },
+  {
+    "key": "ui_try_another_country_or_city_filter",
+    "zh-Hans": "切换国家或城市筛选条件后再试。",
+    "zh-Hant": "切換國家或城市篩選條件後再試。",
+    "en": "Try another country or city filter.",
+    "ja": "国・地域や都市の条件を変更してください。",
+    "ko": "다른 국가나 도시 필터를 선택해 보세요."
+  },
+  {
+    "key": "ui_schedules_are_read_from_jvr_announcements_from_the_past_six_mont",
+    "zh-Hans": "日程实时读取 JVR 官方行程，展示前六个月至未来一年的公告。图片为官方巡演现场照，非各站海报。",
+    "zh-Hant": "日程實時讀取 JVR 官方行程，展示前六個月至未來一年的公告。圖片為官方巡演現場照，非各站海報。",
+    "en": "Schedules are read from JVR announcements from the past six months through the coming year. Photos show the tour and are not individual show posters.",
+    "ja": "日程は JVR 公式発表から、過去6か月から今後1年の範囲で取得します。写真はツアーの様子で、各公演のポスターではありません。",
+    "ko": "JVR 공식 발표에서 지난 6개월부터 앞으로 1년까지의 일정을 가져옵니다. 이미지는 투어 현장 사진이며 개별 공연 포스터가 아닙니다."
+  },
+  {
+    "key": "ui_official_jvr_schedule",
+    "zh-Hans": "JVR 官方行程",
+    "zh-Hant": "JVR 官方行程",
+    "en": "Official JVR schedule",
+    "ja": "JVR 公式スケジュール",
+    "ko": "JVR 공식 일정"
+  },
+  {
+    "key": "ui_live_photos_jvr_music",
+    "zh-Hans": "现场图片 · JVR Music",
+    "zh-Hant": "現場圖片 · JVR Music",
+    "en": "Live photos · JVR Music",
+    "ja": "ライブ写真 · JVR Music",
+    "ko": "공연 사진 · JVR Music"
+  },
+  {
+    "key": "ui_on_tour",
+    "zh-Hans": "巡演现场",
+    "zh-Hant": "巡演現場",
+    "en": "On tour",
+    "ja": "ツアーの現場から",
+    "ko": "투어 현장"
+  },
+  {
+    "key": "ui_a_different_city_another_story_explore_the_officially_announced",
+    "zh-Hans": "一城一名，下一站见。探索官方公布的巡演日程。",
+    "zh-Hant": "一城一名，下一站見。探索官方公佈的巡演日程。",
+    "en": "A different city, another story. Explore the officially announced tour schedule.",
+    "ja": "街ごとに、新しい物語を。公式発表のツアー日程をチェック。",
+    "ko": "도시마다 새로운 이야기. 공식 발표된 투어 일정을 살펴보세요."
+  },
+  {
+    "key": "ui_updated",
+    "zh-Hans": "更新于 %1$s",
+    "zh-Hant": "更新於 %1$s",
+    "en": "Updated %1$s",
+    "ja": "更新：%1$s",
+    "ko": "업데이트: %1$s"
+  },
+  {
+    "key": "ui_checking_the_official_jvr_schedule",
+    "zh-Hans": "· 正在核对 JVR 官方行程",
+    "zh-Hant": "· 正在核對 JVR 官方行程",
+    "en": "· Checking the official JVR schedule",
+    "ja": "· JVR 公式スケジュールを確認中",
+    "ko": "· JVR 공식 일정 확인 중"
+  },
+  {
+    "key": "ui_next_stop",
+    "zh-Hans": "下一站",
+    "zh-Hant": "下一站",
+    "en": "Next stop",
+    "ja": "次の公演",
+    "ko": "다음 공연"
+  },
+  {
+    "key": "ui_mmm_d",
+    "zh-Hans": "M月d日",
+    "zh-Hant": "M月d日",
+    "en": "MMM d",
+    "ja": "M月d日",
+    "ko": "M월 d일"
+  },
+  {
+    "key": "ui_show_details",
+    "zh-Hans": "查看场次详情",
+    "zh-Hant": "檢視場次詳情",
+    "en": "Show details",
+    "ja": "公演の詳細",
+    "ko": "공연 상세 정보"
+  },
+  {
+    "key": "ui_tickets",
+    "zh-Hans": "购票 · %1$s",
+    "zh-Hant": "購票 · %1$s",
+    "en": "Tickets · %1$s",
+    "ja": "チケット · %1$s",
+    "ko": "예매 · %1$s"
+  },
+  {
+    "key": "ui_prices_announced",
+    "zh-Hans": "票价已公布",
+    "zh-Hant": "票價已公佈",
+    "en": "Prices announced",
+    "ja": "料金発表済み",
+    "ko": "가격 발표됨"
+  },
+  {
+    "key": "ui_month",
+    "zh-Hans": "%1$s月",
+    "zh-Hant": "%1$s月",
+    "en": "Month %1$s",
+    "ja": "%1$s月",
+    "ko": "%1$s월"
+  },
+  {
+    "key": "ui_on_sale",
+    "zh-Hans": "售票中",
+    "zh-Hant": "售票中",
+    "en": "On sale",
+    "ja": "発売中",
+    "ko": "판매 중"
+  },
+  {
+    "key": "ui_sales_pending",
+    "zh-Hans": "待开票",
+    "zh-Hant": "待開票",
+    "en": "Sales pending",
+    "ja": "発売前",
+    "ko": "판매 예정"
+  },
+  {
+    "key": "ui_today",
+    "zh-Hans": "今天开演",
+    "zh-Hant": "今天開演",
+    "en": "Today",
+    "ja": "本日開催",
+    "ko": "오늘 공연"
+  },
+  {
+    "key": "ui_sold_out",
+    "zh-Hans": "已售罄",
+    "zh-Hant": "已售罄",
+    "en": "Sold out",
+    "ja": "完売",
+    "ko": "매진"
+  },
+  {
+    "key": "ui_calendar_month_year",
+    "zh-Hans": "%1$s 年 %2$s 月",
+    "zh-Hant": "%1$s 年 %2$s 月",
+    "en": "%1$s / %2$s",
+    "ja": "%1$s 年 %2$s 月",
+    "ko": "%1$s년 %2$s월"
+  },
+  {
+    "key": "ui_shows_91",
+    "zh-Hans": "%1$s 场",
+    "zh-Hant": "%1$s 場",
+    "en": "%1$s shows",
+    "ja": "%1$s 公演",
+    "ko": "%1$s회 공연",
+    "countArg": 0,
+    "enOne": "%1$s show"
+  },
+  {
+    "key": "ui_show_details_92",
+    "zh-Hans": "演出详情",
+    "zh-Hant": "演出詳情",
+    "en": "Show details",
+    "ja": "公演詳細",
+    "ko": "공연 상세 정보"
+  },
+  {
+    "key": "ui_back_to_concerts",
+    "zh-Hans": "返回演唱会",
+    "zh-Hant": "返回演唱會",
+    "en": "Back to concerts",
+    "ja": "ライブ一覧に戻る",
+    "ko": "콘서트 목록으로 돌아가기"
+  },
+  {
+    "key": "ui_official_tour_photo_jvr_music",
+    "zh-Hans": "巡演现场照 · JVR Music",
+    "zh-Hant": "巡演現場照 · JVR Music",
+    "en": "Official tour photo · JVR Music",
+    "ja": "公式ツアー写真 · JVR Music",
+    "ko": "공식 투어 사진 · JVR Music"
+  },
+  {
+    "key": "ui_time_and_venue",
+    "zh-Hans": "时间与地点",
+    "zh-Hant": "時間與地點",
+    "en": "Time and venue",
+    "ja": "日時・会場",
+    "ko": "시간 및 장소"
+  },
+  {
+    "key": "ui_date",
+    "zh-Hans": "日期",
+    "zh-Hant": "日期",
+    "en": "Date",
+    "ja": "日付",
+    "ko": "날짜"
+  },
+  {
+    "key": "ui_local_time",
+    "zh-Hans": "当地时间",
+    "zh-Hant": "當地時間",
+    "en": "Local time",
+    "ja": "現地時間",
+    "ko": "현지 시간"
+  },
+  {
+    "key": "ui_time_zone",
+    "zh-Hans": "时区",
+    "zh-Hant": "時區",
+    "en": "Time zone",
+    "ja": "タイムゾーン",
+    "ko": "시간대"
+  },
+  {
+    "key": "ui_venue",
+    "zh-Hans": "场馆",
+    "zh-Hant": "場館",
+    "en": "Venue",
+    "ja": "会場",
+    "ko": "공연장"
+  },
+  {
+    "key": "ui_address",
+    "zh-Hans": "地址",
+    "zh-Hant": "地址",
+    "en": "Address",
+    "ja": "住所",
+    "ko": "주소"
+  },
+  {
+    "key": "ui_not_provided_in_the_official_schedule",
+    "zh-Hans": "官方行程未提供",
+    "zh-Hant": "官方行程未提供",
+    "en": "Not provided in the official schedule",
+    "ja": "公式スケジュールに記載なし",
+    "ko": "공식 일정에 정보 없음"
+  },
+  {
+    "key": "ui_open_map",
+    "zh-Hans": "地图导航",
+    "zh-Hant": "地圖導航",
+    "en": "Open map",
+    "ja": "地図を開く",
+    "ko": "지도 열기"
+  },
+  {
+    "key": "ui_ticket_information",
+    "zh-Hans": "票务信息",
+    "zh-Hant": "票務資訊",
+    "en": "Ticket information",
+    "ja": "チケット情報",
+    "ko": "예매 정보"
+  },
+  {
+    "key": "ui_ticket_status",
+    "zh-Hans": "售票状态",
+    "zh-Hant": "售票狀態",
+    "en": "Ticket status",
+    "ja": "販売状況",
+    "ko": "판매 상태"
+  },
+  {
+    "key": "ui_ticket_platform",
+    "zh-Hans": "票务平台",
+    "zh-Hant": "票務平臺",
+    "en": "Ticket platform",
+    "ja": "販売サイト",
+    "ko": "예매처"
+  },
+  {
+    "key": "ui_sales_start",
+    "zh-Hans": "开售时间",
+    "zh-Hant": "開售時間",
+    "en": "Sales start",
+    "ja": "発売日時",
+    "ko": "판매 시작"
+  },
+  {
+    "key": "ui_price_range",
+    "zh-Hans": "票价区间",
+    "zh-Hant": "票價區間",
+    "en": "Price range",
+    "ja": "料金",
+    "ko": "가격대"
+  },
+  {
+    "key": "ui_shown_only_when_officially_announced_the_final_price_is_determin",
+    "zh-Hans": "仅在公开来源明确公布票档时显示；实际价格以平台结算页为准。",
+    "zh-Hant": "僅在公開來源明確公佈票檔時顯示；實際價格以平臺結算頁為準。",
+    "en": "Shown only when officially announced. The final price is determined by the ticket platform.",
+    "ja": "公式に発表された料金のみ表示します。最終的な料金は販売サイトをご確認ください。",
+    "ko": "공식 발표된 가격만 표시합니다. 최종 가격은 예매처의 결제 화면을 확인해 주세요."
+  },
+  {
+    "key": "ui_this_show_has_ended_ticket_links_are_closed",
+    "zh-Hans": "演出已结束，票务入口已关闭。",
+    "zh-Hant": "演出已結束，票務入口已關閉。",
+    "en": "This show has ended. Ticket links are closed.",
+    "ja": "公演は終了しました。チケットの案内は終了しています。",
+    "ko": "공연이 종료되어 예매 링크가 닫혔습니다."
+  },
+  {
+    "key": "ui_ticket_sales_have_not_started_check_the_ticket_platform_after_sa",
+    "zh-Hans": "官方尚未开票；开票后可在票务平台购票。",
+    "zh-Hant": "官方尚未開票；開票後可在票務平臺購票。",
+    "en": "Ticket sales have not started. Check the ticket platform after sales open.",
+    "ja": "チケットは発売前です。発売後に販売サイトをご確認ください。",
+    "ko": "아직 티켓 판매가 시작되지 않았습니다. 판매 시작 후 예매처를 확인해 주세요."
+  },
+  {
+    "key": "ui_this_show_is_sold_out_check_official_announcements_for_extra_dat",
+    "zh-Hans": "该场次已售罄；请留意官方后续加场或回流票公告。",
+    "zh-Hant": "該場次已售罄；請留意官方後續加場或迴流票公告。",
+    "en": "This show is sold out. Check official announcements for extra dates or returned tickets.",
+    "ja": "この公演は完売しました。追加公演や再販売については公式発表をご確認ください。",
+    "ko": "매진된 공연입니다. 추가 공연이나 취소표 관련 공식 발표를 확인해 주세요."
+  },
+  {
+    "key": "ui_open",
+    "zh-Hans": "前往 %1$s",
+    "zh-Hant": "前往 %1$s",
+    "en": "Open %1$s",
+    "ja": "%1$s を開く",
+    "ko": "%1$s 열기"
+  },
+  {
+    "key": "ui_view_ticket_platform",
+    "zh-Hans": "查看票务平台",
+    "zh-Hant": "檢視票務平臺",
+    "en": "View ticket platform",
+    "ja": "販売サイトを見る",
+    "ko": "예매처 보기"
+  },
+  {
+    "key": "ui_the_official_schedule_has_no_ticket_link_see_the_official_source",
+    "zh-Hans": "官方行程未提供票务入口，可查看下方官方来源。",
+    "zh-Hant": "官方行程未提供票務入口，可檢視下方官方來源。",
+    "en": "The official schedule has no ticket link. See the official sources below.",
+    "ja": "公式スケジュールにチケットのリンクがありません。下記の公式情報をご確認ください。",
+    "ko": "공식 일정에 예매 링크가 없습니다. 아래 공식 출처를 확인해 주세요."
+  },
+  {
+    "key": "ui_organizer_and_sources",
+    "zh-Hans": "主办与来源",
+    "zh-Hant": "主辦與來源",
+    "en": "Organizer and sources",
+    "ja": "主催者・出典",
+    "ko": "주최 및 출처"
+  },
+  {
+    "key": "ui_organizer",
+    "zh-Hans": "主办方",
+    "zh-Hant": "主辦方",
+    "en": "Organizer",
+    "ja": "主催者",
+    "ko": "주최자"
+  },
+  {
+    "key": "ui_organizer_not_listed_in_public_sources",
+    "zh-Hans": "公开来源未标注主办方",
+    "zh-Hant": "公開來源未標註主辦方",
+    "en": "Organizer not listed in public sources",
+    "ja": "公開情報に主催者の記載なし",
+    "ko": "공개 출처에 주최자 정보 없음"
+  },
+  {
+    "key": "ui_sources",
+    "zh-Hans": "信息来源",
+    "zh-Hant": "資訊來源",
+    "en": "Sources",
+    "ja": "情報源",
+    "ko": "정보 출처"
+  },
+  {
+    "key": "ui_last_updated",
+    "zh-Hans": "最后更新",
+    "zh-Hant": "最後更新",
+    "en": "Last updated",
+    "ja": "最終更新",
+    "ko": "마지막 업데이트"
+  },
+  {
+    "key": "ui_data_verified",
+    "zh-Hans": "数据核对",
+    "zh-Hant": "資料核對",
+    "en": "Data verified",
+    "ja": "情報確認日",
+    "ko": "정보 확인일"
+  },
+  {
+    "key": "ui_show_times_prices_and_ticket_availability_may_change_follow_the",
+    "zh-Hans": "演出时间、票价与售票状态可能调整；请以主办方与票务平台的最终公告为准。",
+    "zh-Hant": "演出時間、票價與售票狀態可能調整；請以主辦方與票務平臺的最終公告為準。",
+    "en": "Show times, prices and ticket availability may change. Follow the organizer and ticket platform for final announcements.",
+    "ja": "開演時間、料金、販売状況は変更される場合があります。主催者や販売サイトの最終発表をご確認ください。",
+    "ko": "공연 시간, 가격 및 판매 상태는 변경될 수 있습니다. 주최자와 예매처의 최종 공지를 확인해 주세요."
+  },
+  {
+    "key": "ui_this_page_collects_public_event_information_it_does_not_offer_ti",
+    "zh-Hans": "本页只整理公开演出信息，不提供购票代理、加价票或保证入场服务。",
+    "zh-Hant": "本頁只整理公開演出資訊，不提供購票代理、加價票或保證入場服務。",
+    "en": "This page collects public event information. It does not offer ticket agency, resale or guaranteed admission services.",
+    "ja": "公開されている公演情報をまとめたページです。購入代行、転売、入場保証サービスは提供していません。",
+    "ko": "공개 공연 정보를 정리한 페이지입니다. 예매 대행, 재판매 또는 입장 보장 서비스는 제공하지 않습니다."
+  },
+  {
+    "key": "ui_open_source",
+    "zh-Hans": "打开来源",
+    "zh-Hant": "開啟來源",
+    "en": "Open source",
+    "ja": "出典を開く",
+    "ko": "출처 열기"
+  },
+  {
+    "key": "ui_time_not_listed",
+    "zh-Hans": "时间未收录",
+    "zh-Hant": "時間未收錄",
+    "en": "Time not listed",
+    "ja": "時間の記載なし",
+    "ko": "시간 정보 없음"
+  },
+  {
+    "key": "ui_yyyy_mm_dd_hh_mm",
+    "zh-Hans": "yyyy年M月d日 HH:mm",
+    "zh-Hant": "yyyy年M月d日 HH:mm",
+    "en": "yyyy-MM-dd HH:mm",
+    "ja": "yyyy年M月d日 HH:mm",
+    "ko": "yyyy년 M월 d일 HH:mm"
+  },
+  {
+    "key": "ui_jvr_music_official_schedule",
+    "zh-Hans": "JVR Music 官方行程",
+    "zh-Hant": "JVR Music 官方行程",
+    "en": "JVR Music official schedule",
+    "ja": "JVR Music 公式スケジュール",
+    "ko": "JVR Music 공식 일정"
+  },
+  {
+    "key": "ui_wikipedia",
+    "zh-Hans": "维基百科",
+    "zh-Hant": "維基百科",
+    "en": "Wikipedia",
+    "ja": "ウィキペディア",
+    "ko": "위키백과"
+  },
+  {
+    "key": "ui_hk01",
+    "zh-Hans": "香港01",
+    "zh-Hant": "香港01",
+    "en": "HK01",
+    "ja": "香港01",
+    "ko": "HK01"
+  },
+  {
+    "key": "ui_sina_hainan_tourism_radio",
+    "zh-Hans": "新浪 / 海南旅游广播",
+    "zh-Hant": "新浪 / 海南旅遊廣播",
+    "en": "Sina / Hainan Tourism Radio",
+    "ja": "新浪 / 海南旅遊放送",
+    "ko": "Sina / 하이난 관광 라디오"
+  },
+  {
+    "key": "ui_8world",
+    "zh-Hans": "8视界",
+    "zh-Hant": "8視界",
+    "en": "8world",
+    "ja": "8world",
+    "ko": "8world"
+  },
+  {
+    "key": "ui_oriental_daily",
+    "zh-Hans": "东方日报",
+    "zh-Hant": "東方日報",
+    "en": "Oriental Daily",
+    "ja": "東方日報",
+    "ko": "Oriental Daily"
+  },
+  {
+    "key": "ui_damai",
+    "zh-Hans": "大麦",
+    "zh-Hant": "大麥",
+    "en": "Damai",
+    "ja": "大麦",
+    "ko": "Damai"
+  },
+  {
+    "key": "ui_source",
+    "zh-Hans": "来源",
+    "zh-Hant": "來源",
+    "en": "Source",
+    "ja": "出典",
+    "ko": "출처"
+  },
+  {
+    "key": "ui_official_photo_from_the_carnival_ii_tour_in_hangzhou",
+    "zh-Hans": "嘉年华 II 巡演杭州站官方现场照",
+    "zh-Hant": "嘉年華 II 巡演杭州站官方現場照",
+    "en": "Official photo from the Carnival II tour in Hangzhou",
+    "ja": "Carnival II ツアー杭州公演の公式写真",
+    "ko": "Carnival II 투어 항저우 공연 공식 사진"
+  },
+  {
+    "key": "ui_live_photo_unavailable",
+    "zh-Hans": "现场图片暂不可用",
+    "zh-Hant": "現場圖片暫不可用",
+    "en": "Live photo unavailable",
+    "ja": "ライブ写真を表示できません",
+    "ko": "공연 사진을 불러올 수 없습니다"
+  },
+  {
+    "key": "ui_carnival_ii_on_tour",
+    "zh-Hans": "CARNIVAL II  /  巡演现场",
+    "zh-Hant": "CARNIVAL II  /  巡演現場",
+    "en": "CARNIVAL II / ON TOUR",
+    "ja": "CARNIVAL II / ツアーの現場から",
+    "ko": "CARNIVAL II / 투어 현장"
+  },
+  {
+    "key": "ui_custom_theme_color",
+    "zh-Hans": "自定义主题色",
+    "zh-Hant": "自定義主題色",
+    "en": "Custom theme color",
+    "ja": "テーマカラーの設定",
+    "ko": "테마 색상 설정"
+  },
+  {
+    "key": "ui_cancel",
+    "zh-Hans": "取消",
+    "zh-Hant": "取消",
+    "en": "Cancel",
+    "ja": "キャンセル",
+    "ko": "취소"
+  },
+  {
+    "key": "ui_apply",
+    "zh-Hans": "应用",
+    "zh-Hant": "應用",
+    "en": "Apply",
+    "ja": "適用",
+    "ko": "적용"
+  },
+  {
+    "key": "ui_used_when_monet_is_off_miuix_generates_light_and_dark_palettes_f",
+    "zh-Hans": "关闭 Monet 时使用此颜色；深浅色均由 Miuix 根据种子色生成。",
+    "zh-Hant": "關閉 Monet 時使用此顏色；深淺色均由 Miuix 根據種子色生成。",
+    "en": "Used when Monet is off. Miuix generates light and dark palettes from this seed color.",
+    "ja": "Monet がオフのときに使用します。Miuix がこの色からライト・ダークの配色を生成します。",
+    "ko": "Monet을 끄면 사용됩니다. Miuix가 이 색상을 바탕으로 밝은 테마와 어두운 테마의 색상을 생성합니다."
+  },
+  {
+    "key": "ui_blue",
+    "zh-Hans": "蓝",
+    "zh-Hant": "藍",
+    "en": "Blue",
+    "ja": "青",
+    "ko": "파랑"
+  },
+  {
+    "key": "ui_purple",
+    "zh-Hans": "紫",
+    "zh-Hant": "紫",
+    "en": "Purple",
+    "ja": "紫",
+    "ko": "보라"
+  },
+  {
+    "key": "ui_green",
+    "zh-Hans": "绿",
+    "zh-Hant": "綠",
+    "en": "Green",
+    "ja": "緑",
+    "ko": "초록"
+  },
+  {
+    "key": "ui_orange",
+    "zh-Hans": "橙",
+    "zh-Hant": "橙",
+    "en": "Orange",
+    "ja": "オレンジ",
+    "ko": "주황"
+  },
+  {
+    "key": "ui_restore_default_blue",
+    "zh-Hans": "恢复预设蓝色",
+    "zh-Hant": "恢復預設藍色",
+    "en": "Restore default blue",
+    "ja": "既定の青に戻す",
+    "ko": "기본 파란색으로 복원"
+  },
+  {
+    "key": "ui_home",
+    "zh-Hans": "首页",
+    "zh-Hant": "首頁",
+    "en": "Home",
+    "ja": "ホーム",
+    "ko": "홈"
+  },
+  {
+    "key": "ui_settings",
+    "zh-Hans": "设置",
+    "zh-Hant": "設定",
+    "en": "Settings",
+    "ja": "設定",
+    "ko": "설정"
+  },
+  {
+    "key": "ui_jay_archive_music_archive",
+    "zh-Hans": "JAY ARCHIVE  /  音乐档案",
+    "zh-Hant": "JAY ARCHIVE  /  音樂檔案",
+    "en": "JAY ARCHIVE / MUSIC ARCHIVE",
+    "ja": "JAY ARCHIVE / 音楽アーカイブ",
+    "ko": "JAY ARCHIVE / 음악 아카이브"
+  },
+  {
+    "key": "ui_let_chinese_language_music_shine",
+    "zh-Hans": "不要让韩流越来越嚣张，华流才是最屌的",
+    "zh-Hant": "不要讓韓流越來越囂張，華流才是最屌的",
+    "en": "Let Chinese-language music shine.",
+    "ja": "中華圏の音楽を、もっと世界へ。",
+    "ko": "중화권 음악이 더 빛날 수 있도록."
+  },
+  {
+    "key": "ui_official_jay_chou_portrait_source_jvr_music",
+    "zh-Hans": "周杰伦官方宣传照，来源：杰威尔音乐",
+    "zh-Hant": "周杰倫官方宣傳照，來源：傑威爾音樂",
+    "en": "Official Jay Chou portrait. Source: JVR Music",
+    "ja": "ジェイ・チョウの公式写真。出典：JVR Music",
+    "ko": "주걸륜 공식 사진. 출처: JVR Music"
+  },
+  {
+    "key": "ui_jay_chou",
+    "zh-Hans": "周杰伦",
+    "zh-Hant": "周杰倫",
+    "en": "Jay Chou",
+    "ja": "ジェイ・チョウ",
+    "ko": "주걸륜"
+  },
+  {
+    "key": "ui_listening_since_2000",
+    "zh-Hans": "从 2000 年，听到今天",
+    "zh-Hant": "從 2000 年，聽到今天",
+    "en": "Listening since 2000",
+    "ja": "2000年から、今も聴き続ける",
+    "ko": "2000년부터 지금까지"
+  },
+  {
+    "key": "ui_jay_chou_born_january_18_1979_is_a_singer_music_producer_actor_a",
+    "zh-Hans": "周杰伦（Jay Chou），1979 年 1 月 18 日出生，华语流行音乐歌手、音乐制作人、演员与导演。2000 年推出首张同名专辑，开启个人音乐创作历程。",
+    "zh-Hant": "周杰倫（Jay Chou），1979 年 1 月 18 日出生，華語流行音樂歌手、音樂製作人、演員與導演。2000 年推出首張同名專輯，開啟個人音樂創作歷程。",
+    "en": "Jay Chou, born January 18, 1979, is a singer, music producer, actor and director. His self-titled debut album in 2000 marked the start of his recording career.",
+    "ja": "ジェイ・チョウは1979年1月18日生まれの歌手、音楽プロデューサー、俳優、映画監督。2000年に初のアルバム『Jay』を発表し、音楽活動の新たな一歩を踏み出しました。",
+    "ko": "주걸륜은 1979년 1월 18일생 가수, 음악 프로듀서, 배우이자 감독입니다. 2000년 첫 정규 앨범 『Jay』를 발표하며 자신의 음악 활동을 시작했습니다."
+  },
+  {
+    "key": "ui_studio_albums",
+    "zh-Hans": "录音室专辑",
+    "zh-Hant": "錄音室專輯",
+    "en": "Studio albums",
+    "ja": "スタジオアルバム",
+    "ko": "정규 앨범"
+  },
+  {
+    "key": "ui_release_years",
+    "zh-Hans": "发行跨度",
+    "zh-Hant": "發行跨度",
+    "en": "Release years",
+    "ja": "発売年代",
+    "ko": "발매 기간"
+  },
+  {
+    "key": "ui_tracks_archived",
+    "zh-Hans": "收录曲目",
+    "zh-Hant": "收錄曲目",
+    "en": "Tracks archived",
+    "ja": "収録曲",
+    "ko": "수록곡"
+  },
+  {
+    "key": "ui_a_sound_of_his_own",
+    "zh-Hans": "旋律之间，自成一派",
+    "zh-Hant": "旋律之間，自成一派",
+    "en": "A sound of his own",
+    "ja": "独自の音楽世界",
+    "ko": "그만의 음악 세계"
+  },
+  {
+    "key": "ui_from_r_b_and_hip_hop_to_pop_ballads_his_albums_speak_many_musica",
+    "zh-Hans": "从 R&B、嘻哈到抒情流行，他的专辑呈现多种音乐语言。《双截棍》的节奏、《东风破》的中国风旋律、《七里香》的抒情表达，构成不同的聆听入口。",
+    "zh-Hant": "從 R&B、嘻哈到抒情流行，他的專輯呈現多種音樂語言。《雙截棍》的節奏、《東風破》的中國風旋律、《七里香》的抒情表達，構成不同的聆聽入口。",
+    "en": "From R&B and hip-hop to pop ballads, his albums speak many musical languages. Explore the rhythm of 雙截棍, the Chinese-style melody of 東風破, and the lyricism of 七里香.",
+    "ja": "R&B、ヒップホップ、ポップバラードまで、アルバムには多彩な音楽が息づいています。『雙截棍』のリズム、『東風破』の中国風の旋律、『七里香』の叙情性から、その世界に触れてみてください。",
+    "ko": "R&B와 힙합부터 팝 발라드까지 그의 앨범은 다양한 음악을 담고 있습니다. 『雙截棍』의 리듬, 『東風破』의 중국풍 선율, 『七里香』의 서정성을 만나 보세요."
+  },
+  {
+    "key": "ui_chinese_style",
+    "zh-Hans": "中国风",
+    "zh-Hant": "中國風",
+    "en": "Chinese style",
+    "ja": "中国風",
+    "ko": "중국풍"
+  },
+  {
+    "key": "ui_pop",
+    "zh-Hans": "流行",
+    "zh-Hant": "流行",
+    "en": "Pop",
+    "ja": "ポップ",
+    "ko": "팝"
+  },
+  {
+    "key": "ui_start_with_these_albums",
+    "zh-Hans": "从这些作品开始",
+    "zh-Hant": "從這些作品開始",
+    "en": "Start with these albums",
+    "ja": "まずはこの作品から",
+    "ko": "이 앨범부터 시작해 보세요"
+  },
+  {
+    "key": "ui_discover_the_music_across_the_years",
+    "zh-Hans": "跨越年代的聆听入口",
+    "zh-Hant": "跨越年代的聆聽入口",
+    "en": "Discover the music across the years",
+    "ja": "時代を越えて音楽に出会う",
+    "ko": "시대를 넘나드는 음악 여행"
+  },
+  {
+    "key": "ui__163",
+    "zh-Hans": "双截棍 · 安静",
+    "zh-Hant": "雙截棍 · 安靜",
+    "en": "雙截棍 · 安靜",
+    "ja": "雙截棍 · 安靜",
+    "ko": "雙截棍 · 安靜"
+  },
+  {
+    "key": "ui__164",
+    "zh-Hans": "东风破 · 晴天",
+    "zh-Hant": "東風破 · 晴天",
+    "en": "東風破 · 晴天",
+    "ja": "東風破 · 晴天",
+    "ko": "東風破 · 晴天"
+  },
+  {
+    "key": "ui__165",
+    "zh-Hans": "七里香 · 搁浅",
+    "zh-Hant": "七里香 · 擱淺",
+    "en": "七里香 · 擱淺",
+    "ja": "七里香 · 擱淺",
+    "ko": "七里香 · 擱淺"
+  },
+  {
+    "key": "ui_album_artwork",
+    "zh-Hans": "%1$s专辑封面",
+    "zh-Hant": "%1$s專輯封面",
+    "en": "%1$s album artwork",
+    "ja": "『%1$s』のジャケット",
+    "ko": "%1$s 앨범 커버"
+  },
+  {
+    "key": "ui_view_album",
+    "zh-Hans": "%1$s  ·  查看专辑",
+    "zh-Hant": "%1$s  ·  檢視專輯",
+    "en": "%1$s · View album",
+    "ja": "%1$s · アルバムを見る",
+    "ko": "%1$s · 앨범 보기"
+  },
+  {
+    "key": "ui_explore_all_albums",
+    "zh-Hans": "翻开全部专辑",
+    "zh-Hant": "翻開全部專輯",
+    "en": "Explore all albums",
+    "ja": "すべてのアルバムを見る",
+    "ko": "모든 앨범 보기"
+  },
+  {
+    "key": "ui_16_albums_from_jay_to_children_of_the_sun",
+    "zh-Hans": "16 张专辑，从《Jay》到《太阳之子》",
+    "zh-Hant": "16 張專輯，從《Jay》到《太陽之子》",
+    "en": "16 albums, from Jay to Children of the Sun",
+    "ja": "『Jay』から『Children of the Sun』まで、16枚のアルバム",
+    "ko": "『Jay』부터 『Children of the Sun』까지 16장의 앨범"
+  },
+  {
+    "key": "ui_unable_to_get_lyrics_please_try_again_later",
+    "zh-Hans": "未能获取歌词，请稍后重试。",
+    "zh-Hant": "未能獲取歌詞，請稍後重試。",
+    "en": "Unable to get lyrics. Please try again later.",
+    "ja": "歌詞を取得できません。後でもう一度お試しください。",
+    "ko": "가사를 가져올 수 없습니다. 나중에 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_unable_to_connect_to_the_lyrics_service_check_your_connection_an",
+    "zh-Hans": "未能连接歌词服务，请检查网络后重试。",
+    "zh-Hant": "未能連線歌詞服務，請檢查網路後重試。",
+    "en": "Unable to connect to the lyrics service. Check your connection and try again.",
+    "ja": "歌詞サービスに接続できません。ネットワークを確認して再試行してください。",
+    "ko": "가사 서비스에 연결할 수 없습니다. 네트워크 연결을 확인한 후 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_import_failed_use_a_utf_8_or_gb18030_lrc_txt_file_no_larger_than",
+    "zh-Hans": "导入失败：请使用不超过 1 MB 的 UTF-8 / GB18030 LRC 或 TXT 文件。",
+    "zh-Hant": "匯入失敗：請使用不超過 1 MB 的 UTF-8 / GB18030 LRC 或 TXT 檔案。",
+    "en": "Import failed. Use a UTF-8 or GB18030 LRC/TXT file no larger than 1 MB.",
+    "ja": "読み込めませんでした。1 MB以下の UTF-8 または GB18030 の LRC/TXT ファイルを選んでください。",
+    "ko": "가져오지 못했습니다. 1 MB 이하의 UTF-8 또는 GB18030 LRC/TXT 파일을 선택해 주세요."
+  },
+  {
+    "key": "ui_local_lyrics_saved_in_app_storage",
+    "zh-Hans": "本地歌词 · 已保存到应用私有目录",
+    "zh-Hant": "本地歌詞 · 已儲存到應用私有目錄",
+    "en": "Local lyrics · Saved in app storage",
+    "ja": "ローカル歌詞 · アプリ内に保存済み",
+    "ko": "로컬 가사 · 앱 저장소에 저장됨"
+  },
+  {
+    "key": "ui_matching_qq_music_lyrics",
+    "zh-Hans": "正在匹配 QQ 音乐歌词",
+    "zh-Hant": "正在匹配 QQ 音樂歌詞",
+    "en": "Matching QQ Music lyrics",
+    "ja": "QQ Music の歌詞を検索中",
+    "ko": "QQ Music 가사 검색 중"
+  },
+  {
+    "key": "ui_qq_music_lyrics_matched",
+    "zh-Hans": "QQ 音乐歌词 · 已匹配",
+    "zh-Hant": "QQ 音樂歌詞 · 已匹配",
+    "en": "QQ Music lyrics · Matched",
+    "ja": "QQ Music の歌詞 · 一致する曲を取得済み",
+    "ko": "QQ Music 가사 · 일치하는 곡 찾음"
+  },
+  {
+    "key": "ui_qq_music_no_match_yet",
+    "zh-Hans": "QQ 音乐 · 暂未匹配",
+    "zh-Hant": "QQ 音樂 · 暫未匹配",
+    "en": "QQ Music · No match yet",
+    "ja": "QQ Music · 一致する曲がありません",
+    "ko": "QQ Music · 일치하는 곡 없음"
+  },
+  {
+    "key": "ui_lyrics",
+    "zh-Hans": "歌词",
+    "zh-Hant": "歌詞",
+    "en": "Lyrics",
+    "ja": "歌詞",
+    "ko": "가사"
+  },
+  {
+    "key": "ui_back_to_album_details",
+    "zh-Hans": "返回专辑详情",
+    "zh-Hant": "返回專輯詳情",
+    "en": "Back to album details",
+    "ja": "アルバム詳細に戻る",
+    "ko": "앨범 상세 정보로 돌아가기"
+  },
+  {
+    "key": "ui_import",
+    "zh-Hans": "导入",
+    "zh-Hant": "匯入",
+    "en": "Import",
+    "ja": "読み込む",
+    "ko": "가져오기"
+  },
+  {
+    "key": "ui_the_local_lyrics_file_has_no_displayable_lines",
+    "zh-Hans": "本地歌词文件里没有可显示的文本行。",
+    "zh-Hant": "本地歌詞檔案裡沒有可顯示的文字行。",
+    "en": "The local lyrics file has no displayable lines.",
+    "ja": "ローカル歌詞ファイルに表示できる行がありません。",
+    "ko": "로컬 가사 파일에 표시할 내용이 없습니다."
+  },
+  {
+    "key": "ui_qq_music_has_no_lyrics_for_this_song",
+    "zh-Hans": "QQ 音乐没有收录这首歌的歌词。",
+    "zh-Hant": "QQ 音樂沒有收錄這首歌的歌詞。",
+    "en": "QQ Music has no lyrics for this song.",
+    "ja": "QQ Music にこの曲の歌詞がありません。",
+    "ko": "QQ Music에 이 노래의 가사가 없습니다."
+  },
+  {
+    "key": "ui_no_lyrics_yet",
+    "zh-Hans": "还没有歌词",
+    "zh-Hant": "還沒有歌詞",
+    "en": "No lyrics yet",
+    "ja": "歌詞がありません",
+    "ko": "가사가 없습니다"
+  },
+  {
+    "key": "ui_unable_to_delete_please_try_again",
+    "zh-Hans": "删除失败，请重试。",
+    "zh-Hant": "刪除失敗，請重試。",
+    "en": "Unable to delete. Please try again.",
+    "ja": "削除できませんでした。もう一度お試しください。",
+    "ko": "삭제하지 못했습니다. 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_jay_chou_184",
+    "zh-Hans": "周杰伦 · %1$s",
+    "zh-Hant": "周杰倫 · %1$s",
+    "en": "Jay Chou · %1$s",
+    "ja": "ジェイ・チョウ · %1$s",
+    "ko": "주걸륜 · %1$s"
+  },
+  {
+    "key": "ui_album_artwork_185",
+    "zh-Hans": "《%1$s》专辑封面",
+    "zh-Hant": "《%1$s》專輯封面",
+    "en": "%1$s album artwork",
+    "ja": "『%1$s』のジャケット",
+    "ko": "%1$s 앨범 커버"
+  },
+  {
+    "key": "ui_bilingual",
+    "zh-Hans": "双语",
+    "zh-Hant": "雙語",
+    "en": "Bilingual",
+    "ja": "対訳",
+    "ko": "번역 함께 보기"
+  },
+  {
+    "key": "ui_original",
+    "zh-Hans": "原文",
+    "zh-Hant": "原文",
+    "en": "Original",
+    "ja": "原文",
+    "ko": "원문"
+  },
+  {
+    "key": "ui_toggle_lyric_translations",
+    "zh-Hans": "切换歌词翻译显示",
+    "zh-Hant": "切換歌詞翻譯顯示",
+    "en": "Toggle lyric translations",
+    "ja": "歌詞の翻訳表示を切り替える",
+    "ko": "가사 번역 표시 전환"
+  },
+  {
+    "key": "ui_finding_lyrics",
+    "zh-Hans": "正在匹配歌词",
+    "zh-Hant": "正在匹配歌詞",
+    "en": "Finding lyrics",
+    "ja": "歌詞を検索中",
+    "ko": "가사 찾는 중"
+  },
+  {
+    "key": "ui_finding_jay_chou_recordings_through_the_qq_music_lyrics_service",
+    "zh-Hans": "通过 QQ 音乐歌词接口查找周杰伦版本",
+    "zh-Hant": "透過 QQ 音樂歌詞介面查詢周杰倫版本",
+    "en": "Finding Jay Chou recordings through the QQ Music lyrics service",
+    "ja": "QQ Music の歌詞サービスでジェイ・チョウの楽曲を検索します",
+    "ko": "QQ Music 가사 서비스에서 주걸륜의 노래를 검색합니다"
+  },
+  {
+    "key": "ui_lyrics_unavailable",
+    "zh-Hans": "暂时没有拿到歌词",
+    "zh-Hant": "暫時沒有拿到歌詞",
+    "en": "Lyrics unavailable",
+    "ja": "歌詞を取得できません",
+    "ko": "가사를 불러올 수 없습니다"
+  },
+  {
+    "key": "ui_import_local_file",
+    "zh-Hans": "导入本地",
+    "zh-Hant": "匯入本地",
+    "en": "Import local file",
+    "ja": "ローカルファイルを読み込む",
+    "ko": "로컬 파일 가져오기"
+  },
+  {
+    "key": "ui_local_lyrics_saved_in_app_storage_193",
+    "zh-Hans": "本地歌词 · 已保存在应用私有目录",
+    "zh-Hant": "本地歌詞 · 已儲存在應用私有目錄",
+    "en": "Local lyrics · Saved in app storage",
+    "ja": "ローカル歌詞 · アプリ内に保存済み",
+    "ko": "로컬 가사 · 앱 저장소에 저장됨"
+  },
+  {
+    "key": "ui_qq_music_lyrics_read_from_the_lyrics_service",
+    "zh-Hans": "QQ 音乐歌词 · 逐行读取自歌词接口",
+    "zh-Hant": "QQ 音樂歌詞 · 逐行讀取自歌詞介面",
+    "en": "QQ Music lyrics · Read from the lyrics service",
+    "ja": "QQ Music の歌詞 · 歌詞サービスから取得",
+    "ko": "QQ Music 가사 · 가사 서비스에서 제공"
+  },
+  {
+    "key": "ui_qq_music_album",
+    "zh-Hans": "QQ 音乐标注：%1$s",
+    "zh-Hant": "QQ 音樂標註：%1$s",
+    "en": "QQ Music album: %1$s",
+    "ja": "QQ Music のアルバム表記：%1$s",
+    "ko": "QQ Music 앨범 표기: %1$s"
+  },
+  {
+    "key": "ui_lyrics_service_vkeys_api_qq_music",
+    "zh-Hans": "歌词接口：落月 API · QQ 音乐",
+    "zh-Hant": "歌詞介面：落月 API · QQ 音樂",
+    "en": "Lyrics service: VKeys API · QQ Music",
+    "ja": "歌詞サービス：VKeys API · QQ Music",
+    "ko": "가사 서비스: VKeys API · QQ Music"
+  },
+  {
+    "key": "ui_lyrics_belong_to_their_rights_holders_this_page_is_for_reading_o",
+    "zh-Hans": "歌词版权归原权利人所有；此页仅供静态阅读，不播放或下载音乐。",
+    "zh-Hant": "歌詞版權歸原權利人所有；此頁僅供靜態閱讀，不播放或下載音樂。",
+    "en": "Lyrics belong to their rights holders. This page is for reading only and does not play or download music.",
+    "ja": "歌詞の著作権は各権利者に帰属します。このページは閲覧専用で、音楽の再生やダウンロードは行いません。",
+    "ko": "가사의 저작권은 각 권리자에게 있습니다. 이 페이지는 읽기 전용이며 음악을 재생하거나 다운로드하지 않습니다."
+  },
+  {
+    "key": "ui_delete_local_lyrics",
+    "zh-Hans": "删除本地歌词",
+    "zh-Hant": "刪除本地歌詞",
+    "en": "Delete local lyrics",
+    "ja": "ローカル歌詞を削除",
+    "ko": "로컬 가사 삭제"
+  },
+  {
+    "key": "ui_album_categories",
+    "zh-Hans": "专辑分类",
+    "zh-Hant": "專輯分類",
+    "en": "Album categories",
+    "ja": "アルバムの種類",
+    "ko": "앨범 종류"
+  },
+  {
+    "key": "ui_confirm",
+    "zh-Hans": "确定",
+    "zh-Hant": "確定",
+    "en": "Confirm",
+    "ja": "確定",
+    "ko": "확인"
+  },
+  {
+    "key": "ui_select_one_or_more_categories_live_albums_are_released_recording",
+    "zh-Hans": "可多选，至少保留一项。演唱会项指已发行唱片，非巡演场次。",
+    "zh-Hant": "可多選，至少保留一項。演唱會項指已發行唱片，非巡演場次。",
+    "en": "Select one or more categories. Live albums are released recordings, not tour dates.",
+    "ja": "1つ以上選択してください。ライブ盤は発売済みの音源で、公演日程とは異なります。",
+    "ko": "하나 이상의 종류를 선택하세요. 라이브 앨범은 발매 음반을 뜻하며 투어 일정과는 별개입니다."
+  },
+  {
+    "key": "ui_releases_202",
+    "zh-Hans": "%1$s 张",
+    "zh-Hant": "%1$s 張",
+    "en": "%1$s releases",
+    "ja": "%1$s 作品",
+    "ko": "발매작 %1$s개",
+    "countArg": 0,
+    "enOne": "%1$s release"
+  },
+  {
+    "key": "ui_album_browsing",
+    "zh-Hans": "专辑浏览",
+    "zh-Hant": "專輯瀏覽",
+    "en": "Album browsing",
+    "ja": "アルバム表示",
+    "ko": "앨범 탐색"
+  },
+  {
+    "key": "ui_album_layout",
+    "zh-Hans": "专辑列表样式",
+    "zh-Hant": "專輯列表樣式",
+    "en": "Album layout",
+    "ja": "アルバムの表示形式",
+    "ko": "앨범 보기 방식"
+  },
+  {
+    "key": "ui_appearance",
+    "zh-Hans": "主题风格",
+    "zh-Hant": "主題風格",
+    "en": "Appearance",
+    "ja": "デザイン",
+    "ko": "디자인"
+  },
+  {
+    "key": "ui_ui_engine",
+    "zh-Hans": "UI 引擎",
+    "zh-Hant": "UI 引擎",
+    "en": "UI engine",
+    "ja": "UI エンジン",
+    "ko": "UI 엔진"
+  },
+  {
+    "key": "ui_floating_navigation_bar",
+    "zh-Hans": "悬浮底栏",
+    "zh-Hant": "懸浮底欄",
+    "en": "Floating navigation bar",
+    "ja": "フローティングナビゲーション",
+    "ko": "플로팅 탐색 바"
+  },
+  {
+    "key": "ui_drag_along_the_bar_and_release_to_switch_pages",
+    "zh-Hans": "沿底栏左右拖动，松手切换页面",
+    "zh-Hant": "沿底欄左右拖動，鬆手切換頁面",
+    "en": "Drag along the bar and release to switch pages",
+    "ja": "バーを左右にドラッグし、指を離すとページが切り替わります",
+    "ko": "바를 좌우로 드래그한 후 놓으면 페이지가 전환됩니다"
+  },
+  {
+    "key": "ui_enabled",
+    "zh-Hans": "已启用",
+    "zh-Hant": "已啟用",
+    "en": "Enabled",
+    "ja": "有効",
+    "ko": "사용 중"
+  },
+  {
+    "key": "ui_theme_mode",
+    "zh-Hans": "主题模式",
+    "zh-Hant": "主題模式",
+    "en": "Theme mode",
+    "ja": "テーマモード",
+    "ko": "테마 모드"
+  },
+  {
+    "key": "ui_enable_monet_dynamic_colors",
+    "zh-Hans": "启用 Monet 动态配色",
+    "zh-Hant": "啟用 Monet 動態配色",
+    "en": "Enable Monet dynamic colors",
+    "ja": "Monet ダイナミックカラーを使用",
+    "ko": "Monet 동적 색상 사용"
+  },
+  {
+    "key": "ui_use_colors_from_your_wallpaper",
+    "zh-Hans": "使用系统壁纸配色",
+    "zh-Hant": "使用系統桌布配色",
+    "en": "Use colors from your wallpaper",
+    "ja": "壁紙の色を使用します",
+    "ko": "배경화면 색상을 사용합니다"
+  },
+  {
+    "key": "ui_requires_android_12_using_the_app_theme_color_on_this_device",
+    "zh-Hans": "Android 12 起支持；当前使用应用主题色",
+    "zh-Hant": "Android 12 起支援；當前使用應用主題色",
+    "en": "Requires Android 12. Using the app theme color on this device.",
+    "ja": "Android 12以降に対応。この端末ではアプリのテーマカラーを使用します。",
+    "ko": "Android 12 이상에서 지원합니다. 현재 앱 테마 색상을 사용합니다."
+  },
+  {
+    "key": "ui_enable_blur",
+    "zh-Hans": "启用模糊",
+    "zh-Hant": "啟用模糊",
+    "en": "Enable blur",
+    "ja": "ぼかしを有効にする",
+    "ko": "흐림 효과 사용"
+  },
+  {
+    "key": "ui_blur_content_behind_top_bars_and_the_floating_navigation_bar",
+    "zh-Hans": "模糊所有顶部栏与悬浮底栏后方的内容",
+    "zh-Hant": "模糊所有頂部欄與懸浮底欄後方的內容",
+    "en": "Blur content behind top bars and the floating navigation bar",
+    "ja": "トップバーとフローティングナビゲーションの背後をぼかします",
+    "ko": "상단 바와 플로팅 탐색 바 뒤의 콘텐츠를 흐리게 표시합니다"
+  },
+  {
+    "key": "ui_requires_android_13_using_solid_surfaces_on_this_device",
+    "zh-Hans": "需要 Android 13；当前使用实色材质",
+    "zh-Hant": "需要 Android 13；當前使用實色材質",
+    "en": "Requires Android 13. Using solid surfaces on this device.",
+    "ja": "Android 13以降に対応。この端末では単色の背景を使用します。",
+    "ko": "Android 13 이상에서 지원합니다. 현재 단색 배경을 사용합니다."
+  },
+  {
+    "key": "ui_custom_color",
+    "zh-Hans": "自定义颜色",
+    "zh-Hant": "自定義顏色",
+    "en": "Custom color",
+    "ja": "カスタムカラー",
+    "ko": "사용자 지정 색상"
+  },
+  {
+    "key": "ui_monet_is_enabled_system_colors_take_priority",
+    "zh-Hans": "Monet 已开启，当前优先使用系统颜色",
+    "zh-Hant": "Monet 已開啟，當前優先使用系統顏色",
+    "en": "Monet is enabled. System colors take priority.",
+    "ja": "Monet が有効なため、システムの色を優先します。",
+    "ko": "Monet이 켜져 있어 시스템 색상을 우선 사용합니다."
+  },
+  {
+    "key": "ui_choose_a_seed_color_for_light_and_dark_miuix_palettes",
+    "zh-Hans": "选择种子色，自动生成深浅色 Miuix 调色板",
+    "zh-Hant": "選擇種子色，自動生成深淺色 Miuix 調色盤",
+    "en": "Choose a seed color for light and dark Miuix palettes",
+    "ja": "基準色から Miuix のライト・ダークの配色を生成します",
+    "ko": "기준 색상을 선택하여 Miuix의 밝은 테마와 어두운 테마 색상을 생성합니다"
+  },
+  {
+    "key": "ui_default_blue",
+    "zh-Hans": "预设蓝色",
+    "zh-Hant": "預設藍色",
+    "en": "Default blue",
+    "ja": "既定の青",
+    "ko": "기본 파란색"
+  },
+  {
+    "key": "ui_animations_and_gestures",
+    "zh-Hans": "动画与手势",
+    "zh-Hant": "動畫與手勢",
+    "en": "Animations and gestures",
+    "ja": "アニメーションとジェスチャー",
+    "ko": "애니메이션 및 제스처"
+  },
+  {
+    "key": "ui_page_transitions",
+    "zh-Hans": "页面切换",
+    "zh-Hant": "頁面切換",
+    "en": "Page transitions",
+    "ja": "ページ切り替え",
+    "ko": "페이지 전환"
+  },
+  {
+    "key": "ui_swipe_pages_or_drag_the_navigation_bar",
+    "zh-Hans": "横向滑动与底栏拖动联动",
+    "zh-Hant": "橫向滑動與底欄拖動聯動",
+    "en": "Swipe pages or drag the navigation bar",
+    "ja": "ページのスワイプとナビゲーションバーのドラッグが連動します",
+    "ko": "페이지 스와이프와 탐색 바 드래그가 연동됩니다"
+  },
+  {
+    "key": "ui_swipe",
+    "zh-Hans": "滑动",
+    "zh-Hant": "滑動",
+    "en": "Swipe",
+    "ja": "スワイプ",
+    "ko": "스와이프"
+  },
+  {
+    "key": "ui_album_transition",
+    "zh-Hans": "专辑展开",
+    "zh-Hant": "專輯展開",
+    "en": "Album transition",
+    "ja": "アルバムを開く動作",
+    "ko": "앨범 전환"
+  },
+  {
+    "key": "ui_artwork_moves_independently_as_details_appear_background_blur_in",
+    "zh-Hans": "封面独立移动，内容并行展开；开启模糊时背景渐进虚化",
+    "zh-Hant": "封面獨立移動，內容並行展開；開啟模糊時背景漸進虛化",
+    "en": "Artwork moves independently as details appear. Background blur increases when enabled.",
+    "ja": "ジャケットと詳細がそれぞれ展開します。ぼかしが有効な場合、背景が徐々にぼけます。",
+    "ko": "커버가 이동하며 상세 정보가 펼쳐집니다. 흐림 효과를 켜면 배경이 점차 흐려집니다."
+  },
+  {
+    "key": "ui_zoom",
+    "zh-Hans": "缩放",
+    "zh-Hant": "縮放",
+    "en": "Zoom",
+    "ja": "ズーム",
+    "ko": "확대"
+  },
+  {
+    "key": "ui_predictive_back_gesture",
+    "zh-Hans": "预测性返回手势",
+    "zh-Hant": "預測性返回手勢",
+    "en": "Predictive back gesture",
+    "ja": "予測型「戻る」ジェスチャー",
+    "ko": "예측 뒤로 가기 동작"
+  },
+  {
+    "key": "ui_preview_the_list_while_swiping_cancel_to_stay_on_details",
+    "zh-Hans": "滑动预览列表，取消后留在详情",
+    "zh-Hant": "滑動預覽列表，取消後留在詳情",
+    "en": "Preview the list while swiping. Cancel to stay on details.",
+    "ja": "スワイプ中に一覧をプレビューし、キャンセルすると詳細に戻ります。",
+    "ko": "스와이프하며 목록을 미리 봅니다. 취소하면 상세 화면에 머무릅니다."
+  },
+  {
+    "key": "ui_requires_android_14_for_progress_previews_using_standard_back_na",
+    "zh-Hans": "Android 14 起支持进度；当前使用常规返回",
+    "zh-Hant": "Android 14 起支援進度；當前使用常規返回",
+    "en": "Requires Android 14 for progress previews. Using standard back navigation.",
+    "ja": "進行状況のプレビューは Android 14以降に対応。この端末では通常の戻る操作を使用します。",
+    "ko": "진행 상태 미리 보기는 Android 14 이상에서 지원합니다. 현재 일반 뒤로 가기를 사용합니다."
+  },
+  {
+    "key": "ui_ok",
+    "zh-Hans": "知道了",
+    "zh-Hant": "知道了",
+    "en": "OK",
+    "ja": "OK",
+    "ko": "확인"
+  },
+  {
+    "key": "ui_artwork_232",
+    "zh-Hans": "《%1$s》封面",
+    "zh-Hant": "《%1$s》封面",
+    "en": "%1$s artwork",
+    "ja": "『%1$s』のジャケット",
+    "ko": "%1$s 커버"
+  },
+  {
+    "key": "ui_unable_to_save_settings_please_try_again",
+    "zh-Hans": "设置保存失败，请重试。",
+    "zh-Hant": "設定儲存失敗，請重試。",
+    "en": "Unable to save settings. Please try again.",
+    "ja": "設定を保存できません。もう一度お試しください。",
+    "ko": "설정을 저장하지 못했습니다. 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_follow_system",
+    "zh-Hans": "跟随系统",
+    "zh-Hant": "跟隨系統",
+    "en": "Follow system",
+    "ja": "システム設定に従う",
+    "ko": "시스템 설정 따르기"
+  },
+  {
+    "key": "ui_light",
+    "zh-Hans": "浅色",
+    "zh-Hant": "淺色",
+    "en": "Light",
+    "ja": "ライト",
+    "ko": "밝게"
+  },
+  {
+    "key": "ui_dark",
+    "zh-Hans": "深色",
+    "zh-Hant": "深色",
+    "en": "Dark",
+    "ja": "ダーク",
+    "ko": "어둡게"
+  },
+  {
+    "key": "ui_list",
+    "zh-Hans": "横向列表",
+    "zh-Hant": "橫向列表",
+    "en": "List",
+    "ja": "リスト",
+    "ko": "목록"
+  },
+  {
+    "key": "ui_small_artwork_on_the_left_album_information_on_the_right",
+    "zh-Hans": "小封面在左，专辑信息在右",
+    "zh-Hant": "小封面在左，專輯資訊在右",
+    "en": "Small artwork on the left, album information on the right",
+    "ja": "左に小さなジャケット、右にアルバム情報を表示",
+    "ko": "왼쪽에 작은 커버, 오른쪽에 앨범 정보 표시"
+  },
+  {
+    "key": "ui_two_column_grid",
+    "zh-Hans": "双列网格",
+    "zh-Hant": "雙列網格",
+    "en": "Two-column grid",
+    "ja": "2列グリッド",
+    "ko": "2열 그리드"
+  },
+  {
+    "key": "ui_browse_albums_in_two_columns",
+    "zh-Hans": "两列卡片并排，快速浏览全部专辑",
+    "zh-Hant": "兩列卡片並排，快速瀏覽全部專輯",
+    "en": "Browse albums in two columns",
+    "ja": "2列のカードですべてのアルバムをすばやく表示",
+    "ko": "2열 카드로 모든 앨범을 빠르게 탐색"
+  },
+  {
+    "key": "ui_large_artwork",
+    "zh-Hans": "大封面卡片",
+    "zh-Hant": "大封面卡片",
+    "en": "Large artwork",
+    "ja": "大きなジャケット",
+    "ko": "큰 커버"
+  },
+  {
+    "key": "ui_enjoy_large_album_artwork_in_a_single_column",
+    "zh-Hans": "单列大封面，逐张欣赏专辑视觉",
+    "zh-Hant": "單列大封面，逐張欣賞專輯視覺",
+    "en": "Enjoy large album artwork in a single column",
+    "ja": "1列の大きなジャケットでアルバムの世界を楽しむ",
+    "ko": "1열의 큰 커버로 앨범의 이미지를 감상"
+  },
+  {
+    "key": "ui_studio_albums_243",
+    "zh-Hans": "录音室 CD",
+    "zh-Hant": "錄音室 CD",
+    "en": "Studio albums",
+    "ja": "スタジオアルバム",
+    "ko": "정규 앨범"
+  },
+  {
+    "key": "ui_live_albums",
+    "zh-Hans": "演唱会 CD",
+    "zh-Hant": "演唱會 CD",
+    "en": "Live albums",
+    "ja": "ライブアルバム",
+    "ko": "라이브 앨범"
+  },
+  {
+    "key": "ui_eps",
+    "zh-Hans": "EP 专辑",
+    "zh-Hant": "EP 專輯",
+    "en": "EPs",
+    "ja": "EP",
+    "ko": "EP"
+  },
+  {
+    "key": "ui_singles",
+    "zh-Hans": "单曲",
+    "zh-Hant": "單曲",
+    "en": "Singles",
+    "ja": "シングル",
+    "ko": "싱글"
+  },
+  {
+    "key": "ui_soundtracks_and_others",
+    "zh-Hans": "原声与其他",
+    "zh-Hant": "原聲與其他",
+    "en": "Soundtracks and others",
+    "ja": "サウンドトラック・その他",
+    "ko": "사운드트랙 및 기타"
+  },
+  {
+    "key": "ui_language",
+    "zh-Hans": "语言 / Language",
+    "zh-Hant": "語言 / Language",
+    "en": "Language",
+    "ja": "言語 / Language",
+    "ko": "언어 / Language"
+  },
+  {
+    "key": "ui_choose_the_app_language",
+    "zh-Hans": "选择应用显示语言",
+    "zh-Hant": "選擇應用顯示語言",
+    "en": "Choose the app language",
+    "ja": "アプリの表示言語を選択",
+    "ko": "앱 표시 언어 선택"
+  },
+  {
+    "key": "ui_loading_250",
+    "zh-Hans": "加载中",
+    "zh-Hant": "載入中",
+    "en": "Loading",
+    "ja": "読み込み中",
+    "ko": "불러오는 중"
+  },
+  {
+    "key": "ui_album_not_listed",
+    "zh-Hans": "未标注专辑",
+    "zh-Hant": "未標註專輯",
+    "en": "Album not listed",
+    "ja": "アルバム表記なし",
+    "ko": "앨범 정보 없음"
+  },
+  {
+    "key": "ui_time_to_be_announced",
+    "zh-Hans": "时间待公布",
+    "zh-Hant": "時間待公佈",
+    "en": "Time to be announced",
+    "ja": "時間未発表",
+    "ko": "시간 추후 공지"
+  },
+  {
+    "key": "ui_cancelled",
+    "zh-Hans": "已取消",
+    "zh-Hant": "已取消",
+    "en": "Cancelled",
+    "ja": "中止",
+    "ko": "취소됨"
+  },
+  {
+    "key": "ui_today_254",
+    "zh-Hans": "今天",
+    "zh-Hant": "今天",
+    "en": "Today",
+    "ja": "今日",
+    "ko": "오늘"
+  },
+  {
+    "key": "ui_tomorrow",
+    "zh-Hans": "明天",
+    "zh-Hant": "明天",
+    "en": "Tomorrow",
+    "ja": "明日",
+    "ko": "내일"
+  },
+  {
+    "key": "ui_in_days",
+    "zh-Hans": "还有 %1$s 天",
+    "zh-Hant": "還有 %1$s 天",
+    "en": "In %1$s days",
+    "ja": "あと %1$s 日",
+    "ko": "%1$s일 후",
+    "countArg": 0,
+    "enOne": "In %1$s day"
+  },
+  {
+    "key": "ui_eeee_mmm_d_yyyy",
+    "zh-Hans": "yyyy年M月d日 EEEE",
+    "zh-Hant": "yyyy年M月d日 EEEE",
+    "en": "EEEE, MMM d, yyyy",
+    "ja": "yyyy年M月d日 EEEE",
+    "ko": "yyyy년 M월 d일 EEEE"
+  },
+  {
+    "key": "ui_see_official_announcements_for_the_venue",
+    "zh-Hans": "场馆请查阅官方公告",
+    "zh-Hant": "場館請查閱官方公告",
+    "en": "See official announcements for the venue",
+    "ja": "会場は公式発表をご確認ください",
+    "ko": "공연장은 공식 발표를 확인해 주세요"
+  },
+  {
+    "key": "ui_jay_chou_carnival_ii_world_tour",
+    "zh-Hans": "周杰伦「嘉年华II」世界巡回演唱会",
+    "zh-Hant": "周杰倫「嘉年華II」世界巡迴演唱會",
+    "en": "Jay Chou Carnival II World Tour",
+    "ja": "ジェイ・チョウ Carnival II ワールドツアー",
+    "ko": "주걸륜 Carnival II 월드 투어"
+  },
+  {
+    "key": "ui_region_to_be_announced",
+    "zh-Hans": "地区待公布",
+    "zh-Hant": "地區待公佈",
+    "en": "Region to be announced",
+    "ja": "地域未発表",
+    "ko": "지역 추후 공지"
+  },
+  {
+    "key": "ui_mainland_china",
+    "zh-Hans": "中国大陆",
+    "zh-Hant": "中國大陸",
+    "en": "Mainland China",
+    "ja": "中国本土",
+    "ko": "중국 본토"
+  },
+  {
+    "key": "ui_australia",
+    "zh-Hans": "澳大利亚",
+    "zh-Hant": "澳大利亞",
+    "en": "Australia",
+    "ja": "オーストラリア",
+    "ko": "호주"
+  },
+  {
+    "key": "ui_malaysia",
+    "zh-Hans": "马来西亚",
+    "zh-Hant": "馬來西亞",
+    "en": "Malaysia",
+    "ja": "マレーシア",
+    "ko": "말레이시아"
+  },
+  {
+    "key": "ui_hangzhou",
+    "zh-Hans": "杭州",
+    "zh-Hant": "杭州",
+    "en": "Hangzhou",
+    "ja": "杭州",
+    "ko": "항저우"
+  },
+  {
+    "key": "ui_nanning",
+    "zh-Hans": "南宁",
+    "zh-Hant": "南寧",
+    "en": "Nanning",
+    "ja": "南寧",
+    "ko": "난닝"
+  },
+  {
+    "key": "ui_wenzhou",
+    "zh-Hans": "温州",
+    "zh-Hant": "溫州",
+    "en": "Wenzhou",
+    "ja": "温州",
+    "ko": "원저우"
+  },
+  {
+    "key": "ui_beijing",
+    "zh-Hans": "北京",
+    "zh-Hant": "北京",
+    "en": "Beijing",
+    "ja": "北京",
+    "ko": "베이징"
+  },
+  {
+    "key": "ui_nanjing",
+    "zh-Hans": "南京",
+    "zh-Hant": "南京",
+    "en": "Nanjing",
+    "ja": "南京",
+    "ko": "난징"
+  },
+  {
+    "key": "ui_qingdao",
+    "zh-Hans": "青岛",
+    "zh-Hant": "青島",
+    "en": "Qingdao",
+    "ja": "青島",
+    "ko": "칭다오"
+  },
+  {
+    "key": "ui_melbourne",
+    "zh-Hans": "墨尔本",
+    "zh-Hant": "墨爾本",
+    "en": "Melbourne",
+    "ja": "メルボルン",
+    "ko": "멜버른"
+  },
+  {
+    "key": "ui_sydney",
+    "zh-Hans": "悉尼",
+    "zh-Hant": "悉尼",
+    "en": "Sydney",
+    "ja": "シドニー",
+    "ko": "시드니"
+  },
+  {
+    "key": "ui_guangzhou",
+    "zh-Hans": "广州",
+    "zh-Hant": "廣州",
+    "en": "Guangzhou",
+    "ja": "広州",
+    "ko": "광저우"
+  },
+  {
+    "key": "ui_sanya",
+    "zh-Hans": "三亚",
+    "zh-Hant": "三亞",
+    "en": "Sanya",
+    "ja": "三亜",
+    "ko": "싼야"
+  },
+  {
+    "key": "ui_singapore",
+    "zh-Hans": "新加坡",
+    "zh-Hant": "新加坡",
+    "en": "Singapore",
+    "ja": "シンガポール",
+    "ko": "싱가포르"
+  },
+  {
+    "key": "ui_kuala_lumpur",
+    "zh-Hans": "吉隆坡",
+    "zh-Hant": "吉隆坡",
+    "en": "Kuala Lumpur",
+    "ja": "クアラルンプール",
+    "ko": "쿠알라룸푸르"
+  },
+  {
+    "key": "ui_fuzhou",
+    "zh-Hans": "福州",
+    "zh-Hant": "福州",
+    "en": "Fuzhou",
+    "ja": "福州",
+    "ko": "푸저우"
+  },
+  {
+    "key": "ui_wuhan",
+    "zh-Hans": "武汉",
+    "zh-Hant": "武漢",
+    "en": "Wuhan",
+    "ja": "武漢",
+    "ko": "우한"
+  },
+  {
+    "key": "ui_jvr_music",
+    "zh-Hans": "杰威尔音乐",
+    "zh-Hant": "傑威爾音樂",
+    "en": "JVR Music",
+    "ja": "JVR Music",
+    "ko": "JVR Music"
+  },
+  {
+    "key": "ui_apple_music_taiwan_catalogue",
+    "zh-Hans": "Apple Music 台湾目录",
+    "zh-Hant": "Apple Music 臺灣目錄",
+    "en": "Apple Music Taiwan catalogue",
+    "ja": "Apple Music 台湾カタログ",
+    "ko": "Apple Music 대만 카탈로그"
+  },
+  {
+    "key": "ui_unable_to_delete_local_lyrics",
+    "zh-Hans": "无法删除本地歌词",
+    "zh-Hant": "無法刪除本地歌詞",
+    "en": "Unable to delete local lyrics",
+    "ja": "ローカル歌詞を削除できません",
+    "ko": "로컬 가사를 삭제할 수 없습니다"
+  },
+  {
+    "key": "ui_unable_to_read_the_selected_file",
+    "zh-Hans": "无法读取所选文件",
+    "zh-Hant": "無法讀取所選檔案",
+    "en": "Unable to read the selected file",
+    "ja": "選択したファイルを読み込めません",
+    "ko": "선택한 파일을 읽을 수 없습니다"
+  },
+  {
+    "key": "ui_the_lyrics_file_must_not_exceed_1_mb",
+    "zh-Hans": "歌词文件不能超过 1 MB",
+    "zh-Hant": "歌詞檔案不能超過 1 MB",
+    "en": "The lyrics file must not exceed 1 MB",
+    "ja": "歌詞ファイルは1 MB以下にしてください",
+    "ko": "가사 파일은 1 MB 이하여야 합니다"
+  },
+  {
+    "key": "ui_select_a_utf_8_or_gb18030_lrc_txt_text_file",
+    "zh-Hans": "请选择 UTF-8 或 GB18030 编码的 LRC/TXT 文本",
+    "zh-Hant": "請選擇 UTF-8 或 GB18030 編碼的 LRC/TXT 文字",
+    "en": "Select a UTF-8 or GB18030 LRC/TXT text file",
+    "ja": "UTF-8 または GB18030 の LRC/TXT ファイルを選んでください",
+    "ko": "UTF-8 또는 GB18030 LRC/TXT 텍스트 파일을 선택해 주세요"
+  },
+  {
+    "key": "ui_no_jay_chou_recording_matching_was_found_on_qq_music",
+    "zh-Hans": "QQ 音乐中没有找到与《%1$s》匹配的周杰伦版本。",
+    "zh-Hant": "QQ 音樂中沒有找到與《%1$s》匹配的周杰倫版本。",
+    "en": "No Jay Chou recording matching “%1$s” was found on QQ Music.",
+    "ja": "QQ Music で『%1$s』に一致するジェイ・チョウの楽曲が見つかりません。",
+    "ko": "QQ Music에서 “%1$s”에 일치하는 주걸륜의 노래를 찾을 수 없습니다."
+  },
+  {
+    "key": "ui_the_lyrics_service_returned_too_much_data",
+    "zh-Hans": "歌词服务返回内容过大",
+    "zh-Hant": "歌詞服務返回內容過大",
+    "en": "The lyrics service returned too much data",
+    "ja": "歌詞サービスからのデータが大きすぎます",
+    "ko": "가사 서비스 응답이 너무 큽니다"
+  },
+  {
+    "key": "ui_lyrics_service_unavailable_http",
+    "zh-Hans": "歌词服务暂不可用（HTTP %1$s）",
+    "zh-Hant": "歌詞服務暫不可用（HTTP %1$s）",
+    "en": "Lyrics service unavailable (HTTP %1$s)",
+    "ja": "歌詞サービスを利用できません（HTTP %1$s）",
+    "ko": "가사 서비스를 이용할 수 없습니다 (HTTP %1$s)"
+  },
+  {
+    "key": "ui_the_lyrics_service_returned_unreadable_data",
+    "zh-Hans": "歌词服务返回了无法解析的数据",
+    "zh-Hant": "歌詞服務返回了無法解析的資料",
+    "en": "The lyrics service returned unreadable data",
+    "ja": "歌詞サービスのデータを解析できません",
+    "ko": "가사 서비스 응답을 해석할 수 없습니다"
+  },
+  {
+    "key": "ui_lyrics_service_unavailable",
+    "zh-Hans": "歌词服务暂不可用",
+    "zh-Hant": "歌詞服務暫不可用",
+    "en": "Lyrics service unavailable",
+    "ja": "歌詞サービスを利用できません",
+    "ko": "가사 서비스를 이용할 수 없습니다"
+  },
+  {
+    "key": "ui_qq_music_returned_no_lyrics",
+    "zh-Hans": "QQ 音乐没有返回歌词内容",
+    "zh-Hant": "QQ 音樂沒有返回歌詞內容",
+    "en": "QQ Music returned no lyrics",
+    "ja": "QQ Music から歌詞が返されませんでした",
+    "ko": "QQ Music에서 가사를 반환하지 않았습니다"
+  },
+  {
+    "key": "ui_the_official_jvr_schedule_is_unavailable",
+    "zh-Hans": "JVR 官方行程暂不可用",
+    "zh-Hant": "JVR 官方行程暫不可用",
+    "en": "The official JVR schedule is unavailable",
+    "ja": "JVR 公式スケジュールを利用できません",
+    "ko": "JVR 공식 일정을 이용할 수 없습니다"
+  },
+  {
+    "key": "ui_the_official_jvr_schedule_is_unavailable_http",
+    "zh-Hans": "JVR 官方行程暂不可用（HTTP %1$s）",
+    "zh-Hant": "JVR 官方行程暫不可用（HTTP %1$s）",
+    "en": "The official JVR schedule is unavailable (HTTP %1$s)",
+    "ja": "JVR 公式スケジュールを利用できません（HTTP %1$s）",
+    "ko": "JVR 공식 일정을 이용할 수 없습니다 (HTTP %1$s)"
+  },
+  {
+    "key": "ui_the_official_jvr_schedule_returned_too_much_data",
+    "zh-Hans": "JVR 官方行程返回内容过大",
+    "zh-Hant": "JVR 官方行程返回內容過大",
+    "en": "The official JVR schedule returned too much data",
+    "ja": "JVR 公式スケジュールのデータが大きすぎます",
+    "ko": "JVR 공식 일정 응답이 너무 큽니다"
+  },
+  {
+    "key": "ui_the_official_schedule_format_has_changed_please_try_again_later",
+    "zh-Hans": "官方行程格式已变化，请稍后重试",
+    "zh-Hant": "官方行程格式已變化，請稍後重試",
+    "en": "The official schedule format has changed. Please try again later.",
+    "ja": "公式スケジュールの形式が変更されました。後でもう一度お試しください。",
+    "ko": "공식 일정 형식이 변경되었습니다. 나중에 다시 시도해 주세요."
+  },
+  {
+    "key": "ui_developer",
+    "zh-Hans": "开发者",
+    "zh-Hant": "開發者",
+    "en": "Developer",
+    "ja": "開発者",
+    "ko": "개발자"
+  }
+]

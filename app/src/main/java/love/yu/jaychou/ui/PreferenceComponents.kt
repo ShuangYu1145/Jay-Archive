@@ -18,7 +18,7 @@ internal fun PreferenceTitle(text: String) {
 
 @Composable
 internal fun PreferenceCard(content: @Composable ColumnScope.() -> Unit) {
-    Card(cornerRadius = 24.dp, insideMargin = PaddingValues(0.dp), content = content)
+    Card(insideMargin = PaddingValues(0.dp), content = content)
 }
 
 @Composable

@@ -1,5 +1,7 @@
 package love.yu.jaychou.navigation
 
+import love.yu.jaychou.data.AppText
+import love.yu.jaychou.R
 import android.os.Build
 import androidx.activity.BackEventCompat
 import androidx.activity.compose.BackHandler
@@ -14,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,6 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.BlurEffect
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.GraphicsLayer
@@ -67,23 +72,26 @@ fun ArchiveApp(
     onTheme: (ThemeMode) -> Unit, onMonet: (Boolean) -> Unit,
     onBlur: (Boolean) -> Unit, onPredictive: (Boolean) -> Unit,
     onAlbumLayout: (AlbumLayout) -> Unit,
+    onAlbumCategories: (List<String>) -> Unit,
     onCustomColor: (Int?) -> Unit,
     error: String?, onDismissError: () -> Unit,
 ) {
     val homeState = rememberLazyListState()
     val albumStateHolder = rememberSaveableStateHolder()
-    var categories by rememberSaveable { mutableStateOf(listOf(ReleaseCategory.STUDIO.name)) }
+    val categories = settings.albumCategories
     val settingsState = rememberLazyListState()
     val aboutState = rememberLazyListState()
     val pager = rememberPagerState(pageCount = { RootPage.entries.size })
     val scope = rememberCoroutineScope()
     val pageMotion = remember(pager, scope) { PageMotion(pager, scope) }
     var detailId by rememberSaveable { mutableStateOf<String?>(null) }
+    var searchTrackNumber by rememberSaveable { mutableStateOf<Int?>(null) }
+    var albumSearchOpen by remember { mutableStateOf(false) }
     var lastDetailId by rememberSaveable { mutableStateOf<String?>(null) }
     val detail = catalog.find(lastDetailId)
     // Fractions survive Activity recreation and changing viewport dimensions.
-    var origin by rememberSaveable { mutableStateOf(listOf(.28f, .3f, .44f, .3f)) }
-    var sourceLayer by remember { mutableStateOf<GraphicsLayer?>(null) }
+    var coverOrigin by rememberSaveable { mutableStateOf(listOf(.28f, .3f, .44f, .3f)) }
+    var albumSource by remember { mutableStateOf<AlbumOrigin?>(null) }
     var hostOrigin by remember { mutableStateOf(Offset.Zero) }
     var hostSize by remember { mutableStateOf(IntSize.Zero) }
     val expansion = remember { Animatable(if (detailId != null) 1f else 0f) }
@@ -100,10 +108,9 @@ fun ArchiveApp(
     var swipeDirection by remember { mutableFloatStateOf(1f) }
     val detailShown by remember { derivedStateOf { detailId != null || expansion.value > 0f } }
     val navigationVisible by remember {
-        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen }
+        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen && !albumSearchOpen }
     }
     val predictiveSupported = Build.VERSION.SDK_INT >= 34 && settings.predictiveBack
-    val dark = settings.isDark()
     val background = MiuixTheme.colorScheme.background
     val density = LocalDensity.current
     val navInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -113,14 +120,14 @@ fun ArchiveApp(
     fun openAlbum(album: Album, source: AlbumOrigin) {
         if (detailShown || pager.isScrollInProgress || hostSize.width == 0 || hostSize.height == 0) return
         val bounds = source.windowBounds
-        if (bounds.width > 0f && bounds.height > 0f) {
-            origin = listOf((bounds.left - hostOrigin.x) / hostSize.width,
-                (bounds.top - hostOrigin.y) / hostSize.height,
-                bounds.width / hostSize.width, bounds.height / hostSize.height)
-        }
+        val cover = source.coverBounds ?: bounds
+        albumSource = source
+        coverOrigin = listOf((cover.left - hostOrigin.x) / hostSize.width,
+            (cover.top - hostOrigin.y) / hostSize.height,
+            cover.width / hostSize.width, cover.height / hostSize.height)
         lyricNumber = null; lastLyricNumber = null
-        sourceLayer = source.layer
         lastDetailId = album.id
+        searchTrackNumber = null
         detailId = album.id
     }
 
@@ -128,11 +135,10 @@ fun ArchiveApp(
         if (detailId != null) {
             expansion.animateTo(1f, spring(dampingRatio = .88f, stiffness = 320f))
         } else {
-            coroutineScope {
-                launch { backProgress.animateTo(0f, tween(320)) }
-                expansion.animateTo(0f, tween(360))
-            }
-            sourceLayer = null
+            expansion.snapTo((expansion.value - backProgress.value * .25f).coerceIn(0f, 1f))
+            backProgress.snapTo(0f)
+            expansion.animateTo(0f, tween(360))
+            albumSource = null
         }
     }
     LaunchedEffect(lyricNumber) {
@@ -170,14 +176,17 @@ fun ArchiveApp(
             .onGloballyPositioned { hostOrigin = it.positionInWindow(); hostSize = it.size }) {
             Box(Modifier.fillMaxSize().then(capture)) {
                 Box(Modifier.fillMaxSize().graphicsLayer {
-                    val depth = expansion.value.coerceIn(0f, 1f)
+                    val depth = (expansion.value - backProgress.value * .25f).coerceIn(0f, 1f)
                     scaleX = 1f - depth * .035f
                     scaleY = 1f - depth * .035f
                     alpha = 1f - depth * .12f
+                    renderEffect = if (Build.VERSION.SDK_INT >= 33 && settings.blur && depth > .001f) {
+                        BlurEffect(18.dp.toPx() * depth, 18.dp.toPx() * depth, TileMode.Clamp)
+                    } else null
                 }.then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier)) {
                     HorizontalPager(
                         state = pager, beyondViewportPageCount = 1,
-                        userScrollEnabled = !detailShown && !concertDetailOpen,
+                        userScrollEnabled = !detailShown && !concertDetailOpen && !albumSearchOpen,
                         modifier = Modifier.fillMaxSize().testTag("root-pager"),
                         key = { RootPage.entries[it].name },
                     ) { page ->
@@ -187,7 +196,14 @@ fun ArchiveApp(
                                 RootPage.ALBUMS -> albumStateHolder.SaveableStateProvider("${settings.albumLayout.name}-${categories.sorted().joinToString()}") {
                                     val albumState = rememberLazyGridState()
                                     AlbumsScreen(catalog, settings.albumLayout, albumState, bottom, ::openAlbum,
-                                        categories, { categories = it })
+                                        categories, onAlbumCategories,
+                                        onSearchSong = { album, track, origin ->
+                                            openAlbum(album, origin)
+                                            if (detailId == album.id) searchTrackNumber = track.number
+                                        },
+                                        onSearchVisibility = { albumSearchOpen = it },
+                                        searchInteractive = !detailShown,
+                                    )
                                 }
                                 RootPage.CONCERTS -> ConcertsScreen(bottom,
                                     onDetailVisibility = { concertDetailOpen = it })
@@ -198,17 +214,26 @@ fun ArchiveApp(
                         }
                     }
                 }
+                if (detailShown && settings.blur) {
+                    Box(Modifier.fillMaxSize().graphicsLayer {
+                        alpha = (expansion.value - backProgress.value * .25f).coerceIn(0f, 1f) * .16f
+                    }.background(androidx.compose.ui.graphics.Color.Black))
+                }
                 if (detailShown && detail != null) {
                     key(detail.id) {
-                        val detailState = rememberLazyListState()
-                        AnimatedArchivePanel(expansion, backProgress, origin, sourceLayer, swipeDirection,
-                            "album-detail", Modifier.graphicsLayer {
+                        val searchTrackIndex = detail.tracks.indexOfFirst { it.number == searchTrackNumber }
+                        val detailState = rememberLazyListState(
+                            initialFirstVisibleItemIndex = if (searchTrackIndex >= 0) 4 + searchTrackIndex else 0,
+                        )
+                        AnimatedAlbumPanel(detail, expansion, backProgress, coverOrigin, albumSource, hostOrigin,
+                            hostSize, Modifier.graphicsLayer {
                                 scaleX = 1f - lyricExpansion.value * .035f
                                 scaleY = 1f - lyricExpansion.value * .035f
-                            }.then(if (lyricShown) Modifier.clearAndSetSemantics { } else Modifier)) {
+                            }.then(if (lyricShown) Modifier.clearAndSetSemantics { } else Modifier)) { coverMotion, bodyMotion, onCoverDetached ->
                             AlbumDetailScreen(detail, detailState, navInset + 28.dp, onBack = {
                                 if (!lyricShown) detailId = null
-                            }, onTrack = { track, source ->
+                            }, coverModifier = coverMotion, bodyModifier = bodyMotion, onCoverDetached = onCoverDetached,
+                                highlightedTrack = searchTrackNumber, onTrack = { track, source ->
                                 if (!lyricShown && expansion.value >= .999f) {
                                     val bounds = source.windowBounds
                                     lyricOrigin = listOf((bounds.left - hostOrigin.x) / hostSize.width,
@@ -230,7 +255,7 @@ fun ArchiveApp(
             }
             if (navigationVisible) {
                 DraggableNavigationBar(
-                    selectedIndex = pager.currentPage,
+                    selectedIndex = pager.targetPage,
                     pagePosition = { pager.currentPage + pager.currentPageOffsetFraction },
                     onSelect = pageMotion::select, onScrub = pageMotion::scrub,
                     glass = glass, enabled = !detailShown && !concertDetailOpen,
@@ -244,18 +269,96 @@ fun ArchiveApp(
             if (error != null) {
                 Card(Modifier.align(Alignment.TopCenter).padding(20.dp), insideMargin = PaddingValues(16.dp)) {
                     Text(error)
-                    Button(onClick = onDismissError) { Text("知道了") }
+                    Button(onClick = onDismissError) { Text(AppText.get(R.string.ui_ok)) }
                 }
             }
         }
     }
-    CompositionLocalProvider(LocalArchiveBlur provides settings.blur) {
+    CompositionLocalProvider(
+        LocalArchiveBlur provides settings.blur,
+        LocalMovingAlbumId provides if (detailShown) lastDetailId else null,
+    ) {
     if (Build.VERSION.SDK_INT >= 33 && settings.blur) {
-        GlassLayer(background, dark, scene)
+        GlassLayer(background, scene)
     } else {
-        scene(Modifier, Modifier.background(MiuixTheme.colorScheme.surfaceContainer, RoundedCornerShape(40.dp)))
+        scene(Modifier, Modifier.background(MiuixTheme.colorScheme.surfaceContainer))
     }
 }
+}
+
+/** The surface, text and artwork share a clock but follow independent paths. */
+@Composable
+private fun AnimatedAlbumPanel(
+    album: Album,
+    expansion: Animatable<Float, androidx.compose.animation.core.AnimationVector1D>,
+    back: Animatable<Float, androidx.compose.animation.core.AnimationVector1D>,
+    origin: List<Float>, source: AlbumOrigin?, hostOrigin: Offset, hostSize: IntSize,
+    modifier: Modifier = Modifier,
+    content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
+) {
+    var destination by remember(album.id) { mutableStateOf<Rect?>(null) }
+    val density = LocalDensity.current
+    val background = MiuixTheme.colorScheme.background
+    val progress = { (expansion.value - back.value * .25f).coerceIn(0f, 1f) }
+    // Shield the pager while leaving the detail and its own scrolling interactive.
+    Box(Modifier.fillMaxSize().pointerInput(Unit) {
+        awaitPointerEventScope { while (true) awaitPointerEvent() }
+    })
+    Box(modifier.fillMaxSize().testTag("album-detail")) {
+        Box(Modifier.fillMaxSize().graphicsLayer {
+            val q = progress()
+            alpha = q
+            translationY = (1f - q) * 48.dp.toPx()
+        }.background(background))
+        val coverMotion = Modifier.onGloballyPositioned {
+            val bounds = it.boundsInWindow()
+            destination = bounds.translate(-hostOrigin)
+        }.graphicsLayer {
+            // Keep this node laid out so the independent artwork always has a real destination.
+            alpha = if (progress() >= .999f || destination == null) 1f else 0f
+        }
+        val bodyMotion = Modifier.graphicsLayer {
+            val q = progress()
+            alpha = ((q - .12f) / .88f).coerceIn(0f, 1f)
+            translationY = (1f - q) * 64.dp.toPx()
+        }
+        Box(Modifier.fillMaxSize().graphicsLayer { alpha = progress() }) {
+            content(coverMotion, bodyMotion) { destination = null }
+        }
+        val target = destination
+        if (target != null && target.width > 0f && target.height > 0f && progress() < .999f) {
+            // Draw at destination resolution and transform only the artwork, never the whole page.
+            Box(
+                Modifier.requiredSize(with(density) { target.width.toDp() }, with(density) { target.height.toDp() })
+                    .graphicsLayer {
+                        val q = progress()
+                        // Follow the actual source as the pager depth and press feedback settle.
+                        val start = source?.currentCoverBounds()?.translate(-hostOrigin)
+                            ?: Rect(origin[0] * hostSize.width, origin[1] * hostSize.height,
+                                (origin[0] + origin[2]) * hostSize.width,
+                                (origin[1] + origin[3]) * hostSize.height)
+                        transformOrigin = TransformOrigin(0f, 0f)
+                        scaleX = (start.width / target.width) * (1f - q) + q
+                        scaleY = (start.height / target.height) * (1f - q) + q
+                        translationX = start.left * (1f - q) + target.left * q
+                        translationY = start.top * (1f - q) + target.top * q
+                        alpha = if (q < .999f) 1f else 0f
+                    }.clearAndSetSemantics { },
+            ) {
+                val sourceLayer = source?.layer?.takeIf { it.size.width > 0 && it.size.height > 0 }
+                CatalogImage(
+                    album.coverUrl, album.coverAsset, AppText.get(R.string.ui_artwork_232, album.title),
+                    Modifier.fillMaxSize().graphicsLayer {
+                        alpha = if (sourceLayer == null) 1f else progress()
+                    },
+                    contentScale = ContentScale.Fit,
+                    crossfade = false,
+                )
+                // At the list endpoint this is the original rendering, including its crop.
+                AlbumSourcePreview(sourceLayer) { 1f - progress() }
+            }
+        }
+    }
 }
 
 /** Each overlay owns a sibling touch shield; list ancestors never consume Final-pass events. */
@@ -278,8 +381,6 @@ private fun AnimatedArchivePanel(
         scaleX = sx; scaleY = sy
         translationX = origin[0] * size.width * (1f - q) + direction * p * size.width * .24f
         translationY = origin[1] * size.height * (1f - q) + p * size.height * .04f
-        shape = ProjectedCornerShape((23f * (1f - q) + p * 30f).dp.toPx(), sx, sy)
-        clip = true
         shadowElevation = 12.dp.toPx() * (1f - q) + p * 18.dp.toPx()
     }.background(MiuixTheme.colorScheme.background).testTag(tag)) {
         Box(Modifier.fillMaxSize().graphicsLayer {

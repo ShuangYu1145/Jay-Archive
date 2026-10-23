@@ -1,15 +1,27 @@
 package love.yu.jaychou.ui
 
+import love.yu.jaychou.data.AppText
+import love.yu.jaychou.R
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
+import kotlinx.coroutines.CancellationException
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -46,7 +58,6 @@ import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
 @Composable
 fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val behavior = MiuixScrollBehavior()
@@ -56,9 +67,9 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
     var refreshing by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
     var refreshNote by remember { mutableStateOf<String?>(null) }
-    var mode by rememberSaveable { mutableStateOf("即将举行") }
-    var country by rememberSaveable { mutableStateOf("全部") }
-    var city by rememberSaveable { mutableStateOf("全部城市") }
+    var mode by rememberSaveable { mutableStateOf("upcoming") }
+    var country by rememberSaveable { mutableStateOf("all") }
+    var city by rememberSaveable { mutableStateOf("all_cities") }
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     var detailConcert by remember { mutableStateOf<Concert?>(null) }
     var now by remember { mutableStateOf(ZonedDateTime.now()) }
@@ -74,23 +85,14 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
         loading = true
         error = null
         try {
-            val loaded = ConcertRepository.load(context)
-            snapshot = loaded
-            loading = false
-            if (ConcertRepository.isStale(loaded, ZonedDateTime.now())) {
-                refreshing = true
-                try {
-                    snapshot = ConcertRepository.refresh(context, loaded)
-                    refreshNote = null
-                } catch (_: Exception) {
-                    refreshNote = "JVR 官方行程暂时无法更新，正在显示离线快照。"
-                } finally {
-                    refreshing = false
-                }
-            }
+            snapshot = ConcertRepository.load()
+            refreshNote = null
+        } catch (cancelled: CancellationException) {
+            throw cancelled
         } catch (_: Exception) {
+            error = AppText.get(R.string.ui_unable_to_connect_to_the_official_schedule_check_your_connection)
+        } finally {
             loading = false
-            error = "演唱会日程加载失败，请稍后重试。"
         }
     }
 
@@ -113,10 +115,12 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
             scope.launch {
                 refreshing = true
                 try {
-                    snapshot = ConcertRepository.refresh(context, base)
+                    snapshot = ConcertRepository.load()
                     refreshNote = null
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
                 } catch (_: Exception) {
-                    refreshNote = "JVR 官方行程暂时无法更新，正在显示离线快照。"
+                    refreshNote = AppText.get(R.string.ui_update_failed_the_loaded_schedule_is_still_available_please_try)
                 } finally {
                     refreshing = false
                 }
@@ -126,14 +130,14 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
 
     Box(Modifier.fillMaxSize()) {
         ArchiveScaffold(
-            "演唱会",
+            AppText.get(R.string.ui_concerts),
             behavior = behavior,
             actions = {
                 if (refreshing) {
-                    Text("更新中…", modifier = Modifier.padding(horizontal = 12.dp),
+                    Text(AppText.get(R.string.ui_updating), modifier = Modifier.padding(horizontal = 12.dp),
                         fontSize = 13.sp, color = MiuixTheme.colorScheme.primary)
                 } else {
-                    TextButton("刷新", onClick = refreshNow, modifier = Modifier.testTag("concerts-refresh"))
+                    TextButton(if (loading) AppText.get(R.string.ui_loading) else AppText.get(R.string.ui_refresh), onClick = { if (!loading) refreshNow() }, modifier = Modifier.testTag("concerts-refresh"))
                 }
             },
         ) { padding ->
@@ -158,13 +162,13 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
 
                 if (loading) {
                     item("concert-loading") {
-                        Card(cornerRadius = 24.dp, insideMargin = PaddingValues(22.dp)) {
+                        Card(insideMargin = PaddingValues(22.dp)) {
                             Row(verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                                 CircularProgressIndicator()
                                 Column {
-                                    Text("正在读取演唱会日程…", fontSize = 16.sp)
-                                    Text("随后会向 JVR 官方行程核对最新场次。", fontSize = 12.sp,
+                                    Text(AppText.get(R.string.ui_loading_concert_schedule), fontSize = 16.sp)
+                                    Text(AppText.get(R.string.ui_connecting_to_the_official_jvr_schedule_please_wait), fontSize = 12.sp,
                                         color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                                 }
                             }
@@ -174,14 +178,14 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
 
                 if (error != null) {
                     item("concert-error") {
-                        Card(cornerRadius = 24.dp, insideMargin = PaddingValues(22.dp)) {
-                            Text("日程暂时不可用", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                        Card(insideMargin = PaddingValues(22.dp)) {
+                            Text(AppText.get(R.string.ui_schedule_unavailable), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                             Spacer(Modifier.height(6.dp))
                             Text(error!!, fontSize = 14.sp, lineHeight = 21.sp,
                                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                             Spacer(Modifier.height(14.dp))
                             Button(onClick = { loadAttempt++ }, modifier = Modifier.testTag("concerts-retry")) {
-                                Text("重试")
+                                Text(AppText.get(R.string.ui_retry))
                             }
                         }
                     }
@@ -196,10 +200,10 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
                         }
                     } else if (!loading) {
                         item("concert-none") {
-                            Card(cornerRadius = 24.dp, insideMargin = PaddingValues(22.dp)) {
-                                Text("暂无已公布场次", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                            Card(insideMargin = PaddingValues(22.dp)) {
+                                Text(AppText.get(R.string.ui_no_announced_shows), fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                                 Spacer(Modifier.height(6.dp))
-                                Text("官方公开新的巡演场次后，可在刷新后自动显示。", fontSize = 13.sp,
+                                Text(AppText.get(R.string.ui_new_shows_will_appear_after_you_refresh_once_they_are_officially), fontSize = 13.sp,
                                     color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                             }
                         }
@@ -207,30 +211,30 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
 
                     item("concert-calendar-title") {
                         Column(Modifier.padding(top = 4.dp)) {
-                            SectionTitle("巡演日历", "按日期排列已公布场次 · 点击查看演出详情")
+                            SectionTitle(AppText.get(R.string.ui_tour_calendar), AppText.get(R.string.ui_announced_shows_by_date_tap_for_details))
                             Spacer(Modifier.height(10.dp))
                             FilterRow(
-                                title = "场次",
-                                labels = listOf("即将举行", "全部", "已结束"),
+                                title = AppText.get(R.string.ui_shows),
+                                labels = listOf("upcoming", "all", "ended"),
                                 selected = mode,
                                 tagPrefix = "concert-mode",
                             ) { mode = it }
                             Spacer(Modifier.height(8.dp))
                             FilterRow(
-                                title = "国家 / 地区",
-                                labels = listOf("全部") + data.countries,
+                                title = AppText.get(R.string.ui_country_region),
+                                labels = listOf("all") + data.countries,
                                 selected = country,
                                 tagPrefix = "concert-country",
                             ) { value ->
                                 country = value
-                                city = "全部城市"
+                                city = "all_cities"
                             }
-                            val cities = if (country == "全部") emptyList() else data.cities(country)
+                            val cities = if (country == "all") emptyList() else data.cities(country)
                             if (cities.isNotEmpty()) {
                                 Spacer(Modifier.height(8.dp))
                                 FilterRow(
-                                    title = "城市",
-                                    labels = listOf("全部城市") + cities,
+                                    title = AppText.get(R.string.ui_city),
+                                    labels = listOf("all_cities") + cities,
                                     selected = city,
                                     tagPrefix = "concert-city",
                                 ) { city = it }
@@ -242,19 +246,19 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
                         .filter {
                             val status = it.status(now)
                             when (mode) {
-                                "即将举行" -> status != ShowStatus.ENDED && status != ShowStatus.CANCELLED
-                                "已结束" -> status == ShowStatus.ENDED || status == ShowStatus.CANCELLED
+                                "upcoming" -> status != ShowStatus.ENDED && status != ShowStatus.CANCELLED
+                                "ended" -> status == ShowStatus.ENDED || status == ShowStatus.CANCELLED
                                 else -> true
                             }
                         }
-                        .filter { country == "全部" || it.venue.country == country }
-                        .filter { city == "全部城市" || it.venue.city == city }
+                        .filter { country == "all" || it.venue.country == country }
+                        .filter { city == "all_cities" || it.venue.city == city }
                     if (filtered.isEmpty()) {
                         item("concert-filter-empty") {
-                            Card(cornerRadius = 24.dp, insideMargin = PaddingValues(22.dp)) {
-                                Text("没有符合筛选的场次", fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                            Card(insideMargin = PaddingValues(22.dp)) {
+                                Text(AppText.get(R.string.ui_no_shows_match_these_filters), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
                                 Spacer(Modifier.height(6.dp))
-                                Text("切换国家或城市筛选条件后再试。", fontSize = 13.sp,
+                                Text(AppText.get(R.string.ui_try_another_country_or_city_filter), fontSize = 13.sp,
                                     color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                             }
                         }
@@ -269,15 +273,18 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
                                 lastMonth = month
                             }
                             item("concert-${concert.id}") {
-                                ConcertRow(concert, now) { detailConcert = concert; selectedId = concert.id }
+                                Box(Modifier.animateItem()) {
+                                    ConcertRow(concert, now) { detailConcert = concert; selectedId = concert.id }
+                                }
                             }
                         }
                     }
 
                     item("concert-source") {
                         Column(Modifier.padding(top = 6.dp)) {
-                            QuietText("日程来源：JVR 官方行程、维基百科与各站票务公告。演出时间、票价与售票状态可能调整，以主办方及票务平台为准。")
-                            SourceLink("JVR 官方行程", ConcertRepository.source)
+                            QuietText(AppText.get(R.string.ui_schedules_are_read_from_jvr_announcements_from_the_past_six_mont))
+                            SourceLink(AppText.get(R.string.ui_official_jvr_schedule), ConcertRepository.source)
+                            CompactSourceLink(AppText.get(R.string.ui_live_photos_jvr_music), concertPhotoSource)
                         }
                     }
                 }
@@ -304,17 +311,18 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit) {
 
 @Composable
 private fun ConcertIntro(updated: String?, refreshing: Boolean, refreshNote: String?) {
-    Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        ConcertPhoto(Modifier.fillMaxWidth().height(200.dp))
         Text("JAY CHOU · CARNIVAL II", fontSize = 11.sp, letterSpacing = 1.8.sp,
             fontWeight = FontWeight.SemiBold, color = MiuixTheme.colorScheme.primary)
-        Text("巡演现场", fontSize = 30.sp, fontWeight = FontWeight.Bold, lineHeight = 36.sp,
+        Text(AppText.get(R.string.ui_on_tour), fontSize = 30.sp, fontWeight = FontWeight.Bold, lineHeight = 36.sp,
             modifier = Modifier.semantics { heading() })
-        QuietText("一城一名的嘉年华 II 世界巡回演唱会。最近场次、巡演日历与票务入口来自公开来源。")
+        QuietText(AppText.get(R.string.ui_a_different_city_another_story_explore_the_officially_announced))
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text("更新于 ${updated ?: "加载中"}", fontSize = 12.sp,
+            Text(AppText.get(R.string.ui_updated, updated ?: AppText.get(R.string.ui_loading_250)), fontSize = 12.sp,
                 color = MiuixTheme.colorScheme.onBackgroundVariant)
             if (refreshing) {
-                Text("· 正在核对 JVR 官方行程", fontSize = 12.sp,
+                Text(AppText.get(R.string.ui_checking_the_official_jvr_schedule), fontSize = 12.sp,
                     color = MiuixTheme.colorScheme.primary)
             }
         }
@@ -332,12 +340,11 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().testTag("concert-featured"),
-        cornerRadius = 30.dp,
         insideMargin = PaddingValues(22.dp),
         pressFeedbackType = PressFeedbackType.Sink,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("最近演唱会", fontSize = 12.sp, letterSpacing = 1.4.sp,
+            Text(AppText.get(R.string.ui_next_stop), fontSize = 12.sp, letterSpacing = 1.4.sp,
                 fontWeight = FontWeight.SemiBold, color = MiuixTheme.colorScheme.primary)
             Spacer(Modifier.weight(1f))
             ConcertStatusChip(concert, now)
@@ -345,9 +352,9 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
         Spacer(Modifier.height(14.dp))
         Row(verticalAlignment = Alignment.Bottom) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("${concert.theme} · ${concert.venue.city}", fontSize = 29.sp, lineHeight = 36.sp,
+                Text("${concert.theme} · ${AppText.fromOriginal(concert.venue.city)}", fontSize = 29.sp, lineHeight = 36.sp,
                     fontWeight = FontWeight.Bold, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                Text(concert.tourName, fontSize = 13.sp, lineHeight = 19.sp,
+                Text(AppText.fromOriginal(concert.tourName), fontSize = 13.sp, lineHeight = 19.sp,
                     color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
                     maxLines = 2, overflow = TextOverflow.Ellipsis)
             }
@@ -355,14 +362,14 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Text(concert.countdown(now), fontSize = 15.sp, fontWeight = FontWeight.SemiBold,
                     color = MiuixTheme.colorScheme.primary)
-                Text(concert.date.format(DateTimeFormatter.ofPattern("M月d日", Locale.SIMPLIFIED_CHINESE)),
+                Text(concert.date.format(DateTimeFormatter.ofPattern(AppText.get(R.string.ui_mmm_d), AppText.locale)),
                     fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
             }
         }
         Spacer(Modifier.height(16.dp))
         Text("${concert.dateLabel} · ${concert.timeLabel}", fontSize = 15.sp, fontWeight = FontWeight.Medium)
         Spacer(Modifier.height(4.dp))
-        Text("${concert.venue.name} · ${concert.venue.country}", fontSize = 13.sp, lineHeight = 20.sp,
+        Text("${AppText.fromOriginal(concert.venue.name)} · ${AppText.fromOriginal(concert.venue.country)}", fontSize = 13.sp, lineHeight = 20.sp,
             color = MiuixTheme.colorScheme.onSurfaceContainerVariant, maxLines = 2,
             overflow = TextOverflow.Ellipsis)
         Text(concert.venue.address, fontSize = 12.sp, lineHeight = 18.sp,
@@ -370,7 +377,7 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
             overflow = TextOverflow.Ellipsis)
         Spacer(Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("查看场次详情", fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
+            Text(AppText.get(R.string.ui_show_details), fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
                 color = MiuixTheme.colorScheme.primary)
             Spacer(Modifier.weight(1f))
             if (concert.ticketUrl != null &&
@@ -379,7 +386,7 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
                 concert.ticketState != TicketState.SOLD_OUT
             ) {
                 Text(
-                    "购票 · ${concert.ticketPlatform ?: "票务平台"}",
+                    AppText.get(R.string.ui_tickets, concert.ticketPlatform ?: AppText.get(R.string.ui_ticket_platform)),
                     modifier = Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button) {
                         uriHandler.openUri(concert.ticketUrl)
                     }.padding(vertical = 4.dp, horizontal = 2.dp),
@@ -387,7 +394,7 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
                     color = MiuixTheme.colorScheme.primary,
                 )
             } else if (concert.priceRange != null) {
-                Text("票价已公布", fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
+                Text(AppText.get(R.string.ui_prices_announced), fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
             }
         }
     }
@@ -398,29 +405,28 @@ private fun ConcertRow(concert: Concert, now: ZonedDateTime, onClick: () -> Unit
     val status = concert.status(now)
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().testTag("concert-row-${concert.id}"),
-        cornerRadius = 22.dp,
+        modifier = Modifier.fillMaxWidth().animateContentSize().testTag("concert-row-${concert.id}"),
         insideMargin = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
         pressFeedbackType = PressFeedbackType.Sink,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             Column(Modifier.width(52.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("${concert.date.monthValue}月", fontSize = 11.sp,
+                Text(concert.date.month.getDisplayName(TextStyle.SHORT, AppText.locale), fontSize = 11.sp,
                     color = MiuixTheme.colorScheme.primary)
                 Text(concert.date.dayOfMonth.toString(), fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                Text(concert.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.SIMPLIFIED_CHINESE),
+                Text(concert.date.dayOfWeek.getDisplayName(TextStyle.SHORT, AppText.locale),
                     fontSize = 10.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
             }
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(concert.venue.city, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
-                    Text(" · ${concert.theme}", fontSize = 13.sp,
+                    Text(AppText.fromOriginal(concert.venue.city), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+                    Text(" · ${concert.theme}", fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f),
                         color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                 }
-                Text(concert.venue.name, fontSize = 13.sp, lineHeight = 19.sp,
+                Text(AppText.fromOriginal(concert.venue.name), fontSize = 13.sp, lineHeight = 19.sp,
                     color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
                     maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text("${concertTime(concert, now)} · ${concert.venue.country}", fontSize = 12.sp,
+                Text("${concertTime(concert, now)} · ${AppText.fromOriginal(concert.venue.country)}", fontSize = 12.sp,
                     color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
             }
             Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -437,15 +443,14 @@ private fun ConcertRow(concert: Concert, now: ZonedDateTime, onClick: () -> Unit
 @Composable
 private fun ConcertStatusChip(concert: Concert, now: ZonedDateTime) {
     val label = concert.ticketLabel(now)
-    val colors = when (label) {
-        "售票中" -> MiuixTheme.colorScheme.primaryContainer to MiuixTheme.colorScheme.onPrimaryContainer
-        "待开票", "即将举行", "今天开演" ->
-            MiuixTheme.colorScheme.secondaryContainer to MiuixTheme.colorScheme.onSecondaryContainer
-        "已售罄" -> MiuixTheme.colorScheme.errorContainer to MiuixTheme.colorScheme.onErrorContainer
-        else -> MiuixTheme.colorScheme.surfaceContainerHigh to MiuixTheme.colorScheme.onSurfaceContainerVariant
+    val colors = when {
+        concert.status(now) in listOf(ShowStatus.ENDED, ShowStatus.CANCELLED) ->
+            MiuixTheme.colorScheme.surfaceContainerHigh to MiuixTheme.colorScheme.onSurfaceContainerVariant
+        concert.ticketState == TicketState.ON_SALE -> MiuixTheme.colorScheme.primaryContainer to MiuixTheme.colorScheme.onPrimaryContainer
+        concert.ticketState == TicketState.SOLD_OUT -> MiuixTheme.colorScheme.errorContainer to MiuixTheme.colorScheme.onErrorContainer
+        else -> MiuixTheme.colorScheme.secondaryContainer to MiuixTheme.colorScheme.onSecondaryContainer
     }
     Card(
-        cornerRadius = 50.dp,
         insideMargin = PaddingValues(horizontal = 10.dp, vertical = 5.dp),
         colors = CardDefaults.defaultColors(color = colors.first, contentColor = colors.second),
     ) {
@@ -467,20 +472,21 @@ private fun FilterRow(
             items(labels.size, key = { labels[it] }) { index ->
                 val label = labels[index]
                 val active = label == selected
+                val background by animateColorAsState(
+                    if (active) MiuixTheme.colorScheme.primaryContainer
+                    else MiuixTheme.colorScheme.surfaceContainerHigh, label = "filterBackground")
                 Card(
                     onClick = { onSelect(label) },
-                    cornerRadius = 50.dp,
                     insideMargin = PaddingValues(horizontal = 13.dp, vertical = 7.dp),
                     colors = CardDefaults.defaultColors(
-                        color = if (active) MiuixTheme.colorScheme.primaryContainer
-                        else MiuixTheme.colorScheme.surfaceContainerHigh,
+                        color = background,
                         contentColor = if (active) MiuixTheme.colorScheme.onPrimaryContainer
                         else MiuixTheme.colorScheme.onSurfaceContainerVariant,
                     ),
                     pressFeedbackType = PressFeedbackType.Sink,
                     modifier = Modifier.testTag("$tagPrefix-$label"),
                 ) {
-                    Text(label, fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    Text(concertFilterLabel(label), fontSize = 12.sp, fontWeight = FontWeight.Medium)
                 }
             }
         }
@@ -491,9 +497,9 @@ private fun FilterRow(
 private fun MonthHeader(month: YearMonth, count: Int) {
     Row(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 2.dp, start = 4.dp),
         verticalAlignment = Alignment.CenterVertically) {
-        Text("${month.year} 年 ${month.monthValue} 月", fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
+        Text(AppText.get(R.string.ui_calendar_month_year, month.year, month.monthValue), fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.weight(1f))
-        Text("$count 场", fontSize = 12.sp, color = MiuixTheme.colorScheme.onBackgroundVariant)
+        Text(AppText.get(R.string.ui_shows_91, count), fontSize = 12.sp, color = MiuixTheme.colorScheme.onBackgroundVariant)
     }
 }
 
@@ -509,8 +515,8 @@ private fun ConcertDetailScreen(
     val status = concert.status(now)
     val timeText = concertTime(concert, now)
     ArchiveScaffold(
-        "演出详情", small = true,
-        navigationIcon = { BackButton(onBack, "返回演唱会") },
+        AppText.get(R.string.ui_show_details_92), small = true,
+        navigationIcon = { BackButton(onBack, AppText.get(R.string.ui_back_to_concerts)) },
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag("concert-detail"),
@@ -521,6 +527,10 @@ private fun ConcertDetailScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
+            item("concert-detail-photo") {
+                ConcertPhoto(Modifier.fillMaxWidth().height(240.dp))
+                CompactSourceLink(AppText.get(R.string.ui_official_tour_photo_jvr_music), concertPhotoSource)
+            }
             item("concert-detail-hero") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
                     verticalArrangement = Arrangement.spacedBy(7.dp)) {
@@ -531,10 +541,10 @@ private fun ConcertDetailScreen(
                         ConcertStatusChip(concert, now)
                     }
                     Spacer(Modifier.height(4.dp))
-                    Text("${concert.theme} · ${concert.venue.city}", fontSize = 34.sp,
+                    Text("${concert.theme} · ${AppText.fromOriginal(concert.venue.city)}", fontSize = 34.sp,
                         lineHeight = 42.sp, fontWeight = FontWeight.Bold,
                         modifier = Modifier.semantics { heading() })
-                    Text(concert.tourName, fontSize = 14.sp, lineHeight = 21.sp,
+                    Text(AppText.fromOriginal(concert.tourName), fontSize = 14.sp, lineHeight = 21.sp,
                         color = MiuixTheme.colorScheme.onBackgroundVariant)
                     Spacer(Modifier.height(2.dp))
                     Text(concert.dateLabel, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
@@ -546,12 +556,12 @@ private fun ConcertDetailScreen(
             }
 
             item("concert-detail-place") {
-                DetailCard("时间与地点") {
-                    DetailValue("日期", concert.dateLabel)
-                    DetailValue("当地时间", timeText)
-                    DetailValue("时区", concert.zoneLabel)
-                    DetailValue("场馆", "${concert.venue.name} · ${concert.venue.country}")
-                    DetailValue("地址", concert.venue.address.ifBlank { "地址待公布" })
+                DetailCard(AppText.get(R.string.ui_time_and_venue)) {
+                    DetailValue(AppText.get(R.string.ui_date), concert.dateLabel)
+                    DetailValue(AppText.get(R.string.ui_local_time), timeText)
+                    DetailValue(AppText.get(R.string.ui_time_zone), concert.zoneLabel)
+                    DetailValue(AppText.get(R.string.ui_venue), "${AppText.fromOriginal(concert.venue.name)} · ${AppText.fromOriginal(concert.venue.country)}")
+                    DetailValue(AppText.get(R.string.ui_address), concert.venue.address.ifBlank { AppText.get(R.string.ui_not_provided_in_the_official_schedule) })
                     if (concert.venue.latitude != null && concert.venue.longitude != null) {
                         Spacer(Modifier.height(14.dp))
                         Button(onClick = {
@@ -569,48 +579,48 @@ private fun ConcertDetailScreen(
                                     )
                                 }
                             }
-                        }) { Text("地图导航") }
+                        }) { Text(AppText.get(R.string.ui_open_map)) }
                     }
                 }
             }
 
             item("concert-detail-ticket") {
-                DetailCard("票务信息") {
-                    DetailValue("售票状态", concert.ticketLabel(now))
-                    concert.ticketPlatform?.let { DetailValue("票务平台", it) }
+                DetailCard(AppText.get(R.string.ui_ticket_information)) {
+                    DetailValue(AppText.get(R.string.ui_ticket_status), concert.ticketLabel(now))
+                    concert.ticketPlatform?.let { DetailValue(AppText.get(R.string.ui_ticket_platform), it) }
                     concert.saleStartsAt?.let {
-                        DetailValue("开售时间", formatDateTime(it, concert))
+                        DetailValue(AppText.get(R.string.ui_sales_start), formatDateTime(it, concert))
                     }
                     concert.priceRange?.let {
-                        DetailValue("票价区间", it)
-                        Text("仅在公开来源明确公布票档时显示；实际价格以平台结算页为准。",
+                        DetailValue(AppText.get(R.string.ui_price_range), it)
+                        Text(AppText.get(R.string.ui_shown_only_when_officially_announced_the_final_price_is_determin),
                             fontSize = 11.sp, lineHeight = 17.sp,
                             color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                     }
                     Spacer(Modifier.height(14.dp))
                     when {
                         status == ShowStatus.ENDED || status == ShowStatus.CANCELLED ->
-                            Text("演出已结束，票务入口已关闭。", fontSize = 13.sp,
+                            Text(AppText.get(R.string.ui_this_show_has_ended_ticket_links_are_closed), fontSize = 13.sp,
                                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                         concert.ticketState == TicketState.PENDING ->
-                            Text("官方尚未开票；开票后可在票务平台购票。", fontSize = 13.sp,
+                            Text(AppText.get(R.string.ui_ticket_sales_have_not_started_check_the_ticket_platform_after_sa), fontSize = 13.sp,
                                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                         concert.ticketState == TicketState.SOLD_OUT ->
-                            Text("该场次已售罄；请留意官方后续加场或回流票公告。", fontSize = 13.sp,
+                            Text(AppText.get(R.string.ui_this_show_is_sold_out_check_official_announcements_for_extra_dat), fontSize = 13.sp,
                                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                         concert.ticketUrl != null ->
                             Button(onClick = { uriHandler.openUri(concert.ticketUrl) },
                                 modifier = Modifier.testTag("concert-ticket")) {
                                 Text(
                                     if (concert.ticketState == TicketState.ON_SALE) {
-                                        "前往 ${concert.ticketPlatform ?: "票务平台"}"
+                                        AppText.get(R.string.ui_open, concert.ticketPlatform ?: AppText.get(R.string.ui_ticket_platform))
                                     } else {
-                                        "查看票务平台"
+                                        AppText.get(R.string.ui_view_ticket_platform)
                                     },
                                 )
                             }
                         else ->
-                            Text("官方票务入口尚未公布。", fontSize = 13.sp,
+                            Text(AppText.get(R.string.ui_the_official_schedule_has_no_ticket_link_see_the_official_source), fontSize = 13.sp,
                                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                     }
                     concert.note?.let {
@@ -622,26 +632,26 @@ private fun ConcertDetailScreen(
             }
 
             item("concert-detail-source") {
-                DetailCard("主办与来源") {
-                    DetailValue("主办方", concert.organizer ?: "公开来源未标注主办方")
+                DetailCard(AppText.get(R.string.ui_organizer_and_sources)) {
+                    DetailValue(AppText.get(R.string.ui_organizer), concert.organizer ?: AppText.get(R.string.ui_organizer_not_listed_in_public_sources))
                     val sources = buildList {
                         addAll(concert.sourceUrls)
                         concert.officialUrl?.let { add(it) }
                     }.distinctBy(::concertSourceLabel)
                     if (sources.isNotEmpty()) {
-                        Text("信息来源", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
+                        Text(AppText.get(R.string.ui_sources), fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                         sources.forEach { CompactSourceLink(concertSourceLabel(it), it) }
                     }
-                    DetailValue("最后更新", updatedLabel)
-                    DetailValue("数据核对", concert.updatedLabel)
-                    Text("演出时间、票价与售票状态可能调整；请以主办方与票务平台的最终公告为准。",
+                    DetailValue(AppText.get(R.string.ui_last_updated), updatedLabel)
+                    DetailValue(AppText.get(R.string.ui_data_verified), concert.updatedLabel)
+                    Text(AppText.get(R.string.ui_show_times_prices_and_ticket_availability_may_change_follow_the),
                         fontSize = 12.sp, lineHeight = 19.sp,
                         color = MiuixTheme.colorScheme.onSurfaceContainerVariant)
                 }
             }
 
             item("concert-detail-note") {
-                QuietText("本页只整理公开演出信息，不提供购票代理、加价票或保证入场服务。")
+                QuietText(AppText.get(R.string.ui_this_page_collects_public_event_information_it_does_not_offer_ti))
             }
         }
     }
@@ -653,7 +663,7 @@ private fun CompactSourceLink(label: String, url: String) {
     Text(
         label,
         modifier = Modifier.clickable(role = androidx.compose.ui.semantics.Role.Button,
-            onClickLabel = "打开来源") { uriHandler.openUri(url) }.padding(vertical = 2.dp),
+            onClickLabel = AppText.get(R.string.ui_open_source)) { uriHandler.openUri(url) }.padding(vertical = 2.dp),
         fontSize = 13.sp,
         color = MiuixTheme.colorScheme.primary,
     )
@@ -661,7 +671,7 @@ private fun CompactSourceLink(label: String, url: String) {
 
 @Composable
 private fun DetailCard(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Card(Modifier.fillMaxWidth(), cornerRadius = 24.dp, insideMargin = PaddingValues(20.dp)) {
+    Card(Modifier.fillMaxWidth(), insideMargin = PaddingValues(20.dp)) {
         Text(title, fontSize = 17.sp, fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.height(13.dp))
         Column(verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
@@ -677,23 +687,50 @@ private fun DetailValue(label: String, value: String) {
 }
 
 private fun concertTime(concert: Concert, now: ZonedDateTime): String =
-    if (concert.startTime == null && concert.status(now) == ShowStatus.ENDED) "时间未收录"
+    if (concert.startTime == null && concert.status(now) == ShowStatus.ENDED) AppText.get(R.string.ui_time_not_listed)
     else concert.timeLabel
 
 private fun formatDateTime(value: ZonedDateTime, concert: Concert): String =
     value.withZoneSameInstant(concert.venue.timeZone)
-        .format(DateTimeFormatter.ofPattern("yyyy年M月d日 HH:mm", Locale.SIMPLIFIED_CHINESE)) +
+        .format(DateTimeFormatter.ofPattern(AppText.get(R.string.ui_yyyy_mm_dd_hh_mm), AppText.locale)) +
         " · ${concert.venue.timeZone.id}"
 
 private fun concertSourceLabel(url: String): String = when {
-    "jvrmusic.com" in url -> "JVR Music 官方行程"
-    "wikipedia.org" in url -> "维基百科"
+    "jvrmusic.com" in url -> AppText.get(R.string.ui_jvr_music_official_schedule)
+    "wikipedia.org" in url -> AppText.get(R.string.ui_wikipedia)
     "ticketmaster" in url -> "Ticketmaster"
     "bookmyshow" in url -> "BookMyShow"
-    "hk01.com" in url -> "香港01"
-    "sina.com.cn" in url -> "新浪 / 海南旅游广播"
-    "8world.com" in url -> "8视界"
-    "orientaldaily.com.my" in url -> "东方日报"
-    "damai.cn" in url -> "大麦"
-    else -> runCatching { Uri.parse(url).host }.getOrNull() ?: "来源"
+    "hk01.com" in url -> AppText.get(R.string.ui_hk01)
+    "sina.com.cn" in url -> AppText.get(R.string.ui_sina_hainan_tourism_radio)
+    "8world.com" in url -> AppText.get(R.string.ui_8world)
+    "orientaldaily.com.my" in url -> AppText.get(R.string.ui_oriental_daily)
+    "damai.cn" in url -> AppText.get(R.string.ui_damai)
+    else -> runCatching { Uri.parse(url).host }.getOrNull() ?: AppText.get(R.string.ui_source)
+}
+
+private const val concertPhotoSource = "https://www.jvrmusic.com/news/detail/2041391444102615040"
+private const val concertPhotoUrl = "https://www.jvrmusic.com/upload/2041392808765558784/mI76_0456n1.jpg"
+
+@Composable
+private fun ConcertPhoto(modifier: Modifier = Modifier) {
+    Box(modifier.background(MiuixTheme.colorScheme.surfaceContainerHigh)) {
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current).data(concertPhotoUrl).crossfade(350).build(),
+            contentDescription = AppText.get(R.string.ui_official_photo_from_the_carnival_ii_tour_in_hangzhou),
+            modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop,
+            loading = { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() } },
+            error = { Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text(AppText.get(R.string.ui_live_photo_unavailable), fontSize = 13.sp) } },
+        )
+        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = .65f)))))
+        Text(AppText.get(R.string.ui_carnival_ii_on_tour), color = Color.White, fontSize = 11.sp, letterSpacing = 1.4.sp,
+            modifier = Modifier.align(Alignment.BottomStart).padding(16.dp))
+    }
+}
+
+private fun concertFilterLabel(key: String): String = when (key) {
+    "upcoming" -> AppText.get(R.string.ui_upcoming)
+    "ended" -> AppText.get(R.string.ui_ended)
+    "all" -> AppText.get(R.string.ui_all)
+    "all_cities" -> AppText.get(R.string.ui_all_cities)
+    else -> AppText.fromOriginal(key)
 }

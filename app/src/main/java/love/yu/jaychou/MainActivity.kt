@@ -2,13 +2,10 @@ package love.yu.jaychou
 
 import android.content.res.Configuration
 import android.os.Bundle
-import androidx.activity.ComponentActivity
+import android.view.ViewTreeObserver
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
@@ -16,21 +13,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import love.yu.jaychou.data.*
 import love.yu.jaychou.ui.*
 import love.yu.jaychou.navigation.ArchiveApp
 
-class MainActivity : ComponentActivity() {
-    companion object {
-        private var splashShownInProcess = false
-    }
-
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_JayChou)
         super.onCreate(savedInstanceState)
+        AppText.update(resources)
+        // Keep the system's icon launch window until the first real app frame is ready.
+        var contentReady = false
+        val content = findViewById<android.view.View>(android.R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                if (!contentReady) return false
+                content.viewTreeObserver.removeOnPreDrawListener(this)
+                return true
+            }
+        })
         enableEdgeToEdge()
         val systemDark = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
             Configuration.UI_MODE_NIGHT_YES
@@ -41,28 +47,15 @@ class MainActivity : ComponentActivity() {
         if (android.os.Build.VERSION.SDK_INT >= 29) window.isNavigationBarContrastEnforced = false
 
         val repository = SettingsRepository(applicationContext)
-        setContent {
-            val settings by remember { repository.settings }.collectAsStateWithLifecycle(initialValue = null)
-            val catalog by produceState<AlbumCatalog?>(initialValue = null) {
-                value = withContext(Dispatchers.IO) { AlbumRepository.load(applicationContext) }
-            }
-            var minimumSplashElapsed by remember { mutableStateOf(splashShownInProcess) }
-            LaunchedEffect(Unit) {
-                if (!splashShownInProcess) {
-                    delay(700)
-                    splashShownInProcess = true
-                    minimumSplashElapsed = true
-                }
-            }
+        lifecycleScope.launch {
+            // Prepare first-frame data independently of Compose's frame clock.
+            val initialSettings = repository.settings.first()
+            val data = withContext(Dispatchers.IO) { AlbumRepository.load(this@MainActivity) }
+            setContent {
+                val current by remember { repository.settings }.collectAsStateWithLifecycle(initialValue = initialSettings)
 
-            val current = settings
-            val data = catalog
-            val ready = current != null && data != null
-            val showSplash = !ready || !minimumSplashElapsed
-
-            Box(Modifier.fillMaxSize()) {
-                // Do not draw the wrong theme before persisted preferences have loaded.
-                if (ready) {
+                Box(Modifier.fillMaxSize()) {
+                    // Do not draw the wrong theme before persisted preferences have loaded.
                     ArchiveTheme(current) {
                         val dark = current.isDark()
                         val view = LocalView.current
@@ -78,7 +71,7 @@ class MainActivity : ComponentActivity() {
                         fun save(action: suspend () -> Unit) {
                             scope.launch {
                                 try { action() } catch (_: java.io.IOException) {
-                                    error = "设置保存失败，请重试。"
+                                    error = AppText.get(R.string.ui_unable_to_save_settings_please_try_again)
                                 }
                             }
                         }
@@ -89,20 +82,14 @@ class MainActivity : ComponentActivity() {
                             onBlur = { save { repository.setBlur(it) } },
                             onPredictive = { save { repository.setPredictiveBack(it) } },
                             onAlbumLayout = { save { repository.setAlbumLayout(it) } },
+                            onAlbumCategories = { save { repository.setAlbumCategories(it) } },
                             onCustomColor = { save { repository.setCustomColor(it) } },
                             error = error, onDismissError = { error = null },
                         )
                     }
                 }
-                AnimatedVisibility(
-                    visible = showSplash,
-                    enter = EnterTransition.None,
-                    exit = fadeOut(tween(200)),
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    JaySplashScreen()
-                }
             }
+            contentReady = true
         }
     }
 }

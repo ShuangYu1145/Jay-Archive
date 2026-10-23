@@ -1,5 +1,7 @@
 package love.yu.jaychou.ui
 
+import love.yu.jaychou.data.AppText
+import love.yu.jaychou.R
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,7 +34,7 @@ import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 // Custom vector glyphs keep the three navigation symbols consistent at every density.
-enum class Glyph { HOME, ALBUMS, CONCERTS, SETTINGS, INFO, PALETTE, BLUR, GLASS, BACK, LINK, GESTURE }
+enum class Glyph { HOME, ALBUMS, CONCERTS, SETTINGS, INFO, PALETTE, BLUR, GLASS, BACK, LINK, GESTURE, SEARCH }
 
 @Composable
 fun ArchiveGlyph(glyph: Glyph, modifier: Modifier = Modifier, color: Color = MiuixTheme.colorScheme.onBackground) {
@@ -47,11 +49,15 @@ fun ArchiveGlyph(glyph: Glyph, modifier: Modifier = Modifier, color: Color = Miu
             drawPath(p, color, style = Stroke(1.9f * unit, cap = StrokeCap.Round))
         }
         when (glyph) {
+            Glyph.SEARCH -> {
+                drawCircle(color, 6.8f * unit, point(10f, 10f), style = Stroke(1.9f * unit))
+                path(15f to 15f, 21f to 21f)
+            }
             Glyph.HOME -> {
                 path(3f to 10f, 12f to 3f, 21f to 10f, 21f to 21f, 15f to 21f, 15f to 14f, 9f to 14f, 9f to 21f, 3f to 21f, 3f to 10f)
             }
             Glyph.ALBUMS -> {
-                drawRoundRect(color, point(3f, 3f), Size(18f * unit, 18f * unit), androidx.compose.ui.geometry.CornerRadius(3f * unit), style = Stroke(1.9f * unit))
+                drawRect(color, point(3f, 3f), Size(18f * unit, 18f * unit), style = Stroke(1.9f * unit))
                 drawCircle(color, 5.2f * unit, point(12f, 12f), style = Stroke(1.7f * unit))
                 drawCircle(color, 1.4f * unit, point(12f, 12f))
             }
@@ -134,26 +140,43 @@ fun QuietText(
 
 /** Network loading, explicit progress/error states, retry, and a bundled offline fallback. */
 @Composable
-fun CatalogImage(url: String, asset: String, description: String, modifier: Modifier = Modifier) {
+fun CatalogImage(
+    url: String, asset: String, description: String, modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+    onAspectRatio: ((Float) -> Unit)? = null,
+    crossfade: Boolean = true,
+) {
     var attempt by remember(url) { mutableIntStateOf(0) }
     val context = LocalContext.current
     key(url, attempt) {
         SubcomposeAsyncImage(
-            model = ImageRequest.Builder(context).data(url).crossfade(true).build(),
+            model = ImageRequest.Builder(context).data(url).crossfade(crossfade).build(),
             contentDescription = description,
-            contentScale = ContentScale.Crop,
-            modifier = modifier.background(MiuixTheme.colorScheme.surfaceContainerHigh),
+            contentScale = contentScale,
+            onSuccess = { state ->
+                val drawable = state.result.drawable
+                if (drawable.intrinsicWidth > 0 && drawable.intrinsicHeight > 0) {
+                    onAspectRatio?.invoke(drawable.intrinsicWidth.toFloat() / drawable.intrinsicHeight)
+                }
+            },
+            modifier = modifier,
             loading = {
                 Box(Modifier.fillMaxSize()) {
-                    AsyncImage("file:///android_asset/$asset", null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    ImageStatus("正在加载网络图片…", Modifier.align(Alignment.BottomStart))
+                    AsyncImage("file:///android_asset/$asset", null, Modifier.fillMaxSize(), contentScale = contentScale)
+                    ImageStatus(context.getString(R.string.ui_loading_online_image), Modifier.align(Alignment.BottomStart))
                 }
             },
             error = {
                 Box(Modifier.fillMaxSize()) {
-                    AsyncImage("file:///android_asset/$asset", description, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-                    ImageStatus("离线图片 · 点此重试", Modifier.align(Alignment.BottomStart)
-                        .clickable(role = Role.Button, onClickLabel = "重试加载网络图片") { attempt++ })
+                    AsyncImage("file:///android_asset/$asset", description, Modifier.fillMaxSize(), contentScale = contentScale,
+                        onSuccess = { state ->
+                            val drawable = state.result.drawable
+                            if (drawable.intrinsicWidth > 0 && drawable.intrinsicHeight > 0) {
+                                onAspectRatio?.invoke(drawable.intrinsicWidth.toFloat() / drawable.intrinsicHeight)
+                            }
+                        })
+                    ImageStatus(context.getString(R.string.ui_offline_image_tap_to_retry), Modifier.align(Alignment.BottomStart)
+                        .clickable(role = Role.Button, onClickLabel = context.getString(R.string.ui_retry_online_image)) { attempt++ })
                 }
             },
         )
@@ -167,7 +190,7 @@ private fun ImageStatus(label: String, modifier: Modifier) {
 }
 
 @Composable
-fun BackButton(onClick: () -> Unit, label: String = "返回专辑列表") {
+fun BackButton(onClick: () -> Unit, label: String = AppText.get(R.string.ui_back_to_albums)) {
     Box(Modifier.size(48.dp).clip(CircleShape)
         .clickable(role = Role.Button, onClickLabel = label, onClick = onClick)
         .semantics { contentDescription = label }, contentAlignment = Alignment.Center) {

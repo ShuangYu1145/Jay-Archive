@@ -1,6 +1,5 @@
 package love.yu.jaychou
 
-import java.io.File
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -11,65 +10,46 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ConcertTest {
-    private val snapshot = ConcertRepository.decode(
-        File("src/main/assets/concerts.json").readText(),
-        refreshedAt = null,
-    )
     private val shanghai = ZoneId.of("Asia/Shanghai")
 
-    @Test fun bundledScheduleIsOrderedAndComplete() {
-        assertEquals(LocalDate.of(2026, 10, 17), snapshot.verifiedAt)
-        assertEquals(36, snapshot.concerts.size)
-        assertEquals(14, snapshot.venues.size)
-        assertEquals(snapshot.concerts.sortedWith(
-            compareBy({ it.date }, { it.startTime ?: java.time.LocalTime.MIDNIGHT })), snapshot.concerts)
-        assertEquals(LocalDate.of(2026, 4, 3), snapshot.concerts.first().date)
-        assertEquals(LocalDate.of(2027, 4, 11), snapshot.concerts.last().date)
-        snapshot.concerts.forEach { concert ->
-            assertTrue(concert.venue.name.isNotBlank())
-            assertTrue(concert.venue.address.isNotBlank())
-            assertTrue(concert.sourceUrls.isNotEmpty())
+    @Test fun networkSnapshotDoesNotInventVenueOrTicketDetails() {
+        val now = ZonedDateTime.of(2026, 10, 23, 12, 0, 0, 0, shanghai)
+        val snapshot = ConcertRepository.fromOfficial(listOf(
+            love.yu.jaychou.data.OfficialShow(LocalDate.of(2026, 11, 21), "悉尼", "海洋"),
+            love.yu.jaychou.data.OfficialShow(LocalDate.of(2026, 10, 17), "墨尔本", "粉色"),
+            love.yu.jaychou.data.OfficialShow(LocalDate.of(2026, 11, 21), "悉尼", "海洋"),
+        ), now)
+        assertEquals(2, snapshot.concerts.size)
+        assertEquals(now, snapshot.refreshedAt)
+        assertEquals("悉尼", snapshot.next(now)!!.venue.city)
+        snapshot.concerts.forEach {
+            assertNull(it.ticketUrl)
+            assertNull(it.startTime)
+            assertNull(it.priceRange)
+            assertEquals(TicketState.UNKNOWN, it.ticketState)
+            assertEquals("场馆请查阅官方公告", it.venue.name)
         }
+        val melbourne = snapshot.concerts.first()
+        assertEquals("Australia/Melbourne", melbourne.venue.timeZone.id)
+        assertEquals(ShowStatus.ENDED, melbourne.status(now))
     }
 
-    @Test fun nearestShowSkipsAnAlreadyFinishedMelbourneNight() {
-        val now = ZonedDateTime.of(2026, 10, 17, 22, 18, 0, 0, shanghai)
-        val featured = snapshot.next(now)
-        assertNotNull(featured)
-        assertEquals("sydney", featured!!.id.substringAfterLast('-'))
-        assertEquals(LocalDate.of(2026, 11, 21), featured.date)
-        assertEquals(34L, featured.daysUntil(now))
-        assertEquals(ShowStatus.UPCOMING, featured.status(now))
-        assertEquals("售票中", featured.ticketLabel(now))
+    @Test fun emptyOfficialScheduleIsAValidEmptyState() {
+        val snapshot = ConcertRepository.fromOfficial(emptyList(), ZonedDateTime.now(shanghai))
+        assertTrue(snapshot.concerts.isEmpty())
+        assertNull(snapshot.next())
     }
 
-    @Test fun melbourneIsStillTodayBeforeItsLocalStart() {
-        val now = ZonedDateTime.of(2026, 10, 17, 10, 0, 0, 0, shanghai)
-        val featured = snapshot.next(now)
-        assertNotNull(featured)
-        assertEquals("melbourne", featured!!.id.substringAfterLast('-'))
-        assertEquals(ShowStatus.TODAY, featured.status(now))
-        assertEquals("今天", featured.countdown(now))
-    }
-
-    @Test fun endedAndOnSaleStatesAreDistinguished() {
-        val now = ZonedDateTime.of(2026, 10, 17, 22, 18, 0, 0, shanghai)
-        val hangzhou = snapshot.concerts.first { it.date == LocalDate.of(2026, 4, 3) }
-        assertEquals(ShowStatus.ENDED, hangzhou.status(now))
-        assertEquals("已结束", hangzhou.ticketLabel(now))
-
-        val guangzhou = snapshot.concerts.first { it.venue.city == "广州" }
-        assertEquals(TicketState.ON_SALE, guangzhou.ticketState)
-        assertEquals("售票中", guangzhou.ticketLabel(now))
-        assertEquals("19:00", guangzhou.timeLabel)
-        assertNotNull(guangzhou.priceRange)
-    }
-
-    @Test fun pendingShowsWithoutAVerifiedTimeStayHonest() {
-        val fuzhou = snapshot.concerts.first { it.venue.city == "福州" }
-        assertEquals(TicketState.PENDING, fuzhou.ticketState)
-        assertEquals("时间待公布", fuzhou.timeLabel)
-        assertEquals("待开票", fuzhou.ticketLabel(ZonedDateTime.of(2026, 10, 17, 22, 18, 0, 0, shanghai)))
+    @Test fun newCitiesAreNotDroppedAndOtherEventsAreExcluded() {
+        val html = """
+            <div class="item"><p data-value="2027-05-01T16:00:00+00:00"></p><div class="group">
+            <p class="title concert">周杰倫嘉年華II世界巡迴演唱會 - 晴天 新城市</p></div></div>
+            <div class="item"><p data-value="2027-05-01T16:00:00+00:00"></p><div class="group">
+            <p class="title event">品牌活動 - 見面 北京</p></div></div>
+        """.trimIndent()
+        val shows = ConcertRepository.parseOfficialSchedule(html)
+        assertEquals(1, shows.size)
+        assertEquals("新城市", shows.single().city)
     }
 
     @Test fun officialMonthlyMarkupIsParsedIntoCanonicalDatesAndCities() {

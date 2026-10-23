@@ -11,7 +11,7 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 5
-        versionName = "0.2"
+        versionName = "0.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -44,11 +44,13 @@ android {
 }
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
 dependencies {
+    implementation("androidx.appcompat:appcompat:1.8.0")
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
     implementation(libs.compose.animation)
     implementation(libs.compose.tooling.preview)
     implementation(libs.miuix.ui)
+    implementation(libs.miuix.icons)
     implementation(libs.miuix.blur)
     implementation(libs.miuix.preference)
     implementation(libs.activity.compose)

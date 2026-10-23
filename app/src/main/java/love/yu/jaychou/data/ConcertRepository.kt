@@ -1,13 +1,10 @@
 ﻿package love.yu.jaychou.data
 
-import android.content.Context
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URI
-import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -25,8 +22,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
-import org.json.JSONObject
 
 enum class TicketState(val raw: String) {
     ON_SALE("on_sale"), PENDING("pending"), SOLD_OUT("sold_out"), UNKNOWN("unknown");
@@ -72,10 +67,10 @@ data class Concert(
     val title: String get() = if (theme.isBlank()) tourName else "$tourName · $theme"
 
     val dateLabel: String get() = date.format(
-        DateTimeFormatter.ofPattern("yyyy年M月d日 EEEE", Locale.SIMPLIFIED_CHINESE),
+        DateTimeFormatter.ofPattern(AppText.fromOriginal("yyyy年M月d日 EEEE"), AppText.locale),
     )
 
-    val timeLabel: String get() = startTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "时间待公布"
+    val timeLabel: String get() = startTime?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: AppText.fromOriginal("时间待公布")
 
     val zoneLabel: String get() = "${venue.timeZone.id} · ${date.atStartOfDay(venue.timeZone).offset.id}"
 
@@ -98,24 +93,24 @@ data class Concert(
 
     fun countdown(now: ZonedDateTime = ZonedDateTime.now()): String {
         val status = status(now)
-        if (status == ShowStatus.ENDED) return "已结束"
-        if (status == ShowStatus.CANCELLED) return "已取消"
+        if (status == ShowStatus.ENDED) return AppText.fromOriginal("已结束")
+        if (status == ShowStatus.CANCELLED) return AppText.fromOriginal("已取消")
         val days = daysUntil(now)
         return when {
-            days <= 0L -> "今天"
-            days == 1L -> "明天"
-            else -> "还有 $days 天"
+            days <= 0L -> AppText.fromOriginal("今天")
+            days == 1L -> AppText.fromOriginal("明天")
+            else -> AppText.fromOriginal("还有 %1\$s 天", days)
         }
     }
 
     fun ticketLabel(now: ZonedDateTime = ZonedDateTime.now()): String = when (status(now)) {
-        ShowStatus.ENDED -> "已结束"
-        ShowStatus.CANCELLED -> "已取消"
+        ShowStatus.ENDED -> AppText.fromOriginal("已结束")
+        ShowStatus.CANCELLED -> AppText.fromOriginal("已取消")
         else -> when (ticketState) {
-            TicketState.ON_SALE -> "售票中"
-            TicketState.PENDING -> "待开票"
-            TicketState.SOLD_OUT -> "已售罄"
-            TicketState.UNKNOWN -> if (status(now) == ShowStatus.TODAY) "今天开演" else "即将举行"
+            TicketState.ON_SALE -> AppText.fromOriginal("售票中")
+            TicketState.PENDING -> AppText.fromOriginal("待开票")
+            TicketState.SOLD_OUT -> AppText.fromOriginal("已售罄")
+            TicketState.UNKNOWN -> if (status(now) == ShowStatus.TODAY) AppText.fromOriginal("今天开演") else AppText.fromOriginal("即将举行")
         }
     }
 }
@@ -148,19 +143,11 @@ class ConcertDataException(message: String, cause: Throwable? = null) : IOExcept
 
 internal data class OfficialShow(val date: LocalDate, val city: String, val theme: String)
 
-/**
- * Loads the versioned concert snapshot from assets and refreshes announced dates from JVR's
- * official monthly schedule. Venue metadata, ticket links and prices remain local so that a
- * network failure never invents ticketing details.
- */
+/** Reads announced shows directly from the official monthly schedule. */
 object ConcertRepository {
     const val source = "https://www.jvrmusic.com/activity/list/1150822038412333056"
     private const val officialSchedule = "https://www.jvrmusic.com/activity/next/1150822038412333056"
-    private const val assetName = "concerts.json"
-    private const val cacheName = "concert-schedule.json"
     private const val maxBytes = 524_288
-    private val cacheTtl = Duration.ofHours(12)
-    private val cacheMaxAge = Duration.ofDays(7)
 
     private val itemRegex = Regex("<div class=\"item\">([\\s\\S]*?)</div>\\s*</div>")
     private val dateValueRegex = Regex("data-value=\"([^\"]+)\"")
@@ -189,112 +176,33 @@ object ConcertRepository {
         "吉隆坡" to "kualalumpur", "福州" to "fuzhou", "武汉" to "wuhan",
     )
 
-    private data class OfficialCache(val refreshedAt: ZonedDateTime, val shows: List<OfficialShow>)
-
-    suspend fun load(context: Context): ConcertSnapshot = withContext(Dispatchers.IO) {
-        val bundled = context.assets.open(assetName).bufferedReader().use { it.readText() }
-        val baseline = decode(bundled)
-        val cache = readCache(context) ?: return@withContext baseline
-        val age = runCatching { Duration.between(cache.refreshedAt, ZonedDateTime.now()) }.getOrNull()
-        if (age == null || age.seconds > cacheMaxAge.seconds || age.seconds < -cacheMaxAge.seconds) {
-            baseline
-        } else {
-            merge(baseline, cache.shows, cache.refreshedAt)
-        }
+    suspend fun load(): ConcertSnapshot = withContext(Dispatchers.IO) {
+        val now = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"))
+        fromOfficial(fetchOfficial(now), now)
     }
 
-    fun isStale(snapshot: ConcertSnapshot, now: ZonedDateTime = ZonedDateTime.now()): Boolean {
-        val refreshedAt = snapshot.refreshedAt ?: return true
-        val age = Duration.between(refreshedAt, now).seconds
-        return age > cacheTtl.seconds || age < -cacheTtl.seconds
-    }
-
-    suspend fun refresh(context: Context, baseline: ConcertSnapshot): ConcertSnapshot = withContext(Dispatchers.IO) {
-        val now = ZonedDateTime.now()
-        val official = fetchOfficial(now)
-        if (official.isEmpty()) throw ConcertDataException("JVR 官方行程暂不可用")
-        val merged = merge(baseline, official, now)
-        writeCache(context, official, now)
-        merged
-    }
-
-    fun decode(json: String, refreshedAt: ZonedDateTime? = null): ConcertSnapshot {
-        val root = try {
-            JSONObject(json)
-        } catch (failure: Exception) {
-            throw ConcertDataException("演唱会数据无法解析", failure)
-        }
-        val verifiedAt = runCatching { LocalDate.parse(root.optString("verifiedAt")) }
-            .getOrElse { throw ConcertDataException("演唱会数据缺少核对日期", it) }
-        val tourName = root.optString("tourName").ifBlank { "周杰伦「嘉年华II」世界巡回演唱会" }
-        val sourceUrl = root.optString("source").ifBlank { source }
-
-        val venuesJson = root.optJSONObject("venues") ?: JSONObject()
-        val venues = LinkedHashMap<String, ConcertVenue>()
-        val keys = venuesJson.keys()
-        while (keys.hasNext()) {
-            val key = keys.next()
-            val item = venuesJson.optJSONObject(key) ?: continue
-            val city = item.text("city") ?: key
-            val zone = runCatching { ZoneId.of(item.text("tz") ?: "Asia/Shanghai") }
-                .getOrDefault(ZoneId.of("Asia/Shanghai"))
-            venues[city] = ConcertVenue(
-                country = item.text("country").orEmpty(),
-                city = city,
-                name = item.text("venue").orEmpty(),
-                address = item.text("address").orEmpty(),
-                latitude = item.optDouble("lat").takeUnless { it.isNaN() },
-                longitude = item.optDouble("lng").takeUnless { it.isNaN() },
-                timeZone = zone,
-            )
-        }
-
-        val shows = root.optJSONArray("shows") ?: JSONArray()
-        val concerts = (0 until shows.length()).mapNotNull { index ->
-            val item = shows.optJSONObject(index) ?: return@mapNotNull null
-            val city = item.text("city") ?: return@mapNotNull null
-            val venue = venues[city] ?: return@mapNotNull null
-            val date = runCatching { LocalDate.parse(item.text("date")) }.getOrNull() ?: return@mapNotNull null
-            val start = item.text("startTime")?.let { value ->
-                runCatching { LocalTime.parse(value) }.getOrNull()
+    internal fun fromOfficial(shows: List<OfficialShow>, now: ZonedDateTime): ConcertSnapshot {
+        val concerts = shows.distinctBy { "${it.date}:${it.city}" }.map { show ->
+            val (country, zone) = when (show.city) {
+                "墨尔本" -> "澳大利亚" to "Australia/Melbourne"
+                "悉尼" -> "澳大利亚" to "Australia/Sydney"
+                "新加坡" -> "新加坡" to "Asia/Singapore"
+                "吉隆坡" -> "马来西亚" to "Asia/Kuala_Lumpur"
+                else -> (if (show.city in cityAliases.values) "中国大陆" else "地区待公布") to "Asia/Shanghai"
             }
-            val sources = item.optJSONArray("sourceUrls")?.let { array ->
-                (0 until array.length()).mapNotNull { position ->
-                    array.optString(position).takeIf { it.isNotBlank() }
-                }
-            }.orEmpty()
             Concert(
-                id = item.text("id") ?: "$date-${citySlugs[city] ?: city}",
-                tourName = tourName,
-                date = date,
-                startTime = start,
-                theme = item.text("theme").orEmpty(),
-                venue = venue,
-                ticketState = TicketState.from(item.text("ticketState")),
-                ticketPlatform = item.text("ticketPlatform"),
-                ticketUrl = item.text("ticketUrl"),
-                saleStartsAt = item.text("saleStartsAt")?.let {
-                    runCatching { OffsetDateTime.parse(it).toZonedDateTime() }.getOrNull()
-                },
-                priceRange = item.text("priceRange"),
-                organizer = item.text("organizer"),
-                officialUrl = item.text("officialUrl") ?: sourceUrl,
-                sourceUrls = sources.ifEmpty { listOf(sourceUrl) },
-                note = item.text("note"),
-                updatedAt = verifiedAt,
-                cancelled = item.optBoolean("cancelled", false),
+                id = "${show.date}-${citySlugs[show.city] ?: show.city}",
+                tourName = "周杰伦「嘉年华II」世界巡回演唱会",
+                date = show.date, startTime = null, theme = show.theme,
+                venue = ConcertVenue(country, show.city, "场馆请查阅官方公告", "", null, null, ZoneId.of(zone)),
+                ticketState = TicketState.UNKNOWN, ticketPlatform = null, ticketUrl = null,
+                saleStartsAt = null, priceRange = null, organizer = null,
+                officialUrl = source, sourceUrls = listOf(source), note = null,
+                updatedAt = now.toLocalDate(),
             )
-        }.distinctBy { it.id }
-            .sortedWith(compareBy({ it.date }, { it.startTime ?: LocalTime.MIDNIGHT }))
-
-        return ConcertSnapshot(
-            verifiedAt = verifiedAt,
-            tourName = tourName,
-            source = sourceUrl,
-            venues = venues,
-            concerts = concerts,
-            refreshedAt = refreshedAt,
-        )
+        }.sortedBy { it.date }
+        return ConcertSnapshot(now.toLocalDate(), "周杰伦「嘉年华II」世界巡回演唱会",
+            source, concerts.associate { it.venue.city to it.venue }, concerts, now)
     }
 
     internal fun parseOfficialSchedule(html: String): List<OfficialShow> {
@@ -303,11 +211,12 @@ object ConcertRepository {
             val dateValue = dateValueRegex.find(block)?.groupValues?.get(1) ?: return@mapNotNull null
             val rawTitle = titleRegex.find(block)?.groupValues?.get(1) ?: return@mapNotNull null
             val title = decodeEntities(rawTitle).replace(Regex("\\s+"), " ").trim()
+            if (!title.contains("演唱會") && !title.contains("演唱会")) return@mapNotNull null
             val suffix = title.substringAfter(" - ", "").trim()
             if (suffix.isEmpty()) return@mapNotNull null
             val parts = suffix.split(Regex("\\s+"))
             if (parts.size < 2) return@mapNotNull null
-            val city = cityAliases[parts.last()] ?: return@mapNotNull null
+            val city = cityAliases[parts.last()] ?: parts.last()
             val themeRaw = parts.dropLast(1).joinToString(" ")
             val theme = themeAliases[themeRaw] ?: themeRaw
             val date = runCatching {
@@ -341,7 +250,7 @@ object ConcertRepository {
     private suspend fun fetchOfficial(now: ZonedDateTime): List<OfficialShow> = coroutineScope {
         val firstMonth = now.withZoneSameInstant(ZoneId.of("Asia/Shanghai"))
             .toLocalDate().withDayOfMonth(1)
-        val months = (0..11).map { firstMonth.plusMonths(it.toLong()) }
+        val months = (-6..11).map { firstMonth.plusMonths(it.toLong()) }
         val gate = Semaphore(4)
         val results = months.map { month ->
             async {
@@ -356,7 +265,7 @@ object ConcertRepository {
                 }
             }
         }.awaitAll()
-        if (results.all { it == null }) throw ConcertDataException("JVR 官方行程暂不可用")
+        if (results.any { it == null }) throw ConcertDataException(AppText.fromOriginal("JVR 官方行程暂不可用"))
         results.filterNotNull().flatten()
             .distinctBy { "${it.date}:${it.city}" }
             .sortedBy { it.date }
@@ -374,11 +283,15 @@ object ConcertRepository {
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
             connection.outputStream.use { }
             if (connection.responseCode !in 200..299) {
-                throw ConcertDataException("JVR 官方行程暂不可用（HTTP ${connection.responseCode}）")
+                throw ConcertDataException(AppText.fromOriginal("JVR 官方行程暂不可用（HTTP %1\$s）", connection.responseCode))
             }
             val body = connection.inputStream.use { it.boundedBytes(maxBytes) }
-            if (body.size > maxBytes) throw ConcertDataException("JVR 官方行程返回内容过大")
-            return parseOfficialSchedule(body.toString(Charsets.UTF_8))
+            if (body.size > maxBytes) throw ConcertDataException(AppText.fromOriginal("JVR 官方行程返回内容过大"))
+            val html = body.toString(Charsets.UTF_8)
+            if (!html.contains("calendar-content")) {
+                throw ConcertDataException(AppText.fromOriginal("官方行程格式已变化，请稍后重试"))
+            }
+            return parseOfficialSchedule(html)
         } finally {
             connection.disconnect()
         }
@@ -395,82 +308,4 @@ object ConcertRepository {
         return out.toByteArray()
     }
 
-    private fun merge(
-        base: ConcertSnapshot,
-        official: List<OfficialShow>,
-        refreshedAt: ZonedDateTime,
-    ): ConcertSnapshot {
-        val byKey = LinkedHashMap<String, Concert>()
-        base.concerts.forEach { byKey["${it.date}:${it.venue.city}"] = it }
-        val cityTemplates = base.concerts.groupBy { it.venue.city }
-            .mapValues { (_, shows) -> shows.firstOrNull { it.ticketUrl != null } ?: shows.first() }
-
-        official.forEach { item ->
-            val key = "${item.date}:${item.city}"
-            val venue = base.venues[item.city] ?: return@forEach
-            val existing = byKey[key]
-            if (existing != null) {
-                byKey[key] = existing.copy(theme = item.theme.ifBlank { existing.theme })
-                return@forEach
-            }
-            val template = cityTemplates[item.city]
-            byKey[key] = Concert(
-                id = "${item.date}-${citySlugs[item.city] ?: item.city}",
-                tourName = base.tourName,
-                date = item.date,
-                startTime = null,
-                theme = item.theme,
-                venue = venue,
-                ticketState = TicketState.UNKNOWN,
-                ticketPlatform = template?.ticketPlatform,
-                ticketUrl = template?.ticketUrl,
-                saleStartsAt = null,
-                priceRange = null,
-                organizer = template?.organizer,
-                officialUrl = base.source,
-                sourceUrls = listOf(base.source).distinct(),
-                note = "JVR 官方行程新增；票务信息待公布。",
-                updatedAt = base.verifiedAt,
-            )
-        }
-
-        return base.copy(
-            concerts = byKey.values.sortedWith(compareBy({ it.date }, { it.startTime ?: LocalTime.MIDNIGHT })),
-            refreshedAt = refreshedAt,
-        )
-    }
-
-    private fun readCache(context: Context): OfficialCache? {
-        val file = File(context.filesDir, cacheName)
-        if (!file.isFile) return null
-        return runCatching {
-            val root = JSONObject(file.readText())
-            val refreshedAt = ZonedDateTime.parse(root.getString("refreshedAt"))
-            val array = root.optJSONArray("shows") ?: JSONArray()
-            val shows = (0 until array.length()).mapNotNull { index ->
-                val item = array.optJSONObject(index) ?: return@mapNotNull null
-                val date = runCatching { LocalDate.parse(item.getString("date")) }.getOrNull()
-                    ?: return@mapNotNull null
-                val city = item.optString("city").takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                OfficialShow(date, city, item.optString("theme"))
-            }
-            OfficialCache(refreshedAt, shows)
-        }.getOrNull()
-    }
-
-    private fun writeCache(context: Context, shows: List<OfficialShow>, refreshedAt: ZonedDateTime) {
-        val array = JSONArray()
-        shows.forEach { show ->
-            array.put(JSONObject().put("date", show.date.toString()).put("city", show.city).put("theme", show.theme))
-        }
-        val root = JSONObject()
-            .put("refreshedAt", refreshedAt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-            .put("shows", array)
-        runCatching { File(context.filesDir, cacheName).writeText(root.toString()) }
-    }
-
-    private fun JSONObject.text(key: String): String? {
-        if (isNull(key)) return null
-        return optString(key).trim().takeUnless { it.isEmpty() || it == "null" }
-    }
 }

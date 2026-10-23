@@ -8,32 +8,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import love.yu.jaychou.data.Album
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
+
+val LocalMovingAlbumId = staticCompositionLocalOf<String?> { null }
 
 /** A live render-layer snapshot, never a bitmap allocation on the UI thread. */
-data class AlbumOrigin(val windowBounds: Rect, val layer: GraphicsLayer)
+data class AlbumOrigin(
+    val windowBounds: Rect,
+    val layer: GraphicsLayer,
+    val coverBounds: Rect? = null,
+    val currentCoverBounds: () -> Rect? = { null },
+)
 
 @Composable
 fun AlbumMotionSource(
     album: Album,
     onOpen: (Album, AlbumOrigin) -> Unit,
-    content: @Composable (Modifier, () -> Unit) -> Unit,
+    content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
 ) {
-    MotionSource(onOpen = { onOpen(album, it) }, content = content)
+    var coverBounds by remember { mutableStateOf<Rect?>(null) }
+    var coverCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var bounds by remember { mutableStateOf(Rect.Zero) }
+    val layer = rememberGraphicsLayer()
+    val moving = LocalMovingAlbumId.current == album.id
+    val coverCapture = Modifier.onGloballyPositioned {
+        coverCoordinates = it
+        coverBounds = it.boundsInWindow()
+    }
+        .graphicsLayer { alpha = if (moving) 0f else 1f }
+        .drawWithContent {
+            // Retain the exact source crop while the overlay owns the artwork.
+            if (!moving) layer.record { this@drawWithContent.drawContent() }
+            drawLayer(layer)
+        }
+    val capture = Modifier.onGloballyPositioned { bounds = it.boundsInWindow() }
+    content(capture, coverCapture) {
+        onOpen(album, AlbumOrigin(bounds, layer, coverBounds) {
+            coverCoordinates?.takeIf { it.isAttached }?.boundsInWindow()
+        })
+    }
+
 }
 
 @Composable
@@ -46,15 +69,6 @@ fun MotionSource(onOpen: (AlbumOrigin) -> Unit, content: @Composable (Modifier, 
             drawLayer(layer)
         }
     content(capture) { onOpen(AlbumOrigin(bounds, layer)) }
-}
-
-/** Compensate X/Y independently so a wide, short card retains circular screen-space corners. */
-class ProjectedCornerShape(private val radiusPx: Float, private val scaleX: Float, private val scaleY: Float) : Shape {
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val radius = radiusPx.coerceAtMost(minOf(size.width * scaleX, size.height * scaleY) / 2f).coerceAtLeast(0f)
-        return Outline.Rounded(RoundRect(Rect(Offset.Zero, size),
-            CornerRadius(radius / scaleX.coerceAtLeast(.001f), radius / scaleY.coerceAtLeast(.001f))))
-    }
 }
 
 /** The original card fades into the expanding detail surface and back on dismissal. */

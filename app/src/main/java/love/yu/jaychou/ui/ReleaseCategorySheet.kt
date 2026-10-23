@@ -1,5 +1,7 @@
 package love.yu.jaychou.ui
 
+import love.yu.jaychou.data.AppText
+import love.yu.jaychou.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
@@ -18,19 +20,19 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 fun ReleaseCategorySheet(show: Boolean, selected: List<String>, catalog: AlbumCatalog,
                          onDismiss: () -> Unit, onApply: (List<String>) -> Unit) {
     var draft by rememberSaveable(show) { mutableStateOf(selected) }
-    WindowBottomSheet(show = show, title = "专辑分类", onDismissRequest = onDismiss,
-        startAction = { TextButton("取消", onClick = onDismiss) },
-        endAction = { TextButton("确定", enabled = draft.isNotEmpty(), onClick = { onApply(draft); onDismiss() }) },
+    WindowBottomSheet(show = show, title = AppText.get(R.string.ui_album_categories), onDismissRequest = onDismiss,
+        startAction = { TextButton(AppText.get(R.string.ui_cancel), onClick = onDismiss) },
+        endAction = { TextButton(AppText.get(R.string.ui_confirm), enabled = draft.isNotEmpty(), onClick = { onApply(draft); onDismiss() }) },
     ) {
         LazyColumn(Modifier.fillMaxWidth().testTag("category-sheet"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            item("scope") { QuietText("可多选，至少保留一项。演唱会项指已发行唱片，非巡演场次。") }
+            item("scope") { QuietText(AppText.get(R.string.ui_select_one_or_more_categories_live_albums_are_released_recording)) }
             ReleaseCategory.entries.forEach { category ->
                 item(category.name) {
-                    Card(insideMargin = PaddingValues(0.dp), cornerRadius = 20.dp,
+                    Card(insideMargin = PaddingValues(0.dp),
                         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surfaceContainerHigh)) {
                         CheckboxPreference(
                             title = category.label,
-                            summary = "${catalog.albums.count { it.category == category }} 张",
+                            summary = AppText.get(R.string.ui_releases_202, catalog.albums.count { it.category == category }),
                             checkboxLocation = CheckboxLocation.End,
                             checked = category.name in draft,
                             onCheckedChange = { checked ->

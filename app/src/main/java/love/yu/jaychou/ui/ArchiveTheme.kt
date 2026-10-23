@@ -22,6 +22,12 @@ fun AppSettings.isDark(): Boolean = when (theme) {
 
 @Composable
 fun ArchiveTheme(settings: AppSettings, content: @Composable () -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+    val textResources = remember(context, configuration) {
+        context.createConfigurationContext(configuration).resources
+    }
+    love.yu.jaychou.data.AppText.update(textResources)
     val mode = if ((settings.monet && Build.VERSION.SDK_INT >= 31) || settings.customColor != null) {
         when (settings.theme) {
             ThemeMode.SYSTEM -> ColorSchemeMode.MonetSystem
