@@ -2,201 +2,264 @@
 
 <img src="docs/banner.png" alt="杰作 · Jay Archive" width="100%" />
 
-**一本关于周杰伦与音乐作品的口袋档案**
+<br />
 
-按年代翻阅作品，让熟悉的旋律有迹可循。
+**一本关于周杰伦与音乐作品的口袋档案** · 原生 Android 应用
 
-![Version](https://img.shields.io/badge/version-0.3%20Beta-2E7CFB?style=flat-square)
 [![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84?style=flat-square&logo=android&logoColor=white)](https://developer.android.com/about/versions/oreo)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.4.20-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Compose](https://img.shields.io/badge/Jetpack%20Compose-1.11.2-4285F4?style=flat-square&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
-[![Miuix](https://img.shields.io/badge/Miuix-0.9.3-FA5AA9?style=flat-square)](https://github.com/compose-miuix-ui/miuix/tree/v0.9.3)
-[![License](https://img.shields.io/badge/license-Apache--2.0-2E7CFB?style=flat-square)](LICENSE)
-
-[界面预览](#界面预览) · [启动动画](#启动动画) · [功能一览](#功能一览) · [构建与运行](#构建与运行) · [更新日志](#更新日志)
+[![Miuix](https://img.shields.io/badge/Miuix%20UI-0.9.3-FA5AA9?style=flat-square)](https://github.com/compose-miuix-ui/miuix/tree/v0.9.3)
+![Version](https://img.shields.io/badge/version-0.4%20Beta-2E7CFB?style=flat-square)
+[![License](https://img.shields.io/github/license/ShuangYu1145/Jay-Archive?style=flat-square&color=2E7CFB)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/ShuangYu1145/Jay-Archive?style=flat-square&color=FA5AA9)](https://github.com/ShuangYu1145/Jay-Archive/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/ShuangYu1145/Jay-Archive?style=flat-square&color=7F52FF)](https://github.com/ShuangYu1145/Jay-Archive/commits)
 
 </div>
 
-杰作（Jay Archive）是一款原生 Android 粉丝档案应用，以 Kotlin 与 Jetpack Compose 构建，提供 **Miuix / Material Design 3** 两套界面风格。从专辑封面、完整曲序到歌词阅读和演唱会行程，把作品与现场放进同一本口袋档案。
+以周杰伦及其录音室专辑为主题的原生 Android 应用。**Kotlin + Jetpack Compose + Miuix** 重写界面，收录 16 张录音室专辑、175 首曲目的完整目录，另附 26 个已核实的扩展发行版本。三种目录布局、多选分类、歌词阅读、玻璃材质与卡片原位展开动画均已可用。
 
-| 录音室专辑 | 录音室曲目 | 扩展发行版本 | 界面语言 |
-| :--: | :--: | :--: | :--: |
-| **16 张** | **175 首** | **26 个 · 229 首曲目** | **5 种** |
+> 本项目是**离线可读的档案应用**，不提供音乐播放或下载。
 
-> 专辑目录可离线浏览。在线图片、歌词获取与官方行程需要网络；本应用不提供音乐播放或下载。
-
-## 界面预览
-
-2026 年 10 月 24 日实机截图，展示 Miuix 风格下的首页、专辑目录与关于页。点击可查看原图。
+## 📱 界面预览
 
 <table align="center">
   <tr>
-    <td align="center" width="33%">
-      <a href="docs/screenshots/2026-10-24-home.jpg"><img src="docs/screenshots/2026-10-24-home.jpg" width="260" alt="首页：个人资料、周杰伦介绍与作品统计" /></a>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/01-home.jpg" width="210" alt="首页" />
+      <br />
+      <sub><b>首页</b> · 作品概览</sub>
     </td>
-    <td align="center" width="33%">
-      <a href="docs/screenshots/2026-10-24-albums.jpg"><img src="docs/screenshots/2026-10-24-albums.jpg" width="260" alt="介绍页：专辑与演唱会分区、双列专辑网格、搜索与筛选" /></a>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/02-albums-list.jpg" width="210" alt="专辑 · 横向列表" />
+      <br />
+      <sub><b>专辑</b> · 横向列表</sub>
     </td>
-    <td align="center" width="33%">
-      <a href="docs/screenshots/2026-10-24-about.jpg"><img src="docs/screenshots/2026-10-24-about.jpg" width="260" alt="关于页：渐变背景、应用图标、Beta 0.3 版本与项目来源" /></a>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/04-about.jpg" width="210" alt="关于" />
+      <br />
+      <sub><b>关于</b> · 项目与来源</sub>
     </td>
-  </tr>
-  <tr>
-    <td align="center"><b>首页</b><br /><sub>人物介绍 · 作品概览 · 个人资料</sub></td>
-    <td align="center"><b>介绍</b><br /><sub>专辑目录 · 演唱会 · 搜索筛选</sub></td>
-    <td align="center"><b>关于</b><br /><sub>应用信息 · 开发者 · 项目与来源</sub></td>
+        <td align="center" width="25%">
+      <img src="docs/media/jay-launch.gif"
+      width="210" alt="专辑 · 双列网格" />
+      <br />
+      <sub><b>专辑</b> · 双列网格</sub>
+    </td>
   </tr>
 </table>
 
-## 启动动画
+## ✨ 功能特性
 
-「Jay」从第一笔写到收笔线，再淡入首页。手写笔迹跟随当前主题色，深浅主题均可呈现；已完成的动画不会因 Activity 重建而重新播放。
+- **双界面风格**：在设置中切换 Miuix / Material Design 3。两套主题、动态配色、自定义颜色和专辑布局独立保存，专辑与歌词数据共用。详见[界面风格说明](docs/ui-styles.md)。
 
-<div align="center">
-  <a href="docs/media/jay-launch.mp4"><img src="docs/media/jay-launch.gif" width="260" alt="启动动画录屏：逐笔书写 Jay，绘制收笔线后淡入首页" /></a>
-  <p><sub>实机录屏 · 约 2.74 秒 · GIF 循环预览</sub></p>
-</div>
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <b>📚 完整录音室目录</b><br />
+      16 张录音室专辑、175 首曲目，逐专辑保存发行日期、完整曲序、封面与官方来源链接。
+    </td>
+    <td width="50%" valign="top">
+      <b>🗃 扩展发行档案</b><br />
+      另有 26 个已核实的演唱会、EP、单曲与原声发行（229 首曲目），版本差异在详情中逐条注明。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <b>🪟 三种目录布局</b><br />
+      横向列表 / 双列网格 / 大封面卡片，随时切换；每种「分类 × 布局」分别记忆滚动位置。
+    </td>
+    <td width="50%" valign="top">
+      <b>🔍 多选分类筛选</b><br />
+      原生 Miuix 底部面板，按录音室、演唱会、EP、单曲、原声自由组合，至少保留一项，选择持久保存。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <b>🎧 歌词阅读</b><br />
+      按需调用落月 API 的 QQ 音乐歌词接口，自动匹配周杰伦版本；单卡片呈现原文与翻译，支持离线导入 LRC / TXT。
+    </td>
+    <td width="50%" valign="top">
+      <b>🎨 主题与配色</b><br />
+      深浅色跟随系统，支持 Monet 动态取色（Android 12+）与自定义种子色，自动生成 Miuix 调色板。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <b>🎤 巡演现场</b><br />
+      最近场次倒计时、巡演日历按国家/城市/状态筛选；详情包含当地时间与时区、场馆地址、地图导航、票务入口与来源。
+    </td>
+    <td width="50%" valign="top">
+      <b>🔄 官方行程刷新</b><br />
+      启动时向 JVR 官方行程核对最新场次，离线时使用核对快照；不虚构票价、开票时间或售票状态。
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <b>🫧 真实采样模糊</b><br />
+      Miuix Blur 直接采样顶栏与悬浮底栏后方的滚动内容，低版本或关闭开关时自动降级。
+    </td>
+    <td width="50%" valign="top">
+      <b>↩️ 预测性返回</b><br />
+      Android 14+ 手势逐帧预览详情关闭过程，取消即恢复当前详情，支持 Activity 重建。
+    </td>
+  </tr>
+</table>
 
-[查看 MP4 原始录屏](docs/media/jay-launch.mp4)
+## 🫧 视觉与交互
 
-## 功能一览
+- **悬浮胶囊底栏** —— 五个一级页面共用 `HorizontalPager`。点按使用弹簧动画切换，也可直接横滑；沿底栏左右拖动时，选中胶囊跟随手指并轻微伸缩，进度同步给 Pager，松手吸附到最近页面。
+- **卡片原位展开** —— 点击专辑时记录封面在窗口中的真实矩形与 `GraphicsLayer`，详情面板从该矩形弹簧展开，原卡片图层渐变为详情，底层页面轻微后退、底栏淡出；返回时反向收回，**不在主线程截取 Bitmap**。
+- **材质链路** —— `rememberLayerBackdrop` → 页面内容的 `layerBackdrop` → 底栏的 `textureBlur`。捕获层与底栏互为兄弟节点，避免把底栏自身拍进背景；半径 24dp，模糊输出上用常规绘制叠加半透明色层、渐变高光边线与阴影，保证前景文字清晰。
+- **系统 inset** —— 页面宿主只处理横向安全区并裁切窗口边界，顶部系统 inset 由顶栏单独消费；底栏距两侧 28dp、距系统导航区上边缘 12dp，宽屏最大 460dp。
+- **实测动效** —— Compose 时钟驱动，遵循系统动画时长缩放；真正的背景模糊限 API 33+，页面与卡片动画在 API 26+ 可用。拖动胶囊与卡片展开是本项目的自定义 Compose 动效，视觉参考 iOS 式可拖动胶囊与 Android 桌面应用展开，不声称调用系统专有动画。
 
-### 作品与现场
+### 能力与降级
 
-- **完整专辑目录**：收录 16 张录音室专辑及 26 个演唱会、EP、单曲与原声等扩展发行版本，保留发行日期、曲序、封面、版本说明和来源链接。
-- **多种浏览方式**：横向列表、双列网格、大封面卡片三种布局；支持多选发行分类与跨语言名称、别名搜索，记忆列表位置及筛选状态。
-- **主打曲目标记**：在专辑曲目中标记已核对的主打歌，标记依据见[主打曲目说明](docs/lead-tracks.md)。
-- **歌词阅读**：按歌曲与专辑匹配在线歌词，支持原文 / 双语显示，也可导入本地 LRC、TXT 文件。
-- **演唱会行程**：「介绍」内切换专辑与演唱会，联网读取 JVR 官方公布的行程，提供最近场次倒计时、日历与国家 / 城市 / 状态筛选。连接失败可重试，未公布的信息保留待确认状态。
-
-### 外观与体验
-
-- **两套原生界面**：在设置中切换 Miuix / Material Design 3，深浅色、动态配色、自定义颜色与专辑布局按风格独立保存。详见[界面风格说明](docs/ui-styles.md)。
-- **四个底部入口**：首页、介绍、设置、关于；专辑与演唱会集中在「介绍」，分区切换后保留各自的浏览状态。
-- **可选导航样式**：Miuix 支持普通底栏、悬浮底栏及液态玻璃效果；Material Design 3 使用原生 Material 导航栏。
-- **连续的页面动效**：手写启动动画、可拖动胶囊、专辑卡片原位展开与详情返回过渡。
-- **个人资料**：点击首页右上角修改名字和头像；头像保存在应用私有目录，重启后仍可使用。
-- **五种语言**：简体中文、繁体中文、英语、日语、韩语，默认跟随系统，也可单独设置。详见[多语言维护说明](docs/localization.md)。
-
-### 系统适配
-
-| 能力 | 生效条件 | 其他情况 |
+| 能力 | 生效条件 | 降级方式 |
 | :-- | :-- | :-- |
-| Miuix 背景模糊与液态玻璃 | Android 13 / API 33+，启用对应设置 | 使用普通表面与导航样式 |
-| Monet 动态配色 | Android 12 / API 31+，启用动态配色 | 使用自定义颜色或预设配色 |
-| 应用内预测性返回 | Android 14 / API 34+，手势导航，启用对应设置 | 使用常规返回过渡 |
-| 离线目录与本地歌词 | Android 8.0 / API 26+ | 无需联网 |
+| Miuix 背景模糊 | API 33+、模糊开关开启、硬件加速正常 | API 26–32 或关闭开关：实色顶栏与胶囊，保留高光、阴影与选中态 |
+| Monet 系统动态配色 | API 31+、Monet 开关开启 | 关闭或系统过旧：已保存的自定义色；未自定义时使用预设蓝色 |
+| 应用内预测性返回进度 | API 34+、手势导航、设置开关开启 | 按钮返回或关闭开关：常规详情退出过渡 |
+| 系统返回桌面预测动画 | 系统、启动器与手势设置支持 | 系统普通返回 |
 
-<details>
-<summary>动效与兼容实现</summary>
+`miuix-blur` 是 Miuix 仓库本体的独立模块，v0.9.3 Android 模块声明 `minSdk = 33`（高斯模糊、噪声与高光使用 `RuntimeShader`）。为支持 API 26，Manifest **仅对 `top.yukonga.miuix.kmp.blur`** 声明 `tools:overrideLibrary`，所有调用隔离在 `ui/effects/GlassLayer.kt`，入口带 `@RequiresApi(33)` 且外层先检查 SDK 与开关——旧系统不会创建任何 backdrop、highlight 或 shader 对象。
 
-- 卡片展开复用封面的位置与图层，不在主线程截取 Bitmap；滚动与选择状态通过可保存状态恢复。
-- 启动时并行读取设置和专辑目录，首帧就绪后移除系统图标页，随后播放手写动画；缺失绘制信号时有超时回退。
-- Miuix 的模糊与液态玻璃调用隔离在 `ui/effects/`，仅在 API 33+ 且设置允许时创建。Material 风格不创建 Miuix 的背景采样或着色器。
-- Manifest 仅对 `top.yukonga.miuix.kmp.blur` 声明 `tools:overrideLibrary`，低版本设备通过 SDK 检查走降级路径。
+## 🚀 快速开始
 
-</details>
+**环境要求**
 
-## 构建与运行
+- Android Studio（支持 AGP **9.4.1**）
+- **JDK 25** 作为 Gradle Daemon JVM（`gradle/gradle-daemon-jvm.properties` 已固定版本，可自动查找或下载）
+- **Android SDK Platform 37.0** 与 **Build Tools 36.0.0**
+- 设备或模拟器 **Android 8.0 / API 26** 及以上
 
-### 环境
-
-- 支持 **AGP 9.4.1** 的 Android Studio。
-- **JDK 25**：Gradle Daemon 版本由 `gradle/gradle-daemon-jvm.properties` 固定，可自动查找或下载；应用 Java 字节码目标为 17。
-- **Android SDK Platform 37.0**、**Build Tools 36.0.0**。
-- Android 8.0 / API 26 及以上的设备或模拟器。
-
-在 `local.properties` 中配置本机 `sdk.dir`，同步项目后运行 `app` 模块。首次构建需要访问 Google Maven、Maven Central 与 Gradle 分发站点。
+**构建**
 
 ```bash
-./gradlew :app:assembleDebug                    # 构建调试 APK
-./gradlew :app:assembleRelease                  # 构建发布 APK
-./gradlew :app:testDebugUnitTest :app:lintDebug  # 单元测试与静态检查
-./gradlew :app:connectedDebugAndroidTest        # 设备端测试
+# 1. 在 local.properties 中配置 sdk.dir（该文件不属于源码）
+# 2. 同步后运行 app 模块
+
+./gradlew :app:assembleRelease                                 # 打包 APK
+./gradlew :app:assembleDebug                                   # 打包 Debug APK
+./gradlew :app:testDebugUnitTest :app:lintDebug                # 单元测试与静态检查
+./gradlew :app:connectedDebugAndroidTest                       # 设备端验收测试
 ```
 
-Windows 下将 `./gradlew` 替换为 `.\gradlew.bat`。调试安装包位于 `app/build/outputs/apk/debug/app-debug.apk`；正式发布签名需自行配置。
+Windows 下把 `./gradlew` 换成 `.\gradlew.bat`。首次同步需访问 Google Maven、Maven Central 与 Gradle 分发站点。
 
-### 技术栈
+产物位于 `app/build/outputs/apk/debug/app-debug.apk`。这是可安装的 Debug 签名包，正式发布签名由项目所有者配置。
 
-| 项目 | 当前配置 |
-| :-- | :-- |
-| Gradle / Android Gradle Plugin | 9.6.0 / 9.4.1 |
-| Kotlin / Compose Compiler | 2.4.20 / 2.4.20 |
-| Compose UI、Foundation、Animation | 1.11.2 |
-| Miuix UI、Blur、Preference | 0.9.3 |
-| Material Design 3 | 1.4.0 |
-| Activity / Lifecycle Compose | 1.12.4 / 2.10.0 |
-| Preferences DataStore / Coil | 1.2.1 / 2.7.0 |
-| compileSdk / targetSdk / minSdk | 37 / 37 / 26 |
-
-依赖版本集中在 [`gradle/libs.versions.toml`](gradle/libs.versions.toml)。工程采用 AGP 内置 Kotlin 支持，根构建脚本将 Kotlin 版本与 Compose Compiler 对齐。
+## 🧱 技术栈
 
 <details>
-<summary>工程结构</summary>
+<summary><b>固定版本与配置</b></summary>
+
+<br />
+
+| 项目 | 固定版本 / 配置 |
+| :-- | :-- |
+| Gradle Wrapper | 9.6.0，保留分发 SHA-256 校验 |
+| Android Gradle Plugin | 9.4.1，使用内置 Kotlin 支持 |
+| Kotlin / Compose Compiler | 2.4.20 / 2.4.20 |
+| AndroidX Compose UI、Foundation、Animation | 1.11.2 |
+| Material Design 3 | 1.4.0，原生 AndroidX Compose 组件 |
+| Miuix UI / Blur / Preference | 0.9.3 / 0.9.3 / 0.9.3 |
+| Activity Compose | 1.12.4 |
+| Lifecycle Compose | 2.10.0 |
+| Preferences DataStore | 1.2.1 |
+| Coil Compose | 2.7.0 |
+| compileSdk / targetSdk / minSdk | 37 / 37 / 26 |
+| Build Tools / Java 字节码 | 36.0.0 / 17 |
+
+为复现构建，固定采用已核实并实际编译的 Miuix **v0.9.3**，而不是跟随 `main`。上游该标签使用 Kotlin 2.4.0 与 Compose Multiplatform 1.11.1；本工程使用 AndroidX Compose 1.11.2 与更新的同系列 Kotlin 2.4.20，编译时已验证兼容。根 `build.gradle.kts` 显式提升 AGP 内置 KGP 版本以与 Compose Compiler 对齐，不再应用 `org.jetbrains.kotlin.android` 插件。
+
+```kotlin
+implementation("top.yukonga.miuix.kmp:miuix-ui-android:0.9.3")
+implementation("top.yukonga.miuix.kmp:miuix-blur-android:0.9.3")
+implementation("top.yukonga.miuix.kmp:miuix-preference-android:0.9.3")
+```
+
+版本集中在 `gradle/libs.versions.toml`。实际使用 Miuix 的 `MiuixTheme`、`ThemeController`、`ColorSchemeMode`、`Scaffold`、`TopAppBar`、`SmallTopAppBar`、`MiuixScrollBehavior`、`Card`、`SmallTitle`、`BasicComponent`、`Text`、`Button`，以及独立 Preference 模块的 `OverlayDropdownPreference`、`SwitchPreference`、`ArrowPreference`，API 均与 v0.9.3 发布源码对照。
+
+</details>
+
+## 🗂 工程结构
+
+<details>
+<summary><b>目录与关键文件</b></summary>
+
+<br />
 
 ```text
-app/src/main/
-├─ assets/                      # 专辑目录、封面与五语资料
-├─ java/love/yu/jaychou/
-│  ├─ MainActivity.kt           # 启动、首帧准备与系统栏
-│  ├─ data/                     # 专辑、歌词、行程与设置
-│  ├─ navigation/ArchiveApp.kt  # 页面导航、详情与预测返回
+JayChou/
+├─ build.gradle.kts                   # AGP、内置 Kotlin 版本对齐
+├─ settings.gradle.kts                # Google Maven / Maven Central
+├─ gradle/libs.versions.toml          # 固定依赖版本
+├─ gradle/wrapper/                    # 可直接运行的 Wrapper
+├─ app/build.gradle.kts
+├─ app/src/main/AndroidManifest.xml
+├─ app/src/main/assets/
+│  ├─ albums.json                     # 16 张录音室专辑，来源 URL、原始时间戳、完整曲序
+│  ├─ extended-albums.json            # 26 个扩展发行版本，含碟片号与数字版来源
+│  └─ jay-portrait.jpg                # 官方人物宣传照
+├─ app/src/main/java/love/yu/jaychou/
+│  ├─ MainActivity.kt                 # 入口、读取设置、edge-to-edge、系统栏
+│  ├─ data/Album.kt                   # 专辑/曲目模型、目录解析与简介
+│  ├─ data/LyricsRepository.kt        # 在线候选、私有目录导入与 LRC 解析
+│  ├─ data/SettingsRepository.kt      # DataStore 设置持久化
+│  ├─ navigation/ArchiveApp.kt        # 一级页面、详情导航及预测返回
 │  └─ ui/
-│     ├─ screens/               # 首页、介绍、专辑、演唱会、歌词、设置、关于
-│     ├─ designsystem/          # Miuix / Material 3 控件适配
-│     ├─ components/            # 跨页面组件
-│     ├─ navigation/            # 普通、悬浮与可拖动底栏
-│     ├─ animation/             # Jay 手写启动与卡片展开
-│     ├─ effects/               # 背景采样、模糊与液态玻璃
-│     └─ theme/                 # 两套主题与配色
-└─ res/                        # 界面资源与多语言文案
-
-app/src/test/                  # 目录、曲序、语言与歌词等单元测试
-app/src/androidTest/           # 导航、启动、设置、语言与状态恢复测试
-docs/                          # 截图、录屏与维护说明
-scripts/                       # 资料抓取、本地化与交付辅助脚本
+│     ├─ screens/                    # 按功能组织页面及其专用组件
+│     │  ├─ home/                    # 首页、个人资料
+│     │  ├─ introduction/            # 专辑与演唱会的分区容器
+│     │  ├─ albums/                  # 专辑列表/详情、搜索、发行分类面板
+│     │  ├─ concerts/                # 演唱会列表、筛选与详情
+│     │  ├─ lyrics/                  # 歌词阅读、版本选择与导入
+│     │  ├─ settings/                # 设置页、自定义颜色面板
+│     │  └─ about/                   # 关于页
+│     ├─ designsystem/               # Miuix / Material 3 原生控件与主题适配
+│     ├─ components/                 # 跨页面复用的组件
+│     │  ├─ ArchiveComponents.kt     # 图片加载状态、文字与矢量图标
+│     │  ├─ ArchiveScaffold.kt       # 页面顶栏、顶部安全区与分区操作
+│     │  ├─ ArchiveIconButton.kt     # 通用图标按钮
+│     │  ├─ PreferenceComponents.kt  # 共用 Miuix 设置组件
+│     │  └─ SourceLink.kt            # 来源链接
+│     ├─ navigation/                 # 普通底栏、可拖动胶囊与导航项
+│     ├─ animation/                  # 卡片原位展开、启动动画
+│     ├─ effects/                    # 玻璃材质与背景采样
+│     │  ├─ GlassLayer.kt            # API 33+ 模糊入口与上下文
+│     │  └─ liquid/                 # 液态玻璃导航栏、折射与高光
+│     └─ theme/ArchiveTheme.kt       # Miuix 深浅色、跟随系统、Monet
+├─ app/src/test/                      # 专辑完整性、原始曲序、日期转换验证
+├─ app/src/androidTest/               # 导航、重建、设置与预测返回验收
+├─ docs/                              # README 横幅与界面截图
+├─ scripts/fetch_catalog.py           # 官方来源抓取辅助，不参与 Gradle 构建
+├─ scripts/fetch_extended_catalog.py  # 扩展数字版目录抓取与曲序核对
+└─ scripts/package_delivery.py        # 源码交付打包辅助
 ```
 
-</details>
-
-## 资料来源与使用说明
-
-- **专辑资料**：目录随包核对日期为 **2026-10-17**，保留 JVR、Apple Music 等来源链接与版本说明。不同发行版本的曲序、日期分开记录。
-- **图片**：通过 Coil 加载在线封面与人物照，并提供随包素材作为加载中和失败时的回退；失败时可点击重试。
-- **歌词**：在线获取使用[落月 API 的 QQ 音乐歌词接口](https://doc.vkeys.cn/v2/%E9%9F%B3%E4%B9%90%E6%A8%A1%E5%9D%97/QQ%E9%9F%B3%E4%B9%90/8-lyric.html)。匹配会区分录音室与现场版本；未预装商业歌曲歌词，也不保证每首歌曲均能匹配。
-- **演唱会**：以 [JVR 官方行程](https://www.jvrmusic.com/activity/list/1150822038412333056)及主办方、票务平台公告为准。未明确公布的时间、场馆或票务信息不补写推测值。
-- **项目定位**：本项目为非官方粉丝档案，与周杰伦本人、杰威尔音乐及任何唱片公司均无关联。封面、人物照片、歌词及商标的版权归各自权利人所有。
-
-## 更新日志
-
-### 0.3 Beta
-
-- 新增 Miuix / Material Design 3 双界面风格，两套外观偏好独立保存。
-- 底部导航整理为首页、介绍、设置、关于；专辑与演唱会在「介绍」内切换。
-- 新增 Jay 逐笔手写启动动画，优化软件图标阶段的等待与退出衔接。
-- 首页支持自定义名字和头像，关于页更新渐变背景与应用信息。
-- 支持五种界面语言、跨语言搜索及已核对的主打曲目标记。
-- Miuix 底栏支持普通、悬浮与液态玻璃样式，并保留低版本降级。
-
-<details>
-<summary>0.2 Beta · 界面重做与档案扩展</summary>
-
-- 使用 Kotlin、Jetpack Compose 与 Miuix 重做界面。
-- 扩充专辑与发行版本，提供三种目录布局和多选分类筛选。
-- 加入卡片原位展开、背景模糊、自定义配色与预测性返回。
-- 提供在线歌词、双语阅读及本地歌词导入。
-- 加入演唱会行程、最近场次倒计时与日历筛选。
+滚动状态位于导航宿主，使用可保存的 `rememberLazyListState` / `rememberLazyGridState`，不随一级页面卸载而丢失。专辑 key 为官方条目 ID，曲目 key 为专辑 ID + 原始序号，因此重建、预测返回与分类切换后都能回到原位置。
 
 </details>
 
-## 许可与致谢
+## 📚 资料与说明
 
-代码以 [Apache License 2.0](LICENSE) 开源。感谢 [Miuix UI](https://github.com/compose-miuix-ui/miuix)、[Jetpack Compose](https://developer.android.com/jetpack/compose)、[Material Design 3](https://developer.android.com/develop/ui/compose/designsystems/material3)、[Coil](https://github.com/coil-kt/coil) 及落月 API 提供的组件与服务。第三方素材与组件的许可见项目内对应声明。
+- 目录、封面与日期取自官方数字版元数据（Apple Music 等），逐条保存 `sourceUrl` 与原始时间戳，核对日期为 **2026-10-17**。日期存在来源分歧时在详情中明确说明，不默默拼接不同版本的曲目。
+- 封面与人物照通过 Coil 联网加载，显示加载状态；失败时显示占位素材与「离线图片 · 点此重试」。文字与完整目录本身完全离线可用。
+- 在线歌词来自[落月 API](https://doc.vkeys.cn/v2/%E9%9F%B3%E4%B9%90%E6%A8%A1%E5%9D%97/QQ%E9%9F%B3%E4%B9%90/8-lyric.html)的 QQ 音乐歌词接口：先按歌名与专辑匹配周杰伦版本，再读取原文与翻译；匹配会区分现场与录音室版本，请自行核对。**未预装任何商业歌曲歌词**，也不承诺所有歌曲都有在线歌词。
+- 演唱会日期与场馆来自 [JVR 官方行程](https://www.jvrmusic.com/activity/list/1150822038412333056)、[维基百科](https://zh.wikipedia.org/wiki/%E5%98%89%E5%B9%B4%E8%8F%AFII%E4%B8%96%E7%95%8C%E5%B7%A1%E8%BF%B4%E6%BC%94%E5%94%B1%E6%9C%83)及各站票务公告；应用启动时会核对 JVR 的当月官方行程，网络不可用时使用随包快照。票价与售票状态仅在来源明确公布时显示，**最终以主办方和票务平台为准**。
+- 本项目为**非官方粉丝档案**，与周杰伦本人、杰威尔音乐及任何唱片公司均无关联。所有专辑封面、人物照片、歌词与商标版权归各自权利人所有，仅作资料展示用途。
+
+## ⚖️ 许可与致谢
+
+代码以 [Apache License 2.0](LICENSE) 开源。界面组件来自 [Miuix UI](https://github.com/compose-miuix-ui/miuix)（Apache-2.0），在线歌词服务来自 [落月 API](https://doc.vkeys.cn/v2/%E9%9F%B3%E4%B9%90%E6%A8%A1%E5%9D%97/QQ%E9%9F%B3%E4%B9%90/8-lyric.html)（QQ 音乐），构建于 [Jetpack Compose](https://developer.android.com/jetpack/compose) 之上。
 
 <div align="center">
 
-**从 2000 年，听到今天。**
+<br />
+
+**献给我们的青春**
 
 <sub>Made with ❤️ for Jay Chou's music · 非官方项目</sub>
 
