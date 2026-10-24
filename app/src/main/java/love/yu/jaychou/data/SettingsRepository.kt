@@ -17,6 +17,18 @@ enum class ThemeMode(private val sourceLabel: String) {
     val label: String get() = AppText.fromOriginal(sourceLabel)
 }
 
+enum class UiStyle(val label: String) {
+    MIUIX("Miuix"), MATERIAL3("Material Design 3");
+
+    companion object {
+        fun fromStored(value: String?): UiStyle = entries.find { it.name == value } ?: MIUIX
+    }
+}
+
+/** Existing Miuix keys stay compatible; Material owns a separate appearance profile. */
+internal fun appearanceKey(style: UiStyle, name: String): String =
+    if (style == UiStyle.MIUIX) name else "material3_$name"
+
 enum class AlbumLayout(private val sourceLabel: String, private val sourceDescription: String) {
     LIST("横向列表", "小封面在左，专辑信息在右"),
     GRID("双列网格", "两列卡片并排，快速浏览全部专辑"),
@@ -33,45 +45,75 @@ data class AppSettings(
     val albumLayout: AlbumLayout = AlbumLayout.GRID,
     val customColor: Int? = null,
     val albumCategories: List<String> = listOf(ReleaseCategory.STUDIO.name),
+    val userName: String = "",
+    val userAvatarPath: String? = null,
+    val liquidGlass: Boolean = true,
+    val floatingBottomBar: Boolean = true,
+    val uiStyle: UiStyle = UiStyle.MIUIX,
 )
 
 private val Context.settingsDataStore by preferencesDataStore("appearance")
 
 class SettingsRepository(context: Context) {
     private val store = context.applicationContext.settingsDataStore
-    private val themeKey = stringPreferencesKey("theme")
-    private val monetKey = booleanPreferencesKey("monet")
     private val blurKey = booleanPreferencesKey("blur")
+    private val liquidGlassKey = booleanPreferencesKey("liquid_glass")
+    private val floatingBottomBarKey = booleanPreferencesKey("floating_bottom_bar")
     private val predictiveKey = booleanPreferencesKey("predictive_back")
-    private val albumLayoutKey = stringPreferencesKey("album_layout")
-    private val customColorKey = intPreferencesKey("custom_color")
     private val albumCategoriesKey = stringSetPreferencesKey("album_categories")
+    private val userNameKey = stringPreferencesKey("user_name")
+    private val userAvatarKey = stringPreferencesKey("user_avatar")
+    private val uiStyleKey = stringPreferencesKey("ui_style")
 
     val settings = store.data.catch { error ->
         if (error is IOException) emit(emptyPreferences()) else throw error
     }.map { prefs ->
+        val style = UiStyle.fromStored(prefs[uiStyleKey])
         AppSettings(
-            theme = ThemeMode.entries.find { it.name == prefs[themeKey] } ?: ThemeMode.SYSTEM,
-            monet = prefs[monetKey] ?: false,
+            uiStyle = style,
+            theme = ThemeMode.entries.find { it.name == prefs[stringPreferencesKey(appearanceKey(style, "theme"))] } ?: ThemeMode.SYSTEM,
+            monet = prefs[booleanPreferencesKey(appearanceKey(style, "monet"))] ?: (style == UiStyle.MATERIAL3),
             blur = prefs[blurKey] ?: true,
+            liquidGlass = prefs[liquidGlassKey] ?: true,
+            floatingBottomBar = prefs[floatingBottomBarKey] ?: true,
             predictiveBack = prefs[predictiveKey] ?: true,
-            albumLayout = AlbumLayout.entries.find { it.name == prefs[albumLayoutKey] } ?: AlbumLayout.GRID,
-            customColor = prefs[customColorKey],
+            albumLayout = AlbumLayout.entries.find { it.name == prefs[stringPreferencesKey(appearanceKey(style, "album_layout"))] } ?: AlbumLayout.GRID,
+            customColor = prefs[intPreferencesKey(appearanceKey(style, "custom_color"))],
             albumCategories = normalizeAlbumCategories(prefs[albumCategoriesKey].orEmpty()),
+            userName = prefs[userNameKey].orEmpty(),
+            userAvatarPath = prefs[userAvatarKey],
         )
     }
 
     // Update only the changed field, so quick independent changes cannot overwrite each other.
-    suspend fun setTheme(value: ThemeMode) { store.edit { it[themeKey] = value.name } }
-    suspend fun setMonet(value: Boolean) { store.edit { it[monetKey] = value } }
+    suspend fun setUiStyle(value: UiStyle) { store.edit { it[uiStyleKey] = value.name } }
+    suspend fun setTheme(value: ThemeMode) {
+        store.edit { it[stringPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "theme"))] = value.name }
+    }
+    suspend fun setMonet(value: Boolean) {
+        store.edit { it[booleanPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "monet"))] = value }
+    }
     suspend fun setBlur(value: Boolean) { store.edit { it[blurKey] = value } }
+    suspend fun setLiquidGlass(value: Boolean) { store.edit { it[liquidGlassKey] = value } }
+    suspend fun setFloatingBottomBar(value: Boolean) { store.edit { it[floatingBottomBarKey] = value } }
     suspend fun setPredictiveBack(value: Boolean) { store.edit { it[predictiveKey] = value } }
-    suspend fun setAlbumLayout(value: AlbumLayout) { store.edit { it[albumLayoutKey] = value.name } }
+    suspend fun setAlbumLayout(value: AlbumLayout) {
+        store.edit { it[stringPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "album_layout"))] = value.name }
+    }
     suspend fun setAlbumCategories(value: List<String>) {
         store.edit { it[albumCategoriesKey] = normalizeAlbumCategories(value).toSet() }
     }
     suspend fun setCustomColor(value: Int?) {
-        store.edit { if (value == null) it.remove(customColorKey) else it[customColorKey] = value or 0xFF000000.toInt() }
+        store.edit {
+            val key = intPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "custom_color"))
+            if (value == null) it.remove(key) else it[key] = value or 0xFF000000.toInt()
+        }
+    }
+    suspend fun setProfile(name: String, avatarPath: String?) {
+        store.edit {
+            it[userNameKey] = name.trim().take(30)
+            if (avatarPath == null) it.remove(userAvatarKey) else it[userAvatarKey] = avatarPath
+        }
     }
 }
 

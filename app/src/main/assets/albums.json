@@ -10,6 +10,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/2037128764168736768?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/2037180941100781568/%E5%A4%AA%E9%99%BD%E4%B9%8B%E5%AD%90%E5%B0%88%E8%BC%AF%E5%B0%81%E9%9D%A2.jpg",
       "coverAsset": "covers/2037128764168736768.jpg",
+      "leadTrackNumbers": [1, 2, 5, 6, 7, 8, 10, 11, 12],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/太陽之子_(專輯)", "https://www.jvrmusic.com/news/detail/2037136475426000896"],
       "tracks": [
         "太阳之子",
         "西西里",
@@ -35,6 +37,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1551833317039542272?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1641037103418707968/%E5%B0%81%E9%9D%A2(%E6%9C%89%E5%AD%97)%20(002).jpg",
       "coverAsset": "covers/1551833317039542272.jpg",
+      "leadTrackNumbers": [2, 3, 5, 8, 10, 11],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/最偉大的作品"],
       "tracks": [
         "Intro",
         "最伟大的作品",
@@ -59,6 +63,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1150824720824930304?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1150824722091610112/d_pic2.jpg",
       "coverAsset": "covers/1150824720824930304.jpg",
+      "leadTrackNumbers": [1, 4, 6, 8],
+      "leadTrackSources": ["https://www.jvrmusic.com/artist/gallery/detail/1150824720824930304?type=album", "https://zh.wikipedia.org/wiki/周杰倫的床邊故事"],
       "tracks": [
         "床边故事",
         "说走就走",
@@ -81,6 +87,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151759216223064064?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983503407386624/album_carousel_13.jpg",
       "coverAsset": "covers/1151759216223064064.jpg",
+      "leadTrackNumbers": [3, 8, 9, 12],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/哎呦，不錯哦", "https://www.jvrmusic.com/news/detail/1154657981707718656?lang=en_US"],
       "tracks": [
         "阳明山",
         "窃爱",
@@ -105,6 +113,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151769443223867392?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983304018563072/album_carousel_12.jpg",
       "coverAsset": "covers/1151769443223867392.jpg",
+      "leadTrackNumbers": [3, 4, 9],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/12新作", "https://ent.sina.com.cn/y/2012-12-28/17063823373.shtml"],
       "tracks": [
         "四季列车",
         "手语",
@@ -129,6 +139,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151771029539000320?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983176436224000/album_carousel_11.jpg",
       "coverAsset": "covers/1151771029539000320.jpg",
+      "leadTrackNumbers": [1, 3, 5, 8, 10],
+      "leadTrackSources": ["https://www.sonymusic.com.tw/album/驚嘆號-周杰倫-jay-chou-88691903047/"],
       "tracks": [
         "惊叹号",
         "迷魂曲",
@@ -152,6 +164,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151771608675913728?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983020114513920/album_carousel_10.jpg",
       "coverAsset": "covers/1151771608675913728.jpg",
+      "leadTrackNumbers": [1, 2, 3, 6, 11],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/跨時代", "https://www.5music.com.tw/CDList-C.asp?cdno=431425679028"],
       "tracks": [
         "跨时代",
         "说了再见",
@@ -175,6 +189,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151772159916511232?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982897393373184/album_carousel_9.jpg",
       "coverAsset": "covers/1151772159916511232.jpg",
+      "leadTrackNumbers": [2, 6, 7, 11],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/魔杰座", "https://ent.sina.com.cn/y/2008-10-08/03162196152.shtml"],
       "tracks": [
         "龙战骑士",
         "给我一首歌的时间",
@@ -198,6 +214,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151772542550282240?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982773002899456/album_carousel_8.jpg",
       "coverAsset": "covers/1151772542550282240.jpg",
+      "leadTrackNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "leadTrackSources": ["https://www.sonymusic.com.tw/album/我很忙-周杰倫-jay-chou-88697197022/"],
       "tracks": [
         "牛仔很忙",
         "彩虹",
@@ -220,6 +238,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151773902062620672?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982630778245120/album_carousel_6.jpg",
       "coverAsset": "covers/1151773902062620672.jpg",
+      "leadTrackNumbers": [1, 2, 3, 5, 10],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/依然范特西", "https://www.shsmusic.tw/tw/product/show.php?num=112555"],
       "tracks": [
         "夜的第七章",
         "听妈妈的话",
@@ -242,6 +262,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151774270238625792?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982509097291776/album_carousel_7.jpg",
       "coverAsset": "covers/1151774270238625792.jpg",
+      "leadTrackNumbers": [1, 3, 4, 6, 10],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/11月的蕭邦"],
       "tracks": [
         "夜曲",
         "蓝色风暴",
@@ -266,6 +288,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152151605810958336?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982365807284224/album_carousel_5.jpg",
       "coverAsset": "covers/1152151605810958336.jpg",
+      "leadTrackNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      "leadTrackSources": ["https://www.hitoradio.com/newweb//7album", "https://www.kiss.com.tw/music/album.php?id=1040"],
       "tracks": [
         "我的地盘",
         "七里香",
@@ -288,6 +312,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152152148126076928?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982098533650432/album_carousel_4.jpg",
       "coverAsset": "covers/1152152148126076928.jpg",
+      "leadTrackNumbers": [1, 3, 5],
+      "leadTrackSources": ["https://www.jvrmusic.com/artist/gallery/detail/1152152148126076928?type=album", "https://zh.wikipedia.org/wiki/葉惠美"],
       "tracks": [
         "以父之名",
         "懦夫",
@@ -311,6 +337,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152152649680949248?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153981956778758144/album_carousel_3.jpg",
       "coverAsset": "covers/1152152649680949248.jpg",
+      "leadTrackNumbers": [1, 3, 4, 10],
+      "leadTrackSources": ["https://zh.wikipedia.org/wiki/八度空間_(專輯)"],
       "tracks": [
         "半兽人",
         "半岛铁盒",
@@ -333,6 +361,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152155344949088256?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153981839883505664/album_carousel_2.jpg",
       "coverAsset": "covers/1152155344949088256.jpg",
+      "leadTrackNumbers": [3, 5, 9],
+      "leadTrackSources": ["https://music-tw.line.me/album/1018305"],
       "tracks": [
         "爱在西元前",
         "爸 我回来了",
@@ -355,6 +385,8 @@
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152155845522493440?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153981674854420480/album_carousel_1.jpg",
       "coverAsset": "covers/1152155845522493440.jpg",
+      "leadTrackNumbers": [1, 3, 6, 9],
+      "leadTrackSources": ["https://www.hk01.com/眾樂迷/131261/周杰倫首張專輯-jay-17年前今日面世-夠膽講10首都係主打歌"],
       "tracks": [
         "可爱女人",
         "完美主义",

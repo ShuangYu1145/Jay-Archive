@@ -1,11 +1,11 @@
 package love.yu.jaychou
 
+import love.yu.jaychou.ui.theme.ArchiveTheme
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import love.yu.jaychou.data.*
 import love.yu.jaychou.navigation.ArchiveApp
-import love.yu.jaychou.ui.ArchiveTheme
 import org.junit.Rule
 import org.junit.Test
 
@@ -22,7 +22,7 @@ class AlbumSearchNavigationTest {
             }
         }
         settle()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        app.onNodeWithTag("tab-INTRODUCTION").performClick()
         settle()
         app.onNodeWithTag("album-search-open").performClick()
         settle()

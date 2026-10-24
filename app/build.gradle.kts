@@ -11,7 +11,7 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 5
-        versionName = "0.3"
+        versionName = "0.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
     implementation(libs.compose.animation)
+    implementation(libs.compose.material3)
     implementation(libs.compose.tooling.preview)
     implementation(libs.miuix.ui)
     implementation(libs.miuix.icons)

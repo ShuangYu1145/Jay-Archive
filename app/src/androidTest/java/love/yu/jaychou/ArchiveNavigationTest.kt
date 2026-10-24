@@ -22,7 +22,7 @@ class ArchiveNavigationTest {
     @get:Rule val app = createAndroidComposeRule<MainActivity>()
 
     private fun ready() {
-        app.waitUntil(15_000) { app.onAllNodesWithTag("tab-ALBUMS").fetchSemanticsNodes().isNotEmpty() }
+        app.waitUntil(15_000) { app.onAllNodesWithTag("tab-INTRODUCTION").fetchSemanticsNodes().isNotEmpty() }
     }
 
     @Before fun establishGridFixture() {
@@ -37,6 +37,16 @@ class ArchiveNavigationTest {
         }
     }
 
+    private fun openAlbums() {
+        app.onNodeWithTag("tab-INTRODUCTION").performClick()
+        app.onNodeWithTag("tab-ALBUMS").performClick()
+    }
+
+    private fun openConcerts() {
+        app.onNodeWithTag("tab-INTRODUCTION").performClick()
+        app.onNodeWithTag("tab-CONCERTS").performClick()
+    }
+
     private fun selectTheme(label: String) {
         // Position the entire settings group above the floating navigation overlay.
         app.onNodeWithTag("settings-list").performScrollToIndex(5)
@@ -48,7 +58,7 @@ class ArchiveNavigationTest {
 
     @Test fun gridPositionSurvivesTabSwitchDetailBackAndRecreation() {
         ready()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         // Align the whole album row: bringing only its title to the viewport edge
         // can leave that title behind a floating navigation bar on short screens.
         app.onNodeWithTag("albums-grid").performScrollToIndex(15)
@@ -57,7 +67,7 @@ class ArchiveNavigationTest {
         assertTrue("The clicked title must be above the floating bar", titleBounds.bottom < navigationBounds.top)
         app.onNodeWithText("范特西").assertIsDisplayed()
         app.onNodeWithTag("tab-ABOUT").performClick()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         app.onNodeWithText("范特西").assertIsDisplayed().performClick()
         app.onNodeWithTag("album-detail").assertIsDisplayed()
         app.onNodeWithText("范特西").assertIsDisplayed()
@@ -118,7 +128,7 @@ class ArchiveNavigationTest {
         val saved = mutableMapOf<AlbumLayout, Float>()
         AlbumLayout.entries.forEach { layout ->
             chooseAlbumLayout(layout)
-            app.onNodeWithTag("tab-ALBUMS").performClick()
+            openAlbums()
             val card = app.onNodeWithTag(first).fetchSemanticsNode().boundsInRoot
             val viewport = app.onNodeWithTag("root-pager").fetchSemanticsNode().boundsInRoot
             when (layout) {
@@ -144,14 +154,14 @@ class ArchiveNavigationTest {
             app.activityRule.scenario.recreate()
             ready()
             app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
-            app.onNodeWithTag("tab-ALBUMS").performClick()
+            openAlbums()
             app.onNodeWithTag("albums-grid").assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, layout.label))
             app.onNodeWithTag(target).assertIsDisplayed()
             assertTrue("Recreation preserves ${layout.label} position", kotlin.math.abs(catalogScrollPosition() - saved.getValue(layout)) < .001f)
         }
         AlbumLayout.entries.forEach { layout ->
             chooseAlbumLayout(layout)
-            app.onNodeWithTag("tab-ALBUMS").performClick()
+            openAlbums()
             app.onNodeWithTag(target).assertIsDisplayed()
             assertTrue("Each style keeps its own position", kotlin.math.abs(catalogScrollPosition() - saved.getValue(layout)) < .001f)
         }
@@ -176,8 +186,7 @@ class ArchiveNavigationTest {
         app.onNodeWithTag("root-pager").performTouchInput { swipeRight() }
         app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         app.onNodeWithTag("root-pager").performTouchInput { swipeRight() }
-        app.onNodeWithTag("tab-CONCERTS").assertIsSelected()
-        app.onNodeWithTag("root-pager").performTouchInput { swipeRight() }
+        app.onNodeWithTag("tab-INTRODUCTION").assertIsSelected()
         app.onNodeWithTag("tab-ALBUMS").assertIsSelected()
     }
 
@@ -186,7 +195,7 @@ class ArchiveNavigationTest {
         val width = app.onNodeWithTag("root-pager").fetchSemanticsNode().boundsInRoot.width
         app.mainClock.autoAdvance = false
         try {
-            app.onNodeWithTag("tab-ALBUMS").performClick()
+            app.onNodeWithTag("tab-INTRODUCTION").performClick()
             app.mainClock.advanceTimeBy(96)
             app.waitForIdle()
             val left = app.onNodeWithTag("page-ALBUMS").fetchSemanticsNode().boundsInRoot.left
@@ -200,7 +209,7 @@ class ArchiveNavigationTest {
 
     @Test fun detailExpandsFromTheTappedCardAndReturnsToItsPosition() {
         ready()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         val card = app.onNodeWithTag("album-2037128764168736768")
         val sourceWidth = card.fetchSemanticsNode().boundsInRoot.width
         val viewportWidth = app.onNodeWithTag("root-pager").fetchSemanticsNode().boundsInRoot.width
@@ -225,7 +234,7 @@ class ArchiveNavigationTest {
 
     @Test fun detailScrollsFromTheCoverAndTrackCardsAfterReopening() {
         ready()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         val card = app.onNodeWithTag("album-2037128764168736768")
         val gridTop = card.fetchSemanticsNode().boundsInRoot.top
         repeat(2) { attempt ->
@@ -262,7 +271,7 @@ class ArchiveNavigationTest {
     @Test fun predictiveBackCanCancelThenCommitWithoutLosingTheGrid() {
         assumeTrue(Build.VERSION.SDK_INT >= 34)
         ready()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         app.onNodeWithTag("albums-grid").performScrollToNode(hasText("七里香"))
         app.onNodeWithText("七里香").performClick()
         app.onNodeWithTag("album-detail").assertIsDisplayed()
@@ -287,7 +296,7 @@ class ArchiveNavigationTest {
         app.onNodeWithText("七里香").assertIsDisplayed()
     }
     @Test fun releaseCategoriesConfirmCancelAndRestorePosition() {
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         app.onNodeWithTag("albums-grid").performScrollToIndex(7)
         val before = catalogScrollPosition()
         app.onNodeWithTag("release-filter").performClick()
@@ -347,7 +356,7 @@ class ArchiveNavigationTest {
         val fixture = java.io.File(app.activity.cacheDir, "self-authored-lyrics.txt")
         fixture.writeText((1..40).joinToString("\n") { "测试文本第 $it 行，仅用于导航回归。" })
         runBlocking { LyricsRepository.import(app.activity, album, track, android.net.Uri.fromFile(fixture)) }
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         app.onNodeWithTag("album-${album.id}").performClick()
         app.onNodeWithTag("album-detail-list").performScrollToIndex(4)
         val before = detailScrollPosition()
@@ -386,7 +395,7 @@ class ArchiveNavigationTest {
 
     @Test fun concertCalendarOpensDetailAndHidesNavigation() {
         ready()
-        app.onNodeWithTag("tab-CONCERTS").performClick()
+        openConcerts()
         app.waitUntil(15_000) { app.onAllNodesWithTag("concert-featured").fetchSemanticsNodes().isNotEmpty() }
         app.onNodeWithTag("concert-featured").performScrollTo().assertIsDisplayed()
         app.onNodeWithText("巡演日历").performScrollTo().assertIsDisplayed()
@@ -404,7 +413,7 @@ class ArchiveNavigationTest {
     @Test fun headersCoverStatusInsetAndTabPagesAreDistinct() {
         app.onNodeWithTag("top-bar-首页").assertIsDisplayed()
         assertTrue("Header surface includes the status bar", app.onNodeWithTag("top-bar-首页").fetchSemanticsNode().boundsInRoot.top < 1f)
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        openAlbums()
         val albums = AlbumRepository.load(app.activity).albums.filter { it.category == ReleaseCategory.STUDIO }
         val firstDate = app.onNodeWithTag("album-date-${albums[0].id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
         val secondDate = app.onNodeWithTag("album-date-${albums[1].id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
@@ -412,7 +421,7 @@ class ArchiveNavigationTest {
         // cover can be one pixel taller; this is rounding, not a text-row offset.
         assertTrue("Metadata aligns within one physical pixel: ${firstDate.top} vs ${secondDate.top}",
             kotlin.math.abs(firstDate.top - secondDate.top) <= 1.01f)
-        app.onNodeWithTag("tab-CONCERTS").performClick()
+        openConcerts()
         app.onNodeWithTag("tab-CONCERTS").assertIsSelected()
         app.onNodeWithTag("top-bar-演唱会").assertIsDisplayed()
         app.onAllNodes(hasTestTag("albums-grid") and hasAnyAncestor(hasTestTag("page-CONCERTS"))).assertCountEquals(0)

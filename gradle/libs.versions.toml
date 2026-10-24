@@ -2,6 +2,7 @@
 agp = "9.4.1"
 kotlin = "2.4.20"
 compose = "1.11.2"
+material3 = "1.4.0"
 miuix = "0.9.3"
 activity = "1.12.4"
 lifecycle = "2.10.0"
@@ -10,6 +11,7 @@ coil = "2.7.0"
 espresso = "3.7.0"
 
 [libraries]
+compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 miuix-icons = { module = "top.yukonga.miuix.kmp:miuix-icons-android", version.ref = "miuix" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }

@@ -1,5 +1,10 @@
 package love.yu.jaychou
 
+import love.yu.jaychou.ui.animation.AlbumMotionSource
+import love.yu.jaychou.ui.animation.AlbumOrigin
+import love.yu.jaychou.ui.animation.AlbumSourcePreview
+import love.yu.jaychou.ui.animation.LocalMovingAlbumId
+import love.yu.jaychou.ui.components.CatalogImage
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,7 +23,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 import love.yu.jaychou.data.Album
-import love.yu.jaychou.ui.*
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test

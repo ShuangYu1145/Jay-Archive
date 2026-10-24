@@ -29,7 +29,7 @@ class AppLanguageTest {
             }
             try {
                 select(AppLanguage.SIMPLIFIED)
-                clickText("专辑")
+                clickText("介绍")
                 clickText("最伟大的作品")
                 await { hasText("专辑档案") }
                 listOf(

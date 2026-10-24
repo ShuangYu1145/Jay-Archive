@@ -238,6 +238,9 @@
     <string name="ui_appearance">Appearance</string>
     <string name="ui_ui_engine">UI engine</string>
     <string name="ui_floating_navigation_bar">Floating navigation bar</string>
+    <string name="ui_floating_bottom_bar_summary">Turn off to use the standard bottom bar</string>
+    <string name="ui_liquid_glass">Liquid glass</string>
+    <string name="ui_liquid_glass_summary">Requires the floating bottom bar; its material effects are independent of the blur switch</string>
     <string name="ui_drag_along_the_bar_and_release_to_switch_pages">Drag along the bar and release to switch pages</string>
     <string name="ui_enabled">Enabled</string>
     <string name="ui_theme_mode">Theme mode</string>
@@ -245,7 +248,7 @@
     <string name="ui_use_colors_from_your_wallpaper">Use colors from your wallpaper</string>
     <string name="ui_requires_android_12_using_the_app_theme_color_on_this_device">Requires Android 12. Using the app theme color on this device.</string>
     <string name="ui_enable_blur">Enable blur</string>
-    <string name="ui_blur_content_behind_top_bars_and_the_floating_navigation_bar">Blur content behind top bars and the floating navigation bar</string>
+    <string name="ui_blur_content_behind_top_bars_and_the_floating_navigation_bar">Blur content behind top and bottom bars, except liquid glass</string>
     <string name="ui_requires_android_13_using_solid_surfaces_on_this_device">Requires Android 13. Using solid surfaces on this device.</string>
     <string name="ui_custom_color">Custom color</string>
     <string name="ui_monet_is_enabled_system_colors_take_priority">Monet is enabled. System colors take priority.</string>
@@ -253,7 +256,7 @@
     <string name="ui_default_blue">Default blue</string>
     <string name="ui_animations_and_gestures">Animations and gestures</string>
     <string name="ui_page_transitions">Page transitions</string>
-    <string name="ui_swipe_pages_or_drag_the_navigation_bar">Swipe pages or drag the navigation bar</string>
+    <string name="ui_swipe_pages_or_drag_the_navigation_bar">Swipe between pages, or drag the liquid bottom bar</string>
     <string name="ui_swipe">Swipe</string>
     <string name="ui_album_transition">Album transition</string>
     <string name="ui_artwork_moves_independently_as_details_appear_background_blur_in">Artwork moves independently as details appear. Background blur increases when enabled.</string>
@@ -337,4 +340,24 @@
         <item quantity="one">%1$d song</item>
         <item quantity="other">%1$d songs</item>
     </plurals>
+    <string name="ui_introduction">Explore</string>
+    <string name="ui_edit_profile">Edit profile</string>
+    <string name="ui_profile_default_name">Jay fan</string>
+    <string name="ui_profile_name">Name</string>
+    <string name="ui_choose_avatar">Choose photo</string>
+    <string name="ui_remove_avatar">Remove photo</string>
+    <string name="ui_profile_local_note">Your photo and name are saved on this device.</string>
+    <string name="ui_avatar_import_failed">Unable to read this photo. Choose an image smaller than 20 MB.</string>
+    <string name="ui_read_lyrics">Read lyrics</string>
+    <string name="ui_lead_track_read_lyrics">Lead track · Read lyrics</string>
+    <string name="ui_lead_track">Lead track</string>
+    <string name="ui_interface_style">Interface style</string>
+    <string name="ui_interface_style_summary">Switch anytime; each style keeps its own appearance settings</string>
+    <string name="ui_choose_seed_color_for_current_style">Set a custom color for this interface</string>
+    <string name="ui_seed_color_current_style_summary">Used when dynamic colors are off. Only this interface is changed.</string>
+    <string name="ui_default_material_color">Default purple</string>
+    <string name="ui_restore_default_palette">Restore default colors</string>
+    <string name="ui_color_red">Red</string>
+    <string name="ui_color_green">Green</string>
+    <string name="ui_color_blue">Blue</string>
 </resources>

@@ -1,5 +1,9 @@
 package love.yu.jaychou
 
+import love.yu.jaychou.ui.effects.GlassLayer
+import love.yu.jaychou.ui.effects.liquid.lens
+import love.yu.jaychou.ui.navigation.DraggableNavigationBar
+import love.yu.jaychou.ui.theme.ArchiveTheme
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,9 +18,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.platform.app.InstrumentationRegistry
 import love.yu.jaychou.data.AppSettings
-import love.yu.jaychou.ui.ArchiveTheme
-import love.yu.jaychou.ui.DraggableNavigationBar
-import love.yu.jaychou.ui.GlassLayer
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -75,10 +76,10 @@ class LiquidNavigationTest {
         app.mainClock.advanceTimeBy(1500)
         app.waitForIdle()
         app.onNodeWithTag("tab-ABOUT").assertIsSelected()
-        app.onNodeWithTag("tab-ALBUMS").performClick()
+        app.onNodeWithTag("tab-INTRODUCTION").performClick()
         app.mainClock.advanceTimeBy(1500)
         app.waitForIdle()
-        app.onNodeWithTag("tab-ALBUMS").assertIsSelected()
+        app.onNodeWithTag("tab-INTRODUCTION").assertIsSelected()
     }
 
     private fun screenshot(name: String) {

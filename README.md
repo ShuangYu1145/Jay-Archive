@@ -50,6 +50,8 @@
 
 ## ✨ 功能特性
 
+- **双界面风格**：在设置中切换 Miuix / Material Design 3。两套主题、动态配色、自定义颜色和专辑布局独立保存，专辑与歌词数据共用。详见[界面风格说明](docs/ui-styles.md)。
+
 <table>
   <tr>
     <td width="50%" valign="top">
@@ -120,7 +122,7 @@
 | 应用内预测性返回进度 | API 34+、手势导航、设置开关开启 | 按钮返回或关闭开关：常规详情退出过渡 |
 | 系统返回桌面预测动画 | 系统、启动器与手势设置支持 | 系统普通返回 |
 
-`miuix-blur` 是 Miuix 仓库本体的独立模块，v0.9.3 Android 模块声明 `minSdk = 33`（高斯模糊、噪声与高光使用 `RuntimeShader`）。为支持 API 26，Manifest **仅对 `top.yukonga.miuix.kmp.blur`** 声明 `tools:overrideLibrary`，所有调用隔离在 `ui/GlassLayer.kt`，入口带 `@RequiresApi(33)` 且外层先检查 SDK 与开关——旧系统不会创建任何 backdrop、highlight 或 shader 对象。
+`miuix-blur` 是 Miuix 仓库本体的独立模块，v0.9.3 Android 模块声明 `minSdk = 33`（高斯模糊、噪声与高光使用 `RuntimeShader`）。为支持 API 26，Manifest **仅对 `top.yukonga.miuix.kmp.blur`** 声明 `tools:overrideLibrary`，所有调用隔离在 `ui/effects/GlassLayer.kt`，入口带 `@RequiresApi(33)` 且外层先检查 SDK 与开关——旧系统不会创建任何 backdrop、highlight 或 shader 对象。
 
 ## 🚀 快速开始
 
@@ -160,6 +162,7 @@ Windows 下把 `./gradlew` 换成 `.\gradlew.bat`。首次同步需访问 Google
 | Android Gradle Plugin | 9.4.1，使用内置 Kotlin 支持 |
 | Kotlin / Compose Compiler | 2.4.20 / 2.4.20 |
 | AndroidX Compose UI、Foundation、Animation | 1.11.2 |
+| Material Design 3 | 1.4.0，原生 AndroidX Compose 组件 |
 | Miuix UI / Blur / Preference | 0.9.3 / 0.9.3 / 0.9.3 |
 | Activity Compose | 1.12.4 |
 | Lifecycle Compose | 2.10.0 |
@@ -206,20 +209,27 @@ JayChou/
 │  ├─ data/SettingsRepository.kt      # DataStore 设置持久化
 │  ├─ navigation/ArchiveApp.kt        # 一级页面、详情导航及预测返回
 │  └─ ui/
-│     ├─ ArchiveTheme.kt              # Miuix 深浅色、跟随系统、Monet
-│     ├─ HomeScreen.kt
-│     ├─ AlbumScreens.kt              # 横向列表、双列网格、大卡片与详情
-│     ├─ AlbumMotion.kt               # 卡片原位图层与展开预览
-│     ├─ ArchiveScaffold.kt           # 全页面顶栏、模糊采样与顶部安全区
-│     ├─ LyricsScreen.kt              # 版本选择、静态阅读、导入与失败重试
-│     ├─ ReleaseCategorySheet.kt      # Miuix 多选发行分类面板
-│     ├─ CustomColorSheet.kt          # Miuix 颜色选择器
-│     ├─ DraggableNavigationBar.kt    # 胶囊拖动、伸缩、高光与选页
-│     ├─ AboutScreen.kt               # 应用身份与项目资料
-│     ├─ SettingsScreen.kt            # 独立设置页、布局选择与外观/手势
-│     ├─ PreferenceComponents.kt      # 共用原生 Miuix 设置组件
-│     ├─ Components.kt                # 图片加载状态、来源链接、矢量图标
-│     └─ GlassLayer.kt                # API 33+ 真正的背景采样模糊
+│     ├─ screens/                    # 按功能组织页面及其专用组件
+│     │  ├─ home/                    # 首页、个人资料
+│     │  ├─ introduction/            # 专辑与演唱会的分区容器
+│     │  ├─ albums/                  # 专辑列表/详情、搜索、发行分类面板
+│     │  ├─ concerts/                # 演唱会列表、筛选与详情
+│     │  ├─ lyrics/                  # 歌词阅读、版本选择与导入
+│     │  ├─ settings/                # 设置页、自定义颜色面板
+│     │  └─ about/                   # 关于页
+│     ├─ designsystem/               # Miuix / Material 3 原生控件与主题适配
+│     ├─ components/                 # 跨页面复用的组件
+│     │  ├─ ArchiveComponents.kt     # 图片加载状态、文字与矢量图标
+│     │  ├─ ArchiveScaffold.kt       # 页面顶栏、顶部安全区与分区操作
+│     │  ├─ ArchiveIconButton.kt     # 通用图标按钮
+│     │  ├─ PreferenceComponents.kt  # 共用 Miuix 设置组件
+│     │  └─ SourceLink.kt            # 来源链接
+│     ├─ navigation/                 # 普通底栏、可拖动胶囊与导航项
+│     ├─ animation/                  # 卡片原位展开、启动动画
+│     ├─ effects/                    # 玻璃材质与背景采样
+│     │  ├─ GlassLayer.kt            # API 33+ 模糊入口与上下文
+│     │  └─ liquid/                 # 液态玻璃导航栏、折射与高光
+│     └─ theme/ArchiveTheme.kt       # Miuix 深浅色、跟随系统、Monet
 ├─ app/src/test/                      # 专辑完整性、原始曲序、日期转换验证
 ├─ app/src/androidTest/               # 导航、重建、设置与预测返回验收
 ├─ docs/                              # README 横幅与界面截图
@@ -256,7 +266,10 @@ JayChou/
 - 修复专辑详情缓慢起手拖动时偶尔不能滚动：移除详情父容器对 Final 阶段触摸事件的无条件消费，改为详情后方的独立全屏触摸隔离层，展开与收回动画期间也覆盖卡片之外区域。参考 [Compose 事件命中与传播规则](https://developer.android.com/develop/ui/compose/touch-input/pointer-input/understand-gestures#event-dispatching)。
 - 歌词获取改为落月 API 的 QQ 音乐搜索 + 歌词接口，按标题、歌手、专辑及 Live 状态评分匹配；歌词页重做为单一 Miuix 卡片，支持原文/双语切换、加载与失败状态，并保留本地导入与删除。
 - 演唱会页新增最近场次倒计时、按国家/城市/状态筛选的巡演日历，以及带当地时间、时区、场馆地址、地图导航、票务与来源的演出详情；启动时自动核对 JVR 官方行程，网络不可用时回退到核对快照。
-- 新增图标启动动画：系统启动窗口与 Compose 启动画面使用同一枚圆形应用图标，等待设置与专辑目录就绪后再淡入主界面，避免首帧空白或页面突然卡顿。
+- 专辑与演唱会合并到「介绍」底部入口，顶部胶囊栏复用底部导航的玻璃材质与按压、拖动和回弹动画；拖动时仅移动胶囊指示，松手直接切换内容，不带动页面左右移动，分别保留列表位置及筛选状态，两页均支持上下拖动浏览。
+- 首页右上角展示本地头像与名字，点击可修改名字、从系统选择图片或移除头像；头像复制到应用私有目录，重启后仍可显示。
+- 启动时先显示 Android 应用图标，再逐笔书写「Jay」并绘制收笔线，完成后交叉淡入主界面；适配深浅主题及主题色，页面重建后不重复播放已完成的动画。
+- 启动动画由应用首帧触发，并对缺失的绘制信号提供限时回退，避免部分系统不发送启动退出回调时停留在空白界面。
 
 </details>
 

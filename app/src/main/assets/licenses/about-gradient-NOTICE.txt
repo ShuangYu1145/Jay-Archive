@@ -1,0 +1,10 @@
+About page gradient attribution
+
+Visual reference: 1812z/HyperIsland, AboutPage.kt.
+Source: https://github.com/1812z/HyperIsland/blob/b25f8992f1196fdd5d4aeb6069e6ef564b421b18/android/app/src/main/kotlin/io/github/hyperisland/compose/page/AboutPage.kt
+Retrieved: 2026-10-24
+Copyright (c) 2026 1812z. MIT license retained in HyperIsland-MIT.txt.
+
+Local implementation: cached blue/pink/violet radial brushes, a seamless
+48-second drift, app-theme-aware dark colors, lifecycle and selected-page
+animation gating, scroll fading, and Jay Archive's existing artwork/content.

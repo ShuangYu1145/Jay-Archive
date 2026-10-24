@@ -238,6 +238,9 @@
     <string name="ui_appearance">デザイン</string>
     <string name="ui_ui_engine">UI エンジン</string>
     <string name="ui_floating_navigation_bar">フローティングナビゲーション</string>
+    <string name="ui_floating_bottom_bar_summary">オフにすると通常のボトムバーを使用します</string>
+    <string name="ui_liquid_glass">リキッドグラス</string>
+    <string name="ui_liquid_glass_summary">フローティングボトムバーが必要です。質感の効果はぼかし設定に影響されません</string>
     <string name="ui_drag_along_the_bar_and_release_to_switch_pages">バーを左右にドラッグし、指を離すとページが切り替わります</string>
     <string name="ui_enabled">有効</string>
     <string name="ui_theme_mode">テーマモード</string>
@@ -245,7 +248,7 @@
     <string name="ui_use_colors_from_your_wallpaper">壁紙の色を使用します</string>
     <string name="ui_requires_android_12_using_the_app_theme_color_on_this_device">Android 12以降に対応。この端末ではアプリのテーマカラーを使用します。</string>
     <string name="ui_enable_blur">ぼかしを有効にする</string>
-    <string name="ui_blur_content_behind_top_bars_and_the_floating_navigation_bar">トップバーとフローティングナビゲーションの背後をぼかします</string>
+    <string name="ui_blur_content_behind_top_bars_and_the_floating_navigation_bar">リキッドグラスを除き、トップバーとボトムバーの背後をぼかします</string>
     <string name="ui_requires_android_13_using_solid_surfaces_on_this_device">Android 13以降に対応。この端末では単色の背景を使用します。</string>
     <string name="ui_custom_color">カスタムカラー</string>
     <string name="ui_monet_is_enabled_system_colors_take_priority">Monet が有効なため、システムの色を優先します。</string>
@@ -253,7 +256,7 @@
     <string name="ui_default_blue">既定の青</string>
     <string name="ui_animations_and_gestures">アニメーションとジェスチャー</string>
     <string name="ui_page_transitions">ページ切り替え</string>
-    <string name="ui_swipe_pages_or_drag_the_navigation_bar">ページのスワイプとナビゲーションバーのドラッグが連動します</string>
+    <string name="ui_swipe_pages_or_drag_the_navigation_bar">横スワイプ、またはリキッドボトムバーのドラッグでページを切り替えます</string>
     <string name="ui_swipe">スワイプ</string>
     <string name="ui_album_transition">アルバムを開く動作</string>
     <string name="ui_artwork_moves_independently_as_details_appear_background_blur_in">ジャケットと詳細がそれぞれ展開します。ぼかしが有効な場合、背景が徐々にぼけます。</string>
@@ -337,4 +340,24 @@
         <item quantity="one">楽曲 %1$d 件</item>
         <item quantity="other">楽曲 %1$d 件</item>
     </plurals>
+    <string name="ui_introduction">紹介</string>
+    <string name="ui_edit_profile">プロフィールを編集</string>
+    <string name="ui_profile_default_name">ジェイファン</string>
+    <string name="ui_profile_name">名前</string>
+    <string name="ui_choose_avatar">写真を選択</string>
+    <string name="ui_remove_avatar">写真を削除</string>
+    <string name="ui_profile_local_note">写真と名前はこの端末に保存されます。</string>
+    <string name="ui_avatar_import_failed">写真を読み込めません。20 MB 以下の画像を選択してください。</string>
+    <string name="ui_read_lyrics">歌詞を読む</string>
+    <string name="ui_lead_track_read_lyrics">リード曲 · 歌詞を読む</string>
+    <string name="ui_lead_track">リード曲</string>
+    <string name="ui_interface_style">UIスタイル</string>
+    <string name="ui_interface_style_summary">各スタイルの外観設定を個別に保存して切り替え</string>
+    <string name="ui_choose_seed_color_for_current_style">現在のスタイル専用の色を選択</string>
+    <string name="ui_seed_color_current_style_summary">ダイナミックカラーがオフのとき、このスタイルだけに適用します。</string>
+    <string name="ui_default_material_color">標準のパープル</string>
+    <string name="ui_restore_default_palette">標準の配色に戻す</string>
+    <string name="ui_color_red">赤</string>
+    <string name="ui_color_green">緑</string>
+    <string name="ui_color_blue">青</string>
 </resources>

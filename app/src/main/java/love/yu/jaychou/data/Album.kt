@@ -12,6 +12,7 @@ data class Track(
     val number: Int, val title: String, val disc: Int = 1, val sourceTrackNumber: Int = number,
     val originalTitle: String = title,
     val searchAliases: List<String> = emptyList(),
+    val isLeadTrack: Boolean = false,
 )
 
 data class Album(
@@ -64,6 +65,10 @@ object AlbumRepository {
         val albums = (0 until array.length()).map { index ->
             val item = array.getJSONObject(index)
             val songs = item.getJSONArray("tracks")
+            val leadTracks = item.optJSONArray("leadTrackNumbers")?.let { numbers ->
+                (0 until numbers.length()).map { numbers.getInt(it) }.toSet()
+            }.orEmpty()
+            require(leadTracks.all { it in 1..songs.length() }) { "Invalid lead track number" }
             Album(
                 id = item.getString("id"), title = item.getString("title"),
                 englishTitle = item.getString("englishTitle"),
@@ -73,8 +78,9 @@ object AlbumRepository {
                 coverAsset = item.getString("coverAsset"),
                 tracks = (0 until songs.length()).map {
                     val song = songs.optJSONObject(it)
-                    if (song == null) Track(it + 1, songs.getString(it))
-                    else Track(it + 1, song.getString("title"), song.optInt("disc", 1), song.optInt("sourceTrackNumber", it + 1))
+                    if (song == null) Track(it + 1, songs.getString(it), isLeadTrack = it + 1 in leadTracks)
+                    else Track(it + 1, song.getString("title"), song.optInt("disc", 1), song.optInt("sourceTrackNumber", it + 1),
+                        isLeadTrack = it + 1 in leadTracks || song.optBoolean("isLeadTrack", false))
                 },
                 category = ReleaseCategory.entries.find { it.name == item.optString("category") } ?: ReleaseCategory.STUDIO,
                 sourceLabel = item.optString("sourceLabel", "杰威尔音乐"),

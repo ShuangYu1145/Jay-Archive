@@ -1,5 +1,22 @@
 package love.yu.jaychou.navigation
 
+import love.yu.jaychou.ui.animation.AlbumOrigin
+import love.yu.jaychou.ui.animation.AlbumSourcePreview
+import love.yu.jaychou.ui.animation.LocalMovingAlbumId
+import love.yu.jaychou.ui.components.AlbumCoverShape
+import love.yu.jaychou.ui.components.CatalogImage
+import love.yu.jaychou.ui.components.LocalArchiveBlur
+import love.yu.jaychou.ui.effects.GlassLayer
+import love.yu.jaychou.ui.effects.LocalArchiveLiquidGlass
+import love.yu.jaychou.ui.navigation.ArchiveBottomNavigationBar
+import love.yu.jaychou.ui.screens.about.AboutScreen
+import love.yu.jaychou.ui.screens.albums.AlbumDetailScreen
+import love.yu.jaychou.ui.screens.albums.AlbumsScreen
+import love.yu.jaychou.ui.screens.concerts.ConcertsScreen
+import love.yu.jaychou.ui.screens.home.HomeScreen
+import love.yu.jaychou.ui.screens.introduction.IntroductionScreen
+import love.yu.jaychou.ui.screens.lyrics.LyricsScreen
+import love.yu.jaychou.ui.screens.settings.SettingsScreen
 import love.yu.jaychou.data.AppText
 import love.yu.jaychou.R
 import android.os.Build
@@ -21,6 +38,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -42,15 +60,14 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.*
 import love.yu.jaychou.data.*
-import love.yu.jaychou.ui.*
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.Card
-import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.theme.MiuixTheme
+import love.yu.jaychou.ui.designsystem.Button
+import love.yu.jaychou.ui.designsystem.Card
+import love.yu.jaychou.ui.designsystem.Text
+import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-private enum class RootPage { HOME, ALBUMS, CONCERTS, SETTINGS, ABOUT }
+private enum class RootPage { HOME, INTRODUCTION, SETTINGS, ABOUT }
 
 /** Every tab tap, page swipe and bottom-bar scrub shares the same pager state. */
 private class PageMotion(private val pager: PagerState, private val scope: CoroutineScope) {
@@ -58,6 +75,10 @@ private class PageMotion(private val pager: PagerState, private val scope: Corou
     fun select(index: Int) {
         job?.cancel()
         job = scope.launch { pager.animateScrollToPage(index, animationSpec = spring(dampingRatio = .9f, stiffness = 400f)) }
+    }
+    fun snap(index: Int) {
+        job?.cancel()
+        job = scope.launch { pager.scrollToPage(index) }
     }
     fun scrub(position: Float) {
         job?.cancel()
@@ -75,15 +96,22 @@ fun ArchiveApp(
     onAlbumCategories: (List<String>) -> Unit,
     onCustomColor: (Int?) -> Unit,
     error: String?, onDismissError: () -> Unit,
+    onLiquidGlass: (Boolean) -> Unit = {},
+    onFloatingBottomBar: (Boolean) -> Unit = {},
+    onUiStyle: (UiStyle) -> Unit = {},
 ) {
+    val miuix = settings.uiStyle == UiStyle.MIUIX
+    val useBlur = miuix && settings.blur
     val homeState = rememberLazyListState()
     val albumStateHolder = rememberSaveableStateHolder()
     val categories = settings.albumCategories
     val settingsState = rememberLazyListState()
     val aboutState = rememberLazyListState()
     val pager = rememberPagerState(pageCount = { RootPage.entries.size })
+    val introductionPager = rememberPagerState(pageCount = { 2 })
     val scope = rememberCoroutineScope()
     val pageMotion = remember(pager, scope) { PageMotion(pager, scope) }
+    val introductionMotion = remember(introductionPager, scope) { PageMotion(introductionPager, scope) }
     var detailId by rememberSaveable { mutableStateOf<String?>(null) }
     var searchTrackNumber by rememberSaveable { mutableStateOf<Int?>(null) }
     var albumSearchOpen by remember { mutableStateOf(false) }
@@ -111,14 +139,15 @@ fun ArchiveApp(
         derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen && !albumSearchOpen }
     }
     val predictiveSupported = Build.VERSION.SDK_INT >= 34 && settings.predictiveBack
-    val background = MiuixTheme.colorScheme.background
+    val background = ArchiveUiTheme.colorScheme.background
     val density = LocalDensity.current
     val navInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    var navHeightPx by remember { mutableIntStateOf(with(density) { 76.dp.roundToPx() }) }
-    val bottom = with(density) { navHeightPx.toDp() } + navInset + 38.dp
+    var navHeightPx by remember { mutableIntStateOf(with(density) { (96.dp + navInset).roundToPx() }) }
+    val bottom = with(density) { navHeightPx.toDp() } + 16.dp
+    val liquidGlass = miuix && settings.liquidGlass && settings.floatingBottomBar && Build.VERSION.SDK_INT >= 33
 
     fun openAlbum(album: Album, source: AlbumOrigin) {
-        if (detailShown || pager.isScrollInProgress || hostSize.width == 0 || hostSize.height == 0) return
+        if (detailShown || pager.isScrollInProgress || introductionPager.isScrollInProgress || hostSize.width == 0 || hostSize.height == 0) return
         val bounds = source.windowBounds
         val cover = source.coverBounds ?: bounds
         albumSource = source
@@ -180,7 +209,7 @@ fun ArchiveApp(
                     scaleX = 1f - depth * .035f
                     scaleY = 1f - depth * .035f
                     alpha = 1f - depth * .12f
-                    renderEffect = if (Build.VERSION.SDK_INT >= 33 && settings.blur && depth > .001f) {
+                    renderEffect = if (Build.VERSION.SDK_INT >= 33 && useBlur && depth > .001f) {
                         BlurEffect(18.dp.toPx() * depth, 18.dp.toPx() * depth, TileMode.Clamp)
                     } else null
                 }.then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier)) {
@@ -192,29 +221,43 @@ fun ArchiveApp(
                     ) { page ->
                         Box(Modifier.fillMaxSize().background(background).testTag("page-${RootPage.entries[page].name}")) {
                             when (RootPage.entries[page]) {
-                                RootPage.HOME -> HomeScreen(catalog, homeState, bottom, ::openAlbum, { pageMotion.select(1) })
-                                RootPage.ALBUMS -> albumStateHolder.SaveableStateProvider("${settings.albumLayout.name}-${categories.sorted().joinToString()}") {
-                                    val albumState = rememberLazyGridState()
-                                    AlbumsScreen(catalog, settings.albumLayout, albumState, bottom, ::openAlbum,
-                                        categories, onAlbumCategories,
-                                        onSearchSong = { album, track, origin ->
-                                            openAlbum(album, origin)
-                                            if (detailId == album.id) searchTrackNumber = track.number
-                                        },
-                                        onSearchVisibility = { albumSearchOpen = it },
-                                        searchInteractive = !detailShown,
-                                    )
+                                RootPage.HOME -> HomeScreen(catalog, homeState, bottom, ::openAlbum, {
+                                    introductionMotion.select(0)
+                                    pageMotion.select(1)
+                                }, profile = settings)
+                                RootPage.INTRODUCTION -> IntroductionScreen(
+                                    pager = introductionPager,
+                                    enabled = !detailShown && !concertDetailOpen && !albumSearchOpen,
+                                    headerVisible = !albumSearchOpen && !concertDetailOpen,
+                                    onSelect = introductionMotion::snap,
+                                ) { section ->
+                                    Box(Modifier.fillMaxSize().testTag(if (section == 0) "page-ALBUMS" else "page-CONCERTS")) {
+                                        if (section == 0) albumStateHolder.SaveableStateProvider("${settings.albumLayout.name}-${categories.sorted().joinToString()}") {
+                                            val albumState = rememberLazyGridState()
+                                            AlbumsScreen(catalog, settings.albumLayout, albumState, bottom, ::openAlbum,
+                                                categories, onAlbumCategories,
+                                                onSearchSong = { album, track, origin ->
+                                                    openAlbum(album, origin)
+                                                    if (detailId == album.id) searchTrackNumber = track.number
+                                                },
+                                                onSearchVisibility = { albumSearchOpen = it },
+                                                searchInteractive = !detailShown,
+                                                sectionHeader = true,
+                                            )
+                                        } else ConcertsScreen(bottom,
+                                            onDetailVisibility = { concertDetailOpen = it },
+                                            sectionHeader = true)
+                                    }
                                 }
-                                RootPage.CONCERTS -> ConcertsScreen(bottom,
-                                    onDetailVisibility = { concertDetailOpen = it })
                                 RootPage.SETTINGS -> SettingsScreen(settings, settingsState, bottom,
-                                    onTheme, onMonet, onBlur, onPredictive, onAlbumLayout, onCustomColor)
-                                RootPage.ABOUT -> AboutScreen(aboutState, bottom)
+                                    onTheme, onMonet, onBlur, onPredictive, onAlbumLayout, onCustomColor,
+                                    onLiquidGlass, onFloatingBottomBar, onUiStyle)
+                                RootPage.ABOUT -> AboutScreen(aboutState, bottom, active = pager.currentPage == page)
                             }
                         }
                     }
                 }
-                if (detailShown && settings.blur) {
+                if (detailShown && useBlur) {
                     Box(Modifier.fillMaxSize().graphicsLayer {
                         alpha = (expansion.value - backProgress.value * .25f).coerceIn(0f, 1f) * .16f
                     }.background(androidx.compose.ui.graphics.Color.Black))
@@ -254,14 +297,14 @@ fun ArchiveApp(
                 }
             }
             if (navigationVisible) {
-                DraggableNavigationBar(
+                ArchiveBottomNavigationBar(
+                    settings = settings,
                     selectedIndex = pager.targetPage,
                     pagePosition = { pager.currentPage + pager.currentPageOffsetFraction },
                     onSelect = pageMotion::select, onScrub = pageMotion::scrub,
-                    glass = glass, enabled = !detailShown && !concertDetailOpen,
+                    enabled = !detailShown && !concertDetailOpen,
                     modifier = Modifier.align(Alignment.BottomCenter)
-                        .padding(start = 28.dp, end = 28.dp, bottom = navInset + 12.dp)
-                        .widthIn(max = 460.dp).fillMaxWidth().onSizeChanged { navHeightPx = it.height }
+                        .onSizeChanged { navHeightPx = it.height }
                         .graphicsLayer { alpha = 1f - expansion.value.coerceIn(0f, 1f); translationY = expansion.value * 24.dp.toPx() }
                         .then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier),
                 )
@@ -275,13 +318,14 @@ fun ArchiveApp(
         }
     }
     CompositionLocalProvider(
-        LocalArchiveBlur provides settings.blur,
+        LocalArchiveBlur provides useBlur,
+        LocalArchiveLiquidGlass provides liquidGlass,
         LocalMovingAlbumId provides if (detailShown) lastDetailId else null,
     ) {
-    if (Build.VERSION.SDK_INT >= 33 && settings.blur) {
+    if (Build.VERSION.SDK_INT >= 33 && (useBlur || liquidGlass)) {
         GlassLayer(background, scene)
     } else {
-        scene(Modifier, Modifier.background(MiuixTheme.colorScheme.surfaceContainer))
+        scene(Modifier, Modifier.background(ArchiveUiTheme.colorScheme.surfaceContainer))
     }
 }
 }
@@ -298,7 +342,7 @@ private fun AnimatedAlbumPanel(
 ) {
     var destination by remember(album.id) { mutableStateOf<Rect?>(null) }
     val density = LocalDensity.current
-    val background = MiuixTheme.colorScheme.background
+    val background = ArchiveUiTheme.colorScheme.background
     val progress = { (expansion.value - back.value * .25f).coerceIn(0f, 1f) }
     // Shield the pager while leaving the detail and its own scrolling interactive.
     Box(Modifier.fillMaxSize().pointerInput(Unit) {
@@ -343,7 +387,7 @@ private fun AnimatedAlbumPanel(
                         translationX = start.left * (1f - q) + target.left * q
                         translationY = start.top * (1f - q) + target.top * q
                         alpha = if (q < .999f) 1f else 0f
-                    }.clearAndSetSemantics { },
+                    }.clip(AlbumCoverShape).clearAndSetSemantics { },
             ) {
                 val sourceLayer = source?.layer?.takeIf { it.size.width > 0 && it.size.height > 0 }
                 CatalogImage(
@@ -382,7 +426,7 @@ private fun AnimatedArchivePanel(
         translationX = origin[0] * size.width * (1f - q) + direction * p * size.width * .24f
         translationY = origin[1] * size.height * (1f - q) + p * size.height * .04f
         shadowElevation = 12.dp.toPx() * (1f - q) + p * 18.dp.toPx()
-    }.background(MiuixTheme.colorScheme.background).testTag(tag)) {
+    }.background(ArchiveUiTheme.colorScheme.background).testTag(tag)) {
         Box(Modifier.fillMaxSize().graphicsLayer {
             alpha = if (layer == null) 1f else ((expansion.value - .12f) / .55f).coerceIn(0f, 1f)
         }) { content() }

@@ -237,7 +237,10 @@
     <string name="ui_album_layout">专辑列表样式</string>
     <string name="ui_appearance">主题风格</string>
     <string name="ui_ui_engine">UI 引擎</string>
-    <string name="ui_floating_navigation_bar">悬浮底栏</string>
+    <string name="ui_floating_navigation_bar">悬浮底部栏</string>
+    <string name="ui_floating_bottom_bar_summary">关闭后使用普通底部栏</string>
+    <string name="ui_liquid_glass">液态玻璃</string>
+    <string name="ui_liquid_glass_summary">开启悬浮底部栏后生效，材质效果不受模糊开关影响</string>
     <string name="ui_drag_along_the_bar_and_release_to_switch_pages">沿底栏左右拖动，松手切换页面</string>
     <string name="ui_enabled">已启用</string>
     <string name="ui_theme_mode">主题模式</string>
@@ -245,7 +248,7 @@
     <string name="ui_use_colors_from_your_wallpaper">使用系统壁纸配色</string>
     <string name="ui_requires_android_12_using_the_app_theme_color_on_this_device">Android 12 起支持；当前使用应用主题色</string>
     <string name="ui_enable_blur">启用模糊</string>
-    <string name="ui_blur_content_behind_top_bars_and_the_floating_navigation_bar">模糊所有顶部栏与悬浮底栏后方的内容</string>
+    <string name="ui_blur_content_behind_top_bars_and_the_floating_navigation_bar">模糊顶部栏与底部栏后方的内容，液态玻璃除外</string>
     <string name="ui_requires_android_13_using_solid_surfaces_on_this_device">需要 Android 13；当前使用实色材质</string>
     <string name="ui_custom_color">自定义颜色</string>
     <string name="ui_monet_is_enabled_system_colors_take_priority">Monet 已开启，当前优先使用系统颜色</string>
@@ -253,7 +256,7 @@
     <string name="ui_default_blue">预设蓝色</string>
     <string name="ui_animations_and_gestures">动画与手势</string>
     <string name="ui_page_transitions">页面切换</string>
-    <string name="ui_swipe_pages_or_drag_the_navigation_bar">横向滑动与底栏拖动联动</string>
+    <string name="ui_swipe_pages_or_drag_the_navigation_bar">横向滑动切换页面，液态底栏支持拖动切换</string>
     <string name="ui_swipe">滑动</string>
     <string name="ui_album_transition">专辑展开</string>
     <string name="ui_artwork_moves_independently_as_details_appear_background_blur_in">封面独立移动，内容并行展开；开启模糊时背景渐进虚化</string>
@@ -337,4 +340,24 @@
         <item quantity="one">%1$d 首歌曲</item>
         <item quantity="other">%1$d 首歌曲</item>
     </plurals>
+    <string name="ui_introduction">介绍</string>
+    <string name="ui_edit_profile">编辑资料</string>
+    <string name="ui_profile_default_name">杰迷</string>
+    <string name="ui_profile_name">名字</string>
+    <string name="ui_choose_avatar">选择头像</string>
+    <string name="ui_remove_avatar">移除头像</string>
+    <string name="ui_profile_local_note">头像和名字仅保存在本机。</string>
+    <string name="ui_avatar_import_failed">无法读取头像，请选择 20 MB 以内的图片。</string>
+    <string name="ui_read_lyrics">阅读歌词</string>
+    <string name="ui_lead_track_read_lyrics">主打曲 · 阅读歌词</string>
+    <string name="ui_lead_track">主打曲</string>
+    <string name="ui_interface_style">界面风格</string>
+    <string name="ui_interface_style_summary">两套界面分别保存外观设置，随时切换</string>
+    <string name="ui_choose_seed_color_for_current_style">为当前界面设置独立的自定义配色</string>
+    <string name="ui_seed_color_current_style_summary">关闭动态配色时使用；仅改变当前界面的配色。</string>
+    <string name="ui_default_material_color">默认紫色</string>
+    <string name="ui_restore_default_palette">恢复默认配色</string>
+    <string name="ui_color_red">红</string>
+    <string name="ui_color_green">绿</string>
+    <string name="ui_color_blue">蓝</string>
 </resources>
