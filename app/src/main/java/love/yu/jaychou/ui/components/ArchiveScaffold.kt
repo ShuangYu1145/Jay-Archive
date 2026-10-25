@@ -56,10 +56,11 @@ fun ArchiveScaffold(
         }
     }
     val background = ArchiveUiTheme.colorScheme.background
+    val pageBackground = ArchiveUiTheme.pageBackground
     if (ArchiveUiTheme.isMaterial) {
         androidx.compose.material3.Scaffold(
             modifier = Modifier.fillMaxSize().clipToBounds(),
-            containerColor = background, contentWindowInsets = WindowInsets(0),
+            containerColor = pageBackground, contentWindowInsets = WindowInsets(0),
             topBar = {
                 val bar = Modifier.testTag("top-bar-$title")
                 when {
@@ -73,14 +74,14 @@ fun ArchiveScaffold(
                 }
             },
         ) { padding ->
-            Box(Modifier.fillMaxSize().clipToBounds().background(background)) { content(padding) }
+            Box(Modifier.fillMaxSize().clipToBounds().background(pageBackground)) { content(padding) }
         }
         return
     }
     val scene: @Composable (Modifier, Modifier) -> Unit = { capture, header ->
         Scaffold(
             modifier = Modifier.fillMaxSize().clipToBounds(),
-            containerColor = background, contentWindowInsets = WindowInsets(0),
+            containerColor = pageBackground, contentWindowInsets = WindowInsets(0),
             topBar = {
                 val bar = header.testTag("top-bar-$title")
                 if (sectionHeader) Row(
@@ -100,7 +101,7 @@ fun ArchiveScaffold(
                     navigationIcon = navigationIcon, actions = actions, defaultWindowInsetsPadding = true)
             },
         ) { padding ->
-            Box(Modifier.fillMaxSize().clipToBounds().then(capture).background(background)) { content(padding) }
+            Box(Modifier.fillMaxSize().clipToBounds().then(capture).background(pageBackground)) { content(padding) }
         }
     }
     // Section actions sample only the sibling list, never the toolbar containing themselves.
@@ -113,7 +114,7 @@ fun ArchiveScaffold(
 internal fun SectionHeaderActions(content: @Composable RowScope.() -> Unit) {
     val backdrop = LocalNavigationBackdrop.current
     if (ArchiveUiTheme.isMaterial) {
-        Row(Modifier.height(64.dp).testTag("introduction-actions"),
+        Row(Modifier.width(96.dp).height(64.dp).testTag("introduction-actions"),
             verticalAlignment = Alignment.CenterVertically, content = content)
         return
     }

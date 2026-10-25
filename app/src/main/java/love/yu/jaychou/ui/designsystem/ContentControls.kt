@@ -15,6 +15,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
+import love.yu.jaychou.ui.effects.backgroundCardBlur
+import love.yu.jaychou.ui.effects.backgroundCardBlurEnabled
+import love.yu.jaychou.ui.effects.BackgroundBlurSurfaceAlpha
 
 /** Native controls selected at the presentation boundary; screen/data state is shared. */
 @Composable
@@ -55,17 +58,21 @@ fun Card(
     showIndication: Boolean = false, onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val blurCards = backgroundCardBlurEnabled()
+    val cardModifier = if (blurCards) modifier.backgroundCardBlur(RoundedCornerShape(cornerRadius)) else modifier
+    // The native surface owns its tint even when the backdrop isn't ready or cannot draw.
+    val cardColors = if (blurCards) CardColors(colors.color.copy(alpha = BackgroundBlurSurfaceAlpha), colors.contentColor) else colors
     if (ArchiveUiTheme.isMaterial) {
         val palette = androidx.compose.material3.CardDefaults.cardColors(
-            containerColor = colors.color, contentColor = colors.contentColor)
+            containerColor = cardColors.color, contentColor = cardColors.contentColor)
         if (onClick == null) androidx.compose.material3.Card(
-            modifier = modifier, shape = RoundedCornerShape(cornerRadius), colors = palette,
+            modifier = cardModifier, shape = RoundedCornerShape(cornerRadius), colors = palette,
         ) { Column(Modifier.padding(insideMargin), content = content) }
         else androidx.compose.material3.Card(
-            onClick = onClick, modifier = modifier, shape = RoundedCornerShape(cornerRadius), colors = palette,
+            onClick = onClick, modifier = cardModifier, shape = RoundedCornerShape(cornerRadius), colors = palette,
         ) { Column(Modifier.padding(insideMargin), content = content) }
     } else top.yukonga.miuix.kmp.basic.Card(
-        modifier, cornerRadius, insideMargin, colors, pressFeedbackType, showIndication,
+        cardModifier, cornerRadius, insideMargin, cardColors, pressFeedbackType, showIndication,
         onClick = onClick, content = content,
     )
 }

@@ -30,6 +30,10 @@ data class ArchiveTextStyles(
 
 /** Shared content reads tokens here; each design system keeps its native components. */
 object ArchiveUiTheme {
+    val pageBackground: Color
+        @Composable get() = if (love.yu.jaychou.ui.effects.LocalCustomBackgroundPath.current != null)
+            Color.Transparent else colorScheme.background
+
     val isMaterial: Boolean @Composable get() = LocalUiStyle.current == UiStyle.MATERIAL3
 
     val colorScheme: ArchiveColors

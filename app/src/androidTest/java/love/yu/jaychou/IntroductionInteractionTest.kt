@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.compose.runtime.mutableStateOf
 import java.io.File
 import love.yu.jaychou.data.*
 import love.yu.jaychou.navigation.ArchiveApp
@@ -22,6 +23,45 @@ class IntroductionInteractionTest {
     @get:Rule val app = createComposeRule()
 
     @Test fun listsScrollBothWaysWithBlurDisabled() = verifyInteractions(false)
+
+    @Test fun sectionTabClicksAnimateBothDirectionsInBothStyles() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        AppText.update(context.resources)
+        val catalog = AlbumRepository.load(context)
+        val settings = mutableStateOf(AppSettings(blur = false, liquidGlass = false))
+        app.mainClock.autoAdvance = false
+        try {
+            app.setContent {
+                ArchiveTheme(settings.value) {
+                    ArchiveApp(catalog, settings.value, {}, {}, {}, {}, {}, {}, {}, null, {})
+                }
+            }
+            settle()
+            app.onNodeWithTag("tab-INTRODUCTION").performClick()
+            settle()
+            for (style in UiStyle.entries) {
+                app.runOnIdle { settings.value = settings.value.copy(uiStyle = style) }
+                settle()
+                val host = app.onNodeWithTag("introduction-pager").getUnclippedBoundsInRoot()
+                app.onNodeWithTag("tab-CONCERTS").performClick()
+                app.mainClock.advanceTimeBy(96)
+                val incoming = app.onNodeWithTag("page-CONCERTS").getUnclippedBoundsInRoot()
+                assertTrue("Concerts must slide in from the right in $style",
+                    incoming.left > host.left && incoming.left < host.right)
+                assertTrue("Section transition stays horizontal", incoming.top == host.top)
+                settle()
+                app.onNodeWithTag("tab-CONCERTS").assertIsSelected()
+                app.onNodeWithTag("tab-ALBUMS").performClick()
+                app.mainClock.advanceTimeBy(96)
+                val returning = app.onNodeWithTag("page-ALBUMS").getUnclippedBoundsInRoot()
+                assertTrue("Albums must slide back from the left in $style", returning.left < host.left)
+                settle()
+                app.onNodeWithTag("tab-ALBUMS").assertIsSelected()
+            }
+        } finally {
+            app.mainClock.autoAdvance = true
+        }
+    }
 
     @Test fun liquidTopBarPressDragCancelAndListsScrollBothWays() {
         assumeTrue(Build.VERSION.SDK_INT >= 33)
@@ -124,7 +164,7 @@ class IntroductionInteractionTest {
         app.mainClock.advanceTimeBy(32)
         app.waitForIdle()
         val concertLeft = app.onNodeWithTag("page-CONCERTS").fetchSemanticsNode().boundsInRoot.left
-        assertTrue("Release switches content without a horizontal page transition", kotlin.math.abs(concertLeft - albumLeft) < 1f)
+        assertTrue("Release starts an animated horizontal page transition", concertLeft > albumLeft + 1f)
         settle()
         app.onNodeWithTag("tab-CONCERTS").assertIsSelected()
         app.onNodeWithTag("tab-INTRODUCTION").assertIsSelected()
@@ -146,7 +186,8 @@ class IntroductionInteractionTest {
         app.mainClock.advanceTimeBy(300)
         app.waitForIdle()
         val rootLeft = app.onNodeWithTag("page-INTRODUCTION").fetchSemanticsNode().boundsInRoot.left
-        assertTrue("Capsule gestures must not move the root page", kotlin.math.abs(rootLeft) < 1f)
+        val pagerLeft = app.onNodeWithTag("root-pager").fetchSemanticsNode().boundsInRoot.left
+        assertTrue("Capsule gestures must not move the root page", kotlin.math.abs(rootLeft - pagerLeft) < 1f)
         top.performTouchInput { cancel() }
         settle()
         app.onNodeWithTag("tab-ALBUMS").performClick()

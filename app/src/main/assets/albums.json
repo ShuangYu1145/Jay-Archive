@@ -3,6 +3,7 @@
   "albums": [
     {
       "id": "2037128764168736768",
+      "trackArtists": {"13":["周杰伦","杨瑞代"]},
       "title": "太阳之子",
       "englishTitle": "Children of the Sun",
       "releaseDate": "2026-03-25",
@@ -11,6 +12,13 @@
       "coverUrl": "https://www.jvrmusic.com/upload/2037180941100781568/%E5%A4%AA%E9%99%BD%E4%B9%8B%E5%AD%90%E5%B0%88%E8%BC%AF%E5%B0%81%E9%9D%A2.jpg",
       "coverAsset": "covers/2037128764168736768.jpg",
       "leadTrackNumbers": [1, 2, 5, 6, 7, 8, 10, 11, 12],
+      "trackArtwork": {
+        "13": {
+          "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000001ln9YB420a7b_2.jpg?max_age=2592000",
+          "coverAsset": "track-covers/christmas-star.jpg",
+          "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/457240977"
+        }
+      },
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/太陽之子_(專輯)", "https://www.jvrmusic.com/news/detail/2037136475426000896"],
       "tracks": [
         "太阳之子",
@@ -30,6 +38,7 @@
     },
     {
       "id": "1551833317039542272",
+      "trackArtists": {"4":["周杰伦","阿信"],"9":["周杰伦","杨瑞代"]},
       "title": "最伟大的作品",
       "englishTitle": "Greatest Works of Art",
       "releaseDate": "2022-07-15",
@@ -38,6 +47,33 @@
       "coverUrl": "https://www.jvrmusic.com/upload/1641037103418707968/%E5%B0%81%E9%9D%A2(%E6%9C%89%E5%AD%97)%20(002).jpg",
       "coverAsset": "covers/1551833317039542272.jpg",
       "leadTrackNumbers": [2, 3, 5, 8, 10, 11],
+      "trackArtwork": {
+        "4": {
+          "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000002gBTVk4JEE2T_2.jpg?max_age=2592000",
+          "coverAsset": "track-covers/wont-cry.jpg",
+          "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/237773700"
+        },
+        "6": {
+          "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000001CnPE31iJ899_1.jpg?max_age=2592000",
+          "coverAsset": "track-covers/if-you-dont-love-me.jpg",
+          "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/213922043"
+        },
+        "7": {
+          "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M0000009C3rp3Kfwg0_3.jpg?max_age=2592000",
+          "coverAsset": "track-covers/mojito.jpg",
+          "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/268352018"
+        },
+        "9": {
+          "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000003bSL0v4bpKAx_1.jpg?max_age=2592000",
+          "coverAsset": "track-covers/waiting-for-you.jpg",
+          "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/212877900"
+        },
+        "12": {
+          "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000001hGx1Z0so1YX_1.jpg?max_age=2592000",
+          "coverAsset": "track-covers/i-truly-believe.jpg",
+          "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/247261229"
+        }
+      },
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/最偉大的作品"],
       "tracks": [
         "Intro",
@@ -56,6 +92,7 @@
     },
     {
       "id": "1150824720824930304",
+      "trackArtists": {"6":["周杰伦","张惠妹"]},
       "title": "周杰伦的床边故事",
       "englishTitle": "Jay Chou's Bedtime Stories",
       "releaseDate": "2016-06-24",
@@ -80,6 +117,7 @@
     },
     {
       "id": "1151759216223064064",
+      "trackArtists": {"5":["周杰伦","袁咏琳"],"7":["周杰伦","杨瑞代"]},
       "title": "哎呦不错哦",
       "englishTitle": "Aiyo, Not Bad",
       "releaseDate": "2014-12-26",
@@ -106,6 +144,7 @@
     },
     {
       "id": "1151769443223867392",
+      "trackArtists": {"5":["周杰伦","袁咏琳"],"6":["周杰伦","梁心颐","杨瑞代"]},
       "title": "十二新作",
       "englishTitle": "Opus 12",
       "releaseDate": "2012-12-28",
@@ -157,6 +196,7 @@
     },
     {
       "id": "1151771608675913728",
+      "trackArtists": {"9":["周杰伦","杨瑞代"]},
       "title": "跨时代",
       "englishTitle": "The Era",
       "releaseDate": "2010-05-18",
@@ -182,6 +222,7 @@
     },
     {
       "id": "1151772159916511232",
+      "trackArtists": {"3":["周杰伦","梁心颐"],"8":["周杰伦","杨瑞代"]},
       "title": "魔杰座",
       "englishTitle": "Capricorn",
       "releaseDate": "2008-10-14",
@@ -231,6 +272,7 @@
     },
     {
       "id": "1151773902062620672",
+      "trackArtists": {"3":["周杰伦","费玉清"]},
       "title": "依然范特西",
       "englishTitle": "Still Fantasy",
       "releaseDate": "2006-09-05",
@@ -255,6 +297,7 @@
     },
     {
       "id": "1151774270238625792",
+      "trackArtists": {"10":["周杰伦","梁心颐"]},
       "title": "11月的萧邦",
       "englishTitle": "November's Chopin",
       "releaseDate": "2005-11-01",

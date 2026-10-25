@@ -18,8 +18,10 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import love.yu.jaychou.data.Album
+import love.yu.jaychou.data.Track
 
 val LocalMovingAlbumId = staticCompositionLocalOf<String?> { null }
+val LocalMovingTrack = staticCompositionLocalOf<Pair<String, Int>?> { null }
 
 /** A live render-layer snapshot, never a bitmap allocation on the UI thread. */
 data class AlbumOrigin(
@@ -35,11 +37,29 @@ fun AlbumMotionSource(
     onOpen: (Album, AlbumOrigin) -> Unit,
     content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
 ) {
+    CoverMotionSource(LocalMovingAlbumId.current == album.id, { onOpen(album, it) }, content)
+}
+
+@Composable
+fun TrackMotionSource(
+    album: Album,
+    track: Track,
+    onOpen: (AlbumOrigin) -> Unit,
+    content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
+) {
+    CoverMotionSource(LocalMovingTrack.current == (album.id to track.number), onOpen, content)
+}
+
+@Composable
+private fun CoverMotionSource(
+    moving: Boolean,
+    onOpen: (AlbumOrigin) -> Unit,
+    content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
+) {
     var coverBounds by remember { mutableStateOf<Rect?>(null) }
     var coverCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var bounds by remember { mutableStateOf(Rect.Zero) }
     val layer = rememberGraphicsLayer()
-    val moving = LocalMovingAlbumId.current == album.id
     val coverCapture = Modifier.onGloballyPositioned {
         coverCoordinates = it
         coverBounds = it.boundsInWindow()
@@ -52,23 +72,11 @@ fun AlbumMotionSource(
         }
     val capture = Modifier.onGloballyPositioned { bounds = it.boundsInWindow() }
     content(capture, coverCapture) {
-        onOpen(album, AlbumOrigin(bounds, layer, coverBounds) {
+        onOpen(AlbumOrigin(bounds, layer, coverBounds) {
             coverCoordinates?.takeIf { it.isAttached }?.boundsInWindow()
         })
     }
 
-}
-
-@Composable
-fun MotionSource(onOpen: (AlbumOrigin) -> Unit, content: @Composable (Modifier, () -> Unit) -> Unit) {
-    val layer = rememberGraphicsLayer()
-    var bounds by remember { mutableStateOf(Rect.Zero) }
-    val capture = Modifier.onGloballyPositioned { bounds = it.boundsInWindow() }
-        .drawWithContent {
-            layer.record { this@drawWithContent.drawContent() }
-            drawLayer(layer)
-        }
-    content(capture) { onOpen(AlbumOrigin(bounds, layer)) }
 }
 
 /** The original card fades into the expanding detail surface and back on dismissal. */

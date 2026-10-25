@@ -146,6 +146,7 @@ fun CatalogImage(
     contentScale: ContentScale = ContentScale.Crop,
     onAspectRatio: ((Float) -> Unit)? = null,
     crossfade: Boolean = true,
+    showStatus: Boolean = true,
 ) {
     var attempt by remember(url) { mutableIntStateOf(0) }
     val context = LocalContext.current
@@ -167,7 +168,7 @@ fun CatalogImage(
             loading = {
                 Box(Modifier.fillMaxSize()) {
                     AsyncImage("file:///android_asset/$asset", null, Modifier.fillMaxSize(), contentScale = contentScale)
-                    ImageStatus(loadingLabel, Modifier.align(Alignment.BottomStart))
+                    if (showStatus) ImageStatus(loadingLabel, Modifier.align(Alignment.BottomStart))
                 }
             },
             error = {
@@ -179,7 +180,7 @@ fun CatalogImage(
                                 onAspectRatio?.invoke(drawable.intrinsicWidth.toFloat() / drawable.intrinsicHeight)
                             }
                         })
-                    ImageStatus(offlineLabel, Modifier.align(Alignment.BottomStart)
+                    if (showStatus) ImageStatus(offlineLabel, Modifier.align(Alignment.BottomStart)
                         .clickable(role = Role.Button, onClickLabel = retryLabel) { attempt++ })
                 }
             },

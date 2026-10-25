@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import java.io.IOException
 import kotlinx.coroutines.flow.catch
@@ -50,6 +51,11 @@ data class AppSettings(
     val liquidGlass: Boolean = true,
     val floatingBottomBar: Boolean = true,
     val uiStyle: UiStyle = UiStyle.MIUIX,
+    val customBackgroundPath: String? = null,
+    val backgroundCardBlur: Boolean = false,
+    val autoCheckUpdates: Boolean = true,
+    val includePrereleaseUpdates: Boolean = true,
+    val lastUpdateCheckAt: Long = 0L,
 )
 
 private val Context.settingsDataStore by preferencesDataStore("appearance")
@@ -64,6 +70,27 @@ class SettingsRepository(context: Context) {
     private val userNameKey = stringPreferencesKey("user_name")
     private val userAvatarKey = stringPreferencesKey("user_avatar")
     private val uiStyleKey = stringPreferencesKey("ui_style")
+    private val customBackgroundKey = stringPreferencesKey("custom_background")
+    private val backgroundCardBlurKey = booleanPreferencesKey("background_card_blur")
+    private val autoCheckUpdatesKey = booleanPreferencesKey("auto_check_updates")
+    private val prereleaseUpdatesKey = booleanPreferencesKey("prerelease_updates")
+    private val lastUpdateCheckKey = longPreferencesKey("last_update_check")
+
+    val lyricsReadingSettings = store.data.catch { error ->
+        if (error is IOException) emit(emptyPreferences()) else throw error
+    }.map(LyricsReadingKeys::decode)
+
+    suspend fun setLyricsReadingSettings(value: LyricsReadingSettings) {
+        val normalized = value.normalized()
+        store.edit {
+            it[LyricsReadingKeys.font] = normalized.fontSize
+            it[LyricsReadingKeys.spacing] = normalized.lineSpacing
+            it[LyricsReadingKeys.alignment] = normalized.alignment.name
+            it[LyricsReadingKeys.background] = normalized.background.name
+            it[LyricsReadingKeys.immersive] = normalized.immersive
+            it[LyricsReadingKeys.translation] = normalized.showTranslation
+        }
+    }
 
     val settings = store.data.catch { error ->
         if (error is IOException) emit(emptyPreferences()) else throw error
@@ -82,6 +109,11 @@ class SettingsRepository(context: Context) {
             albumCategories = normalizeAlbumCategories(prefs[albumCategoriesKey].orEmpty()),
             userName = prefs[userNameKey].orEmpty(),
             userAvatarPath = prefs[userAvatarKey],
+            customBackgroundPath = prefs[customBackgroundKey],
+            backgroundCardBlur = prefs[backgroundCardBlurKey] ?: false,
+            autoCheckUpdates = prefs[autoCheckUpdatesKey] ?: true,
+            includePrereleaseUpdates = prefs[prereleaseUpdatesKey] ?: true,
+            lastUpdateCheckAt = prefs[lastUpdateCheckKey] ?: 0L,
         )
     }
 
@@ -94,6 +126,17 @@ class SettingsRepository(context: Context) {
         store.edit { it[booleanPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "monet"))] = value }
     }
     suspend fun setBlur(value: Boolean) { store.edit { it[blurKey] = value } }
+    suspend fun setAutoCheckUpdates(value: Boolean) { store.edit { it[autoCheckUpdatesKey] = value } }
+    suspend fun setIncludePrereleaseUpdates(value: Boolean) {
+        store.edit { it[prereleaseUpdatesKey] = value; it.remove(lastUpdateCheckKey) }
+    }
+    suspend fun recordUpdateCheck(timeMillis: Long) { store.edit { it[lastUpdateCheckKey] = timeMillis } }
+    suspend fun setBackgroundCardBlur(value: Boolean) { store.edit { it[backgroundCardBlurKey] = value } }
+    suspend fun setCustomBackground(path: String?) {
+        store.edit {
+            if (path == null) it.remove(customBackgroundKey) else it[customBackgroundKey] = path
+        }
+    }
     suspend fun setLiquidGlass(value: Boolean) { store.edit { it[liquidGlassKey] = value } }
     suspend fun setFloatingBottomBar(value: Boolean) { store.edit { it[floatingBottomBarKey] = value } }
     suspend fun setPredictiveBack(value: Boolean) { store.edit { it[predictiveKey] = value } }

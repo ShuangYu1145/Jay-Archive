@@ -44,6 +44,8 @@ class AlbumLocalizationTest {
                     result.tracks.map { Triple(it.number, it.disc, it.sourceTrackNumber) })
                 assertEquals(source.tracks.map { it.title }, result.tracks.map { it.originalTitle })
                 assertEquals(source.tracks.map { it.isLeadTrack }, result.tracks.map { it.isLeadTrack })
+                assertEquals(source.tracks.map { it.artwork }, result.tracks.map { it.artwork })
+                assertEquals(source.tracks.map { it.artists }, result.tracks.map { it.artists })
             }
         }
     }

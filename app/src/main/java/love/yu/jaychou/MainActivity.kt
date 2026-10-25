@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         JayLaunchAnimation(playOnLaunch = savedInstanceState == null, ready = launchAnimationReady) {
+                            love.yu.jaychou.ui.updates.UpdateHost(current) {
                             ArchiveApp(
                                 catalog = data, settings = current,
                                 onTheme = { save { repository.setTheme(it) } },
@@ -118,6 +119,7 @@ class MainActivity : AppCompatActivity() {
                                 onCustomColor = { save { repository.setCustomColor(it) } },
                                 error = error, onDismissError = { error = null },
                             )
+                            }
                         }
                     }
                 }

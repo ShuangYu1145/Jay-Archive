@@ -16,14 +16,20 @@ import love.yu.jaychou.ui.designsystem.WindowBottomSheet
 import love.yu.jaychou.ui.designsystem.CheckboxPreference
 import top.yukonga.miuix.kmp.preference.CheckboxLocation
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import top.yukonga.miuix.kmp.icon.MiuixIcons
+import top.yukonga.miuix.kmp.icon.extended.Close
+import top.yukonga.miuix.kmp.icon.extended.Ok
 
 @Composable
 fun ReleaseCategorySheet(show: Boolean, selected: List<String>, catalog: AlbumCatalog,
                          onDismiss: () -> Unit, onApply: (List<String>) -> Unit) {
     var draft by rememberSaveable(show) { mutableStateOf(selected) }
     WindowBottomSheet(show = show, title = AppText.get(R.string.ui_album_categories), onDismissRequest = onDismiss,
-        startAction = { TextButton(AppText.get(R.string.ui_cancel), onClick = onDismiss) },
-        endAction = { TextButton(AppText.get(R.string.ui_confirm), enabled = draft.isNotEmpty(), onClick = { onApply(draft); onDismiss() }) },
+        startAction = { SheetActionButton(MiuixIcons.Close, AppText.get(R.string.ui_cancel), onClick = onDismiss,
+            modifier = Modifier.testTag("category-cancel")) },
+        endAction = { SheetActionButton(MiuixIcons.Ok, AppText.get(R.string.ui_confirm), enabled = draft.isNotEmpty(),
+            onClick = { onApply(draft); onDismiss() }, modifier = Modifier.testTag("category-apply")) },
+        expanded = true,
     ) {
         LazyColumn(Modifier.fillMaxWidth().testTag("category-sheet"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item("scope") { QuietText(AppText.get(R.string.ui_select_one_or_more_categories_live_albums_are_released_recording)) }

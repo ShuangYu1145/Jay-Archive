@@ -10,8 +10,8 @@ android {
         applicationId = "love.yu.jaychou"
         minSdk = 26
         targetSdk = 37
-        versionCode = 5
-        versionName = "0.4"
+        versionCode = 6
+        versionName = "0.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -43,6 +43,27 @@ android {
     testOptions { unitTests.isReturnDefaultValues = true }
 }
 kotlin { compilerOptions { jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17) } }
+
+val updateMetadataValues = mapOf(
+    "versionCode" to requireNotNull(android.defaultConfig.versionCode),
+    "versionName" to requireNotNull(android.defaultConfig.versionName),
+    "minSdk" to requireNotNull(android.defaultConfig.minSdk),
+)
+val updateMetadataFile = layout.buildDirectory.file("outputs/updates/update.json")
+val generateUpdateMetadata = tasks.register("generateUpdateMetadata") {
+    description = "Generate update.json to upload alongside the APK to GitHub Releases."
+    inputs.properties(updateMetadataValues)
+    outputs.file(updateMetadataFile)
+    doLast {
+        val target = outputs.files.singleFile
+        target.parentFile.mkdirs()
+        target.writeText(groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(inputs.properties)) + "\n")
+    }
+}
+tasks.matching { it.name == "assembleDebug" || it.name == "assembleRelease" }.configureEach {
+    finalizedBy(generateUpdateMetadata)
+}
+
 dependencies {
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation(libs.compose.ui)

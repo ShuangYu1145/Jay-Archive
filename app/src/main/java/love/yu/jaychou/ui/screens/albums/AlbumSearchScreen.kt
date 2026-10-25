@@ -53,6 +53,7 @@ import top.yukonga.miuix.kmp.icon.extended.Search
 import top.yukonga.miuix.kmp.icon.extended.Close
 import top.yukonga.miuix.kmp.icon.extended.Back
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import love.yu.jaychou.ui.effects.CustomBackgroundImage
 
 @Composable
 internal fun AlbumSearchScreen(
@@ -68,7 +69,9 @@ internal fun AlbumSearchScreen(
     val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) { delay(200); focus.requestFocus() }
     LaunchedEffect(query) { list.scrollToItem(0) }
-    Column(Modifier.fillMaxSize().background(colors.background).statusBarsPadding()
+    Box(Modifier.fillMaxSize().background(colors.background)) {
+    CustomBackgroundImage()
+    Column(Modifier.fillMaxSize().statusBarsPadding()
         .navigationBarsPadding().imePadding().testTag("album-search")) {
         Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
             verticalAlignment = Alignment.CenterVertically) {
@@ -136,6 +139,7 @@ internal fun AlbumSearchScreen(
             }
         }
     }
+}
 }
 
 @Composable

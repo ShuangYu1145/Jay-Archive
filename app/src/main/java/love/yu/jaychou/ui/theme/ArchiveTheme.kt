@@ -19,6 +19,8 @@ import top.yukonga.miuix.kmp.theme.ThemeController
 import top.yukonga.miuix.kmp.theme.darkColorScheme
 import top.yukonga.miuix.kmp.theme.lightColorScheme
 
+internal const val DefaultMiuixBlue: Long = 0xFF277AF7
+
 @Composable
 fun AppSettings.isDark(): Boolean = when (theme) {
     ThemeMode.SYSTEM -> isSystemInDarkTheme()
@@ -44,6 +46,7 @@ fun ArchiveTheme(settings: AppSettings, content: @Composable () -> Unit) {
 
 @Composable
 private fun MiuixArchiveTheme(settings: AppSettings, content: @Composable () -> Unit) {
+    val dark = settings.isDark()
     val mode = if ((settings.monet && Build.VERSION.SDK_INT >= 31) || settings.customColor != null) {
         when (settings.theme) {
             ThemeMode.SYSTEM -> ColorSchemeMode.MonetSystem
@@ -64,15 +67,26 @@ private fun MiuixArchiveTheme(settings: AppSettings, content: @Composable () -> 
             colorSchemeMode = mode,
             keyColor = seed,
             lightColors = lightColorScheme(
-                primary = Color(0xFF4979F5), background = Color(0xFFF6F6F8),
+                primary = Color(DefaultMiuixBlue), background = Color(0xFFF6F6F8),
                 onBackgroundVariant = Color(0xFF656872),
             ),
             darkColors = darkColorScheme(
-                primary = Color(0xFF9CB8FF), background = Color(0xFF111318),
-                surface = Color(0xFF111318), surfaceContainer = Color(0xFF22252D),
+                primary = Color(DefaultMiuixBlue), background = Color.Black,
+                surface = Color.Black, surfaceContainer = Color(0xFF242424),
                 onBackgroundVariant = Color(0xFFB5BAC9),
             ),
         )
     }
-    MiuixTheme(controller = controller, content = content)
+    MiuixTheme(controller = controller) {
+        val colors = MiuixTheme.colorScheme
+        // Keep the black page and neutral gray cards with Monet and custom palettes too.
+        MiuixTheme(
+            colors = if (dark) colors.copy(
+                background = Color.Black,
+                surface = Color.Black,
+                surfaceContainer = Color(0xFF242424),
+            ) else colors,
+            content = content,
+        )
+    }
 }

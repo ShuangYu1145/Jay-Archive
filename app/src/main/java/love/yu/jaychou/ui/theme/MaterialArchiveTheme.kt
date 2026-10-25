@@ -24,13 +24,14 @@ internal fun MaterialArchiveTheme(settings: AppSettings, content: @Composable ()
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val colors = remember(dark, settings.monet, settings.customColor, context, configuration) {
-        when {
+        val palette = when {
             settings.monet && Build.VERSION.SDK_INT >= 31 ->
                 if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             settings.customColor != null -> seededMaterialColors(Color(settings.customColor), dark)
             dark -> darkColorScheme()
             else -> lightColorScheme()
         }
+        if (dark) palette.copy(background = Color.Black, surface = Color.Black) else palette
     }
     MaterialTheme(colorScheme = colors) {
         Surface(Modifier.fillMaxSize(), color = colors.background, contentColor = colors.onBackground,

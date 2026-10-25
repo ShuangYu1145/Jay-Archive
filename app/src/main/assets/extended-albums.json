@@ -3,6 +3,7 @@
   "albums": [
     {
       "id": "apple-1858840329",
+      "trackArtists": {"1":["周杰伦","言承旭","吴建豪","周渝民","阿信"]},
       "title": "恒星不忘 Forever Forever",
       "englishTitle": "",
       "category": "SINGLE",
@@ -45,6 +46,7 @@
     },
     {
       "id": "apple-1789036121",
+      "trackArtists": {"1":["派伟俊","周杰伦"]},
       "title": "Six Degrees",
       "englishTitle": "",
       "category": "SINGLE",
@@ -87,6 +89,7 @@
     },
     {
       "id": "apple-1721878663",
+      "trackArtists": {"1":["周杰伦","杨瑞代"]},
       "title": "圣诞星 (feat. 杨瑞代)",
       "englishTitle": "",
       "category": "SINGLE",
@@ -291,6 +294,7 @@
     },
     {
       "id": "apple-1480229674",
+      "trackArtists": {"1":["周杰伦","阿信"]},
       "title": "说好不哭",
       "englishTitle": "",
       "category": "SINGLE",
@@ -333,6 +337,7 @@
     },
     {
       "id": "apple-1336404440",
+      "trackArtists": {"1":["周杰伦","杨瑞代"]},
       "title": "等你下课 (with 杨瑞代)",
       "englishTitle": "",
       "category": "SINGLE",
@@ -354,6 +359,7 @@
     },
     {
       "id": "apple-1108410359",
+      "trackArtists": {"4":["周杰伦","宋健彰"],"5":["周杰伦","袁咏琳","邱凯伟","杨瑞代","宋健彰"],"6":["周杰伦","袁咏琳","邱凯伟"],"7":["周杰伦","宋健彰","邱凯伟"],"22":["周杰伦","宋健彰","袁咏琳","邱凯伟","杨瑞代"]},
       "title": "魔天伦世界巡回演唱会",
       "englishTitle": "",
       "category": "LIVE",
@@ -501,6 +507,7 @@
     },
     {
       "id": "apple-1070863333",
+      "trackArtists": {"1":["派伟俊","周杰伦"]},
       "title": "Try (《功夫熊猫3》全球主题曲)",
       "englishTitle": "",
       "category": "SINGLE",
@@ -769,6 +776,7 @@
     },
     {
       "id": "apple-536637791",
+      "trackArtists": {"3":["周杰伦","梁心颐"],"9":["周杰伦","袁咏琳"],"11":["周杰伦","浪花兄弟"],"20":["周杰伦","杨瑞代"]},
       "title": "超时代演唱会",
       "englishTitle": "",
       "category": "LIVE",

@@ -8,12 +8,18 @@ enum class ReleaseCategory(private val sourceLabel: String) {
     val label: String get() = AppText.fromOriginal(sourceLabel)
 }
 
+data class TrackArtwork(val coverUrl: String, val coverAsset: String, val sourceUrl: String)
+
 data class Track(
     val number: Int, val title: String, val disc: Int = 1, val sourceTrackNumber: Int = number,
     val originalTitle: String = title,
     val searchAliases: List<String> = emptyList(),
     val isLeadTrack: Boolean = false,
-)
+    val artwork: TrackArtwork? = null,
+    val artists: List<String> = listOf("周杰伦"),
+) {
+    val artistLabel: String get() = artists.joinToString(" / ") { AppText.fromOriginal(it) }
+}
 
 data class Album(
     val id: String,
@@ -78,9 +84,19 @@ object AlbumRepository {
                 coverAsset = item.getString("coverAsset"),
                 tracks = (0 until songs.length()).map {
                     val song = songs.optJSONObject(it)
-                    if (song == null) Track(it + 1, songs.getString(it), isLeadTrack = it + 1 in leadTracks)
+                    val artwork = item.optJSONObject("trackArtwork")?.optJSONObject((it + 1).toString())?.let { art ->
+                        TrackArtwork(art.getString("coverUrl"), art.getString("coverAsset"), art.getString("sourceUrl"))
+                    }
+                    val credits = song?.optJSONArray("artists")
+                        ?: item.optJSONObject("trackArtists")?.optJSONArray((it + 1).toString())
+                        ?: item.optJSONArray("artists")
+                    val artists = credits?.let { names ->
+                        (0 until names.length()).map { index -> names.getString(index).trim() }
+                            .filter(String::isNotEmpty).distinct()
+                    }?.takeIf { names -> names.isNotEmpty() } ?: listOf("周杰伦")
+                    if (song == null) Track(it + 1, songs.getString(it), isLeadTrack = it + 1 in leadTracks, artwork = artwork, artists = artists)
                     else Track(it + 1, song.getString("title"), song.optInt("disc", 1), song.optInt("sourceTrackNumber", it + 1),
-                        isLeadTrack = it + 1 in leadTracks || song.optBoolean("isLeadTrack", false))
+                        isLeadTrack = it + 1 in leadTracks || song.optBoolean("isLeadTrack", false), artwork = artwork, artists = artists)
                 },
                 category = ReleaseCategory.entries.find { it.name == item.optString("category") } ?: ReleaseCategory.STUDIO,
                 sourceLabel = item.optString("sourceLabel", "杰威尔音乐"),

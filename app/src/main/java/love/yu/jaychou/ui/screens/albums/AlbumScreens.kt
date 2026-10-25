@@ -2,9 +2,8 @@ package love.yu.jaychou.ui.screens.albums
 
 import love.yu.jaychou.ui.animation.AlbumMotionSource
 import love.yu.jaychou.ui.animation.AlbumOrigin
-import love.yu.jaychou.ui.animation.MotionSource
+import love.yu.jaychou.ui.animation.TrackMotionSource
 import love.yu.jaychou.ui.components.AlbumCoverShape
-import love.yu.jaychou.ui.components.LeadTrackStar
 import love.yu.jaychou.ui.components.ArchiveGlyph
 import love.yu.jaychou.ui.components.ArchiveIconButton
 import love.yu.jaychou.ui.components.ArchiveScaffold
@@ -47,6 +46,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -92,11 +92,17 @@ fun AlbumsScreen(
             ArchiveIconButton(MiuixIcons.Filter, AppText.get(R.string.ui_filter_album_categories), { showCategories = true }, Modifier.testTag("release-filter"))
         },
     ) { padding ->
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+        val columns = when (layout) {
+            AlbumLayout.GRID -> maxOf(2, ((maxWidth - 24.dp + 14.dp) / 194.dp).toInt())
+            AlbumLayout.LARGE -> maxOf(1, ((maxWidth - 24.dp + 14.dp) / 374.dp).toInt())
+            AlbumLayout.LIST -> 1
+        }
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize()
                 .then(if (sectionHeader) Modifier else Modifier.nestedScroll(behavior.nestedScrollConnection))
                 .testTag("albums-grid").semantics { stateDescription = layout.label },
-            columns = GridCells.Fixed(if (layout == AlbumLayout.GRID) 2 else 1), state = state,
+            columns = GridCells.Fixed(columns), state = state,
             contentPadding = PaddingValues(12.dp, padding.calculateTopPadding() + 8.dp, 12.dp, bottom),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalArrangement = Arrangement.spacedBy(if (layout == AlbumLayout.LIST) 12.dp else 18.dp),
@@ -118,6 +124,7 @@ fun AlbumsScreen(
                     QuietText(AppText.get(R.string.ui_sources_jvr_music_qq_music_apple_music))
                 }
             }
+        }
         }
     }
     }
@@ -212,9 +219,9 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
             }
             item("tracks-title") { SectionTitle(AppText.get(R.string.ui_track_list), AppText.get(R.string.ui_original_track_order_tap_a_song_to_read_its_lyrics), bodyModifier) }
             items(album.tracks, key = { "${album.id}-${it.number}" }, contentType = { "track" }) { track ->
-                MotionSource(onOpen = { onTrack(track, it) }) { capture, open ->
+                TrackMotionSource(album, track, onOpen = { onTrack(track, it) }) { capture, coverCapture, open ->
                     AlbumTrackCard(album, track, highlightedTrack == track.number,
-                        capture.then(bodyModifier), open)
+                        capture.then(bodyModifier), coverCapture, open)
                 }
             }
             item("source") {
@@ -228,7 +235,7 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
 }
 
 @Composable
-private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, modifier: Modifier, onClick: () -> Unit) {
+private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, modifier: Modifier, coverModifier: Modifier, onClick: () -> Unit) {
     Card(
         modifier = modifier.fillMaxWidth().testTag("track-${track.number}"),
         cornerRadius = 18.dp, onClick = onClick, pressFeedbackType = PressFeedbackType.Sink,
@@ -238,18 +245,21 @@ private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, mod
         insideMargin = PaddingValues(16.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            Box(Modifier.size(42.dp).background(ArchiveUiTheme.colorScheme.primary.copy(alpha = .09f), RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center) {
-                Text(if (album.tracks.any { it.disc > 1 }) "${track.disc}.${track.sourceTrackNumber}"
-                    else track.number.toString().padStart(2, '0'),
-                    fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = ArchiveUiTheme.colorScheme.primary)
-            }
+            Text(if (album.tracks.any { it.disc > 1 }) "${track.disc}.${track.sourceTrackNumber}"
+                else track.number.toString().padStart(2, '0'),
+                modifier = Modifier.widthIn(min = 28.dp).testTag("track-number-${track.number}"),
+                textAlign = TextAlign.Center,
+                fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
+            CatalogImage(
+                url = track.artwork?.coverUrl ?: album.coverUrl,
+                asset = track.artwork?.coverAsset ?: album.coverAsset,
+                description = AppText.get(R.string.ui_album_artwork, track.title),
+                modifier = Modifier.size(48.dp).then(coverModifier).clip(RoundedCornerShape(8.dp)).testTag("track-cover-${track.number}"),
+                showStatus = false,
+            )
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    if (track.isLeadTrack) LeadTrackStar(Modifier.testTag("lead-track-${track.number}"))
-                    Text(track.title, fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.SemiBold)
-                }
-                Text(AppText.get(if (track.isLeadTrack) R.string.ui_lead_track_read_lyrics else R.string.ui_read_lyrics),
+                Text(track.title, fontSize = 16.sp, lineHeight = 23.sp, fontWeight = FontWeight.SemiBold)
+                Text(track.artistLabel, maxLines = 2, overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp, color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
             }
             ArchiveGlyph(Glyph.LINK, Modifier.size(18.dp), ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)

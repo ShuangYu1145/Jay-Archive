@@ -360,14 +360,14 @@ class ArchiveNavigationTest {
         app.onNodeWithTag("album-${album.id}").performClick()
         app.onNodeWithTag("album-detail-list").performScrollToIndex(4)
         val before = detailScrollPosition()
-        val sourceWidth = app.onNodeWithTag("track-1").fetchSemanticsNode().boundsInRoot.width
+        val sourceWidth = app.onNodeWithTag("track-cover-1", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.width
         app.mainClock.autoAdvance = false
         try {
             app.onNodeWithTag("track-1").performClick()
             app.mainClock.advanceTimeBy(96)
             app.waitForIdle()
-            val width = app.onNodeWithTag("lyrics-detail").fetchSemanticsNode().boundsInRoot.width
-            assertTrue("Lyrics use the same card expansion", width > sourceWidth)
+            val width = app.onNodeWithTag("lyrics-detail-cover-flight", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.width
+            assertTrue("Lyrics expand from the song artwork", width > sourceWidth)
         } finally { app.mainClock.autoAdvance = true }
         app.waitUntil(8_000) { app.onAllNodesWithText("测试文本第 1 行，仅用于导航回归。").fetchSemanticsNodes().isNotEmpty() }
         app.activityRule.scenario.recreate()

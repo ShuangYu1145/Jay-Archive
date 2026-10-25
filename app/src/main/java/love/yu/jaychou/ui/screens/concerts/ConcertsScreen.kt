@@ -543,6 +543,7 @@ private fun ConcertDetailScreen(
         AppText.get(R.string.ui_show_details_92), small = true,
         navigationIcon = { BackButton(onBack, AppText.get(R.string.ui_back_to_concerts)) },
     ) { padding ->
+        love.yu.jaychou.ui.effects.CustomBackgroundImage()
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag("concert-detail"),
             contentPadding = PaddingValues(

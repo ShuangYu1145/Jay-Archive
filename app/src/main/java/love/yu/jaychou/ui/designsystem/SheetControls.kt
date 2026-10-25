@@ -7,13 +7,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.semantics
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WindowBottomSheet(show: Boolean, title: String, onDismissRequest: () -> Unit,
                       startAction: @Composable () -> Unit = {}, endAction: @Composable () -> Unit = {},
+                      expanded: Boolean = false,
                       content: @Composable ColumnScope.() -> Unit) {
     if (!ArchiveUiTheme.isMaterial) {
+        if (expanded) {
+            MiuixModalSheet(show, title, onDismissRequest, startAction, endAction, content)
+            return
+        }
         top.yukonga.miuix.kmp.window.WindowBottomSheet(show, title = title,
             onDismissRequest = onDismissRequest, startAction = startAction, endAction = endAction,
             content = { Column(content = content) })
@@ -35,6 +44,27 @@ fun WindowBottomSheet(show: Boolean, title: String, onDismissRequest: () -> Unit
                 endAction()
             }
             Column(Modifier.weight(1f, fill = false).padding(horizontal = 24.dp, vertical = 16.dp), content = content)
+        }
+    }
+}
+
+@Composable
+internal fun SheetActionButton(
+    icon: ImageVector, label: String, onClick: () -> Unit,
+    enabled: Boolean = true, modifier: Modifier = Modifier,
+) {
+    if (ArchiveUiTheme.isMaterial) {
+        TextButton(label, onClick, modifier, enabled)
+    } else {
+        top.yukonga.miuix.kmp.basic.IconButton(
+            onClick = onClick, enabled = enabled,
+            modifier = modifier.size(48.dp).semantics { if (!enabled) disabled() },
+            backgroundColor = Color.Transparent,
+        ) {
+            top.yukonga.miuix.kmp.basic.Icon(
+                imageVector = icon, contentDescription = label, modifier = Modifier.size(28.dp),
+                tint = ArchiveUiTheme.colorScheme.onBackground.copy(alpha = if (enabled) 1f else .38f),
+            )
         }
     }
 }

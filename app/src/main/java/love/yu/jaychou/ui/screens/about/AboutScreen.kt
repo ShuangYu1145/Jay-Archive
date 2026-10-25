@@ -11,6 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,6 +25,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.heading
@@ -49,7 +54,10 @@ import top.yukonga.miuix.kmp.utils.PressFeedbackType
 fun AboutScreen(
     state: LazyListState, bottom: Dp, active: Boolean = true,
 ) {
-    val background = ArchiveUiTheme.colorScheme.background
+    var developerCardTaps by remember { mutableIntStateOf(0) }
+    var showEasterEgg by rememberSaveable { mutableStateOf(false) }
+    val availableUpdate = love.yu.jaychou.ui.updates.LocalUpdateController.current?.availableUpdate
+    val background = ArchiveUiTheme.pageBackground
     val density = LocalDensity.current
     BoxWithConstraints(Modifier.fillMaxSize().background(background).clipToBounds()) {
         val heroHeight = (maxHeight * .60f).coerceAtLeast(300.dp * density.fontScale)
@@ -65,7 +73,7 @@ fun AboutScreen(
                 state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset < heroPx * .60f
             }
         }
-        AboutBackground(
+        if (love.yu.jaychou.ui.effects.LocalCustomBackgroundPath.current == null) AboutBackground(
             active = active && backgroundVisible,
             modifier = Modifier.fillMaxWidth().height(heroHeight + 180.dp).graphicsLayer {
                 val scroll = if (state.firstVisibleItemIndex == 0) state.firstVisibleItemScrollOffset.toFloat() else heroPx
@@ -81,7 +89,16 @@ fun AboutScreen(
             item("identity") { Spacer(Modifier.height(heroHeight)) }
             item("about-title") { PreferenceTitle(AppText.get(R.string.ui_about)) }
             item("about") {
-                PreferenceCard {
+                Card(
+                    modifier = Modifier.testTag("about-developer-card"),
+                    onClick = {
+                        developerCardTaps++
+                        if (developerCardTaps == 4) {
+                            developerCardTaps = 0
+                            showEasterEgg = true
+                        }
+                    },
+                ) {
                     BasicComponent(
                         title = "ShuangYu",
                         startAction = {
@@ -89,7 +106,8 @@ fun AboutScreen(
                                 modifier = Modifier
                                     .size(40.dp)
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(ArchiveUiTheme.colorScheme.surfaceContainerHighest),
+                                    .background(ArchiveUiTheme.colorScheme.surfaceContainerHighest)
+                                    .testTag("about-developer-avatar"),
                             ) {
                                 AsyncImage(
                                     model = "https://q1.qlogo.cn/g?b=qq&nk=1106388837&s=100",
@@ -103,6 +121,12 @@ fun AboutScreen(
                 }
             }
 
+            if (availableUpdate != null) {
+                item("updates-title") { PreferenceTitle(AppText.get(R.string.ui_update_settings)) }
+                item("updates") {
+                    PreferenceCard { love.yu.jaychou.ui.updates.AvailableUpdateRow() }
+                }
+            }
             item("project-title") { PreferenceTitle(AppText.get(R.string.ui_project_and_sources)) }
             item("project") {
                 PreferenceCard {
@@ -157,6 +181,114 @@ fun AboutScreen(
                     scaleY = scaleX
                 },
         )
+    }
+    AboutEasterEggDialog(show = showEasterEgg && active, onDismiss = { showEasterEgg = false })
+}
+
+@Composable
+private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
+    var code by rememberSaveable(show) { mutableStateOf("") }
+    var message by rememberSaveable(show) { mutableStateOf<String?>(null) }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val onCodeChange: (String) -> Unit = { value ->
+        code = value
+        message = when (code) {
+            "0118" -> "周杰伦牛逼"
+            "0302" -> "诶哟，你怎么知道作者的生日的"
+            "1008" -> "庭庭，不管怎样，我会永远爱你的"
+            "庭庭" -> "永远爱你哟"
+            "度蜜月卡" -> "蜜蜜蜜蜜"
+            else -> null
+        }
+        if (message != null) keyboard?.hide()
+    }
+    val dismissLabel = if (message == null) AppText.get(R.string.ui_cancel) else AppText.get(R.string.ui_confirm)
+    if (ArchiveUiTheme.isMaterial) {
+        if (show) androidx.compose.material3.AlertDialog(
+            modifier = Modifier.testTag("about-easter-egg-dialog"),
+            onDismissRequest = onDismiss,
+            containerColor = if (ArchiveUiTheme.colorScheme.background.luminance() < .5f) Color.Black
+                else androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 0.dp,
+            title = { androidx.compose.material3.Text(message ?: "彩蛋") },
+            text = if (message == null) {
+                {
+                    androidx.compose.material3.OutlinedTextField(
+                        value = code,
+                        onValueChange = onCodeChange,
+                        label = { androidx.compose.material3.Text("输入彩蛋口令") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth().testTag("about-easter-egg-input"),
+                    )
+                }
+            } else null,
+            confirmButton = {
+                androidx.compose.material3.TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.testTag("about-easter-egg-dismiss"),
+                ) { androidx.compose.material3.Text(dismissLabel) }
+            },
+        )
+        return
+    }
+    CenteredEasterEggDialog(
+        show = show,
+        title = message ?: "彩蛋",
+        onDismissRequest = onDismiss,
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            if (message == null) {
+                top.yukonga.miuix.kmp.basic.TextField(
+                    value = code,
+                    onValueChange = onCodeChange,
+                    label = "输入彩蛋口令",
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth().testTag("about-easter-egg-input"),
+                )
+            }
+            top.yukonga.miuix.kmp.basic.TextButton(
+                text = dismissLabel,
+                onClick = onDismiss,
+                modifier = Modifier.fillMaxWidth().testTag("about-easter-egg-dismiss"),
+            )
+        }
+    }
+}
+
+@Composable
+private fun CenteredEasterEggDialog(
+    show: Boolean,
+    title: String,
+    onDismissRequest: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    if (!show) return
+    val colors = top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
+    // Miuix WindowDialog aligns to the bottom on phones. A platform dialog host
+    // centers the same native Miuix surface and controls at every window size.
+    androidx.compose.ui.window.Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        top.yukonga.miuix.kmp.basic.Card(
+            modifier = Modifier.padding(horizontal = 24.dp).widthIn(max = 420.dp)
+                .fillMaxWidth().testTag("about-easter-egg-dialog"),
+            cornerRadius = 32.dp,
+            insideMargin = PaddingValues(24.dp),
+            colors = top.yukonga.miuix.kmp.basic.CardDefaults.defaultColors(
+                color = if (colors.background.luminance() < .5f) Color.Black
+                    else top.yukonga.miuix.kmp.layout.DialogDefaults.backgroundColor(),
+            ),
+        ) {
+            top.yukonga.miuix.kmp.basic.Text(
+                text = title,
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+            )
+            content()
+        }
     }
 }
 

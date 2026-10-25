@@ -8,6 +8,14 @@ import love.yu.jaychou.ui.components.SettingSwitch
 import love.yu.jaychou.data.AppText
 import love.yu.jaychou.R
 import android.os.Build
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -35,6 +43,10 @@ fun SettingsScreen(
     onUiStyle: (UiStyle) -> Unit = {},
 ) {
     var colorPicker by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    val customColorVisible = settings.uiStyle != UiStyle.MIUIX || !settings.monet
+    LaunchedEffect(customColorVisible) {
+        if (!customColorVisible) colorPicker = false
+    }
     val behavior = rememberArchiveScrollBehavior()
     ArchiveScaffold(AppText.get(R.string.ui_settings), behavior = behavior) { padding ->
         LazyColumn(
@@ -85,10 +97,12 @@ fun SettingsScreen(
                     SettingSwitch(AppText.get(R.string.ui_floating_navigation_bar),
                         AppText.get(R.string.ui_floating_bottom_bar_summary),
                         settings.floatingBottomBar, onFloatingBottomBar, true)
-                    SettingSwitch(AppText.get(R.string.ui_liquid_glass),
-                        if (Build.VERSION.SDK_INT >= 33) AppText.get(R.string.ui_liquid_glass_summary)
-                        else AppText.get(R.string.ui_requires_android_13_using_solid_surfaces_on_this_device),
-                        settings.liquidGlass, onLiquidGlass, Build.VERSION.SDK_INT >= 33)
+                    AnimatedSetting(visible = settings.floatingBottomBar) {
+                        SettingSwitch(AppText.get(R.string.ui_liquid_glass),
+                            if (Build.VERSION.SDK_INT >= 33) AppText.get(R.string.ui_liquid_glass_summary)
+                            else AppText.get(R.string.ui_requires_android_13_using_solid_surfaces_on_this_device),
+                            settings.liquidGlass, onLiquidGlass, Build.VERSION.SDK_INT >= 33)
+                    }
                     }
                 }
             }
@@ -108,12 +122,20 @@ fun SettingsScreen(
                     if (settings.uiStyle == UiStyle.MIUIX) SettingSwitch(AppText.get(R.string.ui_enable_blur),
                         if (Build.VERSION.SDK_INT >= 33) AppText.get(R.string.ui_blur_content_behind_top_bars_and_the_floating_navigation_bar) else AppText.get(R.string.ui_requires_android_13_using_solid_surfaces_on_this_device),
                         settings.blur, onBlur, Build.VERSION.SDK_INT >= 33)
-                    ArrowPreference(title = AppText.get(R.string.ui_custom_color),
-                        summary = if (settings.monet && Build.VERSION.SDK_INT >= 31) AppText.get(R.string.ui_monet_is_enabled_system_colors_take_priority) else AppText.get(R.string.ui_choose_seed_color_for_current_style),
-                        endActions = { PreferenceValue(settings.customColor?.let { "#%06X".format(it and 0xFFFFFF) } ?: AppText.get(if (settings.uiStyle == UiStyle.MATERIAL3) R.string.ui_default_material_color else R.string.ui_default_blue)) },
-                        onClick = { colorPicker = true }, modifier = Modifier.testTag("custom-color"))
+                    AnimatedSetting(visible = customColorVisible) {
+                        ArrowPreference(title = AppText.get(R.string.ui_custom_color),
+                            summary = if (settings.monet && Build.VERSION.SDK_INT >= 31) AppText.get(R.string.ui_monet_is_enabled_system_colors_take_priority) else AppText.get(R.string.ui_choose_seed_color_for_current_style),
+                            endActions = { PreferenceValue(settings.customColor?.let { "#%06X".format(it and 0xFFFFFF) } ?: AppText.get(if (settings.uiStyle == UiStyle.MATERIAL3) R.string.ui_default_material_color else R.string.ui_default_blue)) },
+                            onClick = { colorPicker = true }, modifier = Modifier.testTag("custom-color"))
+                    }
                 }
             }
+
+            item("background-title") { PreferenceTitle(AppText.get(R.string.ui_custom_background)) }
+            item("background") { BackgroundPreferences(settings) }
+
+            item("updates-title") { PreferenceTitle(AppText.get(R.string.ui_update_settings)) }
+            item("updates") { love.yu.jaychou.ui.updates.UpdatePreferences(settings) }
 
             item("motion-title") { PreferenceTitle(AppText.get(R.string.ui_animations_and_gestures)) }
             item("motion") {
@@ -127,5 +149,16 @@ fun SettingsScreen(
             }
         }
     }
-    CustomColorSheet(colorPicker, settings.customColor, { colorPicker = false }, onCustomColor)
+    CustomColorSheet(colorPicker && customColorVisible, settings.customColor, { colorPicker = false }, onCustomColor)
+}
+
+@Composable
+private fun AnimatedSetting(visible: Boolean, content: @Composable () -> Unit) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = expandVertically(tween(280)) + slideInVertically(tween(280)) { -it / 2 } + fadeIn(tween(180)),
+        exit = shrinkVertically(tween(220)) + slideOutVertically(tween(220)) { -it / 2 } + fadeOut(tween(150)),
+    ) {
+        content()
+    }
 }

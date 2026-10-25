@@ -1,0 +1,59 @@
+[
+  {
+    "tag_name": "0.4",
+    "html_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/tag/0.4",
+    "draft": false,
+    "prerelease": true,
+    "body": "Beta 0.4版本更新\r\n支持Material Design 3，支持更多底部栏，优化一些UI，关于页面更新\r\n下个版本预计更新：支持平板比例",
+    "assets": [
+      {
+        "name": "app-debug.apk",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/download/0.4/app-debug.apk"
+      },
+      {
+        "name": "app-release.apk",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/download/0.4/app-release.apk"
+      }
+    ]
+  },
+  {
+    "tag_name": "0.3",
+    "html_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/tag/0.3",
+    "draft": false,
+    "prerelease": true,
+    "body": "beta 0.3版本更新\r\n演唱会页面更新，支持多语言，动画优化，底部栏优化等等",
+    "assets": [
+      {
+        "name": "app-debug.apk",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/download/0.3/app-debug.apk"
+      },
+      {
+        "name": "app-release.apk",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/download/0.3/app-release.apk"
+      }
+    ]
+  },
+  {
+    "tag_name": "0.2",
+    "html_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/tag/0.2",
+    "draft": false,
+    "prerelease": true,
+    "body": "这是Beta 0.2版本 详细请看README",
+    "assets": [
+      {
+        "name": "app-debug.apk",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/download/0.2/app-debug.apk"
+      },
+      {
+        "name": "app-release.apk",
+        "state": "uploaded",
+        "browser_download_url": "https://github.com/ShuangYu1145/Jay-Archive/releases/download/0.2/app-release.apk"
+      }
+    ]
+  }
+]
