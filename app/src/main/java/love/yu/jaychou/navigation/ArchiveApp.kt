@@ -17,6 +17,7 @@ import love.yu.jaychou.ui.screens.about.AboutScreen
 import love.yu.jaychou.ui.screens.albums.AlbumDetailScreen
 import love.yu.jaychou.ui.screens.albums.AlbumsScreen
 import love.yu.jaychou.ui.screens.concerts.ConcertsScreen
+import love.yu.jaychou.ui.screens.compositions.CompositionsScreen
 import love.yu.jaychou.ui.screens.home.HomeScreen
 import love.yu.jaychou.ui.screens.introduction.IntroductionScreen
 import love.yu.jaychou.ui.screens.lyrics.LyricsScreen
@@ -122,20 +123,20 @@ fun ArchiveApp(
     onLiquidGlass: (Boolean) -> Unit = {},
     onFloatingBottomBar: (Boolean) -> Unit = {},
     onUiStyle: (UiStyle) -> Unit = {},
+    onTopAppBarBlur: (love.yu.jaychou.data.TopAppBarBlur) -> Unit = {},
 ) {
     CustomBackgroundHost(settings) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
     // Use the current window, so rotation and tablet split-screen resize immediately.
     val useNavigationRail = maxWidth >= 600.dp || maxWidth > maxHeight
-    val miuix = settings.uiStyle == UiStyle.MIUIX
-    val useBlur = miuix && settings.blur
+    val useBlur = settings.uiStyle != UiStyle.MATERIAL3 && settings.blur
     val homeState = rememberLazyListState()
     val albumStateHolder = rememberSaveableStateHolder()
     val categories = settings.albumCategories
     val settingsState = rememberLazyListState()
     val aboutState = rememberLazyListState()
     val pager = rememberPagerState(pageCount = { RootPage.entries.size })
-    val introductionPager = rememberPagerState(pageCount = { 2 })
+    val introductionPager = rememberPagerState(pageCount = { 3 })
     val scope = rememberCoroutineScope()
     val pageMotion = remember(pager, scope) { PageMotion(pager, scope) }
     val introductionMotion = remember(introductionPager, scope) { PageMotion(introductionPager, scope) }
@@ -152,6 +153,7 @@ fun ArchiveApp(
     val expansion = remember { Animatable(if (detailId != null) 1f else 0f) }
     val backProgress = remember { Animatable(0f) }
     var concertDetailOpen by remember { mutableStateOf(false) }
+    var compositionDetailOpen by remember { mutableStateOf(false) }
     var lyricNumber by rememberSaveable { mutableStateOf<Int?>(null) }
     var lastLyricNumber by rememberSaveable { mutableStateOf<Int?>(null) }
     var lyricOrigin by rememberSaveable { mutableStateOf(listOf(.1f, .4f, .8f, .08f)) }
@@ -162,7 +164,7 @@ fun ArchiveApp(
     val lyricTrack = detail?.tracks?.find { it.number == lastLyricNumber }
     val detailShown by remember { derivedStateOf { detailId != null || expansion.value > 0f } }
     val navigationVisible by remember {
-        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen && !albumSearchOpen }
+        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen }
     }
     val predictiveSupported = Build.VERSION.SDK_INT >= 34 && settings.predictiveBack
     val background = ArchiveUiTheme.colorScheme.background
@@ -171,7 +173,7 @@ fun ArchiveApp(
     var navHeightPx by remember { mutableIntStateOf(with(density) { (96.dp + navInset).roundToPx() }) }
     var railWidthPx by remember { mutableIntStateOf(with(density) { 81.dp.roundToPx() }) }
     val bottom = if (useNavigationRail) navInset + 16.dp else with(density) { navHeightPx.toDp() } + 16.dp
-    val liquidGlass = miuix && settings.liquidGlass && settings.floatingBottomBar && Build.VERSION.SDK_INT >= 33
+    val liquidGlass = settings.liquidGlass && settings.floatingBottomBar && Build.VERSION.SDK_INT >= 33
 
     fun openAlbum(album: Album, source: AlbumOrigin) {
         if (detailShown || pager.isScrollInProgress || introductionPager.isScrollInProgress || hostSize.width == 0 || hostSize.height == 0) return
@@ -230,7 +232,7 @@ fun ArchiveApp(
             .onGloballyPositioned { hostOrigin = it.positionInWindow(); hostSize = it.size }) {
             Box(Modifier.fillMaxSize().then(capture)) {
                 Box(Modifier.fillMaxSize()
-                    .padding(start = if (useNavigationRail && !concertDetailOpen && !albumSearchOpen)
+                    .padding(start = if (useNavigationRail && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen)
                         with(density) { railWidthPx.toDp() } else 0.dp)
                     .graphicsLayer {
                     val depth = (expansion.value - backProgress.value * .25f).coerceIn(0f, 1f)
@@ -243,7 +245,7 @@ fun ArchiveApp(
                 }.then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier)) {
                     RootPager(
                         state = pager, vertical = useNavigationRail,
-                        userScrollEnabled = !detailShown && !concertDetailOpen && !albumSearchOpen,
+                        userScrollEnabled = !detailShown && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen,
                     ) { page ->
                         Box(Modifier.fillMaxSize().background(ArchiveUiTheme.pageBackground).testTag("page-${RootPage.entries[page].name}")) {
                             when (RootPage.entries[page]) {
@@ -253,11 +255,15 @@ fun ArchiveApp(
                                 }, profile = settings)
                                 RootPage.INTRODUCTION -> IntroductionScreen(
                                     pager = introductionPager,
-                                    enabled = !detailShown && !concertDetailOpen && !albumSearchOpen,
-                                    headerVisible = !albumSearchOpen && !concertDetailOpen,
+                                    enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen,
+                                    headerVisible = !albumSearchOpen && !concertDetailOpen && !compositionDetailOpen,
                                     onSelect = introductionMotion::select,
                                 ) { section ->
-                                    Box(Modifier.fillMaxSize().testTag(if (section == 0) "page-ALBUMS" else "page-CONCERTS")) {
+                                    Box(Modifier.fillMaxSize().testTag(when (section) {
+                                        0 -> "page-ALBUMS"
+                                        1 -> "page-CONCERTS"
+                                        else -> "page-COMPOSITIONS"
+                                    })) {
                                         if (section == 0) albumStateHolder.SaveableStateProvider("${settings.albumLayout.name}-${categories.sorted().joinToString()}") {
                                             val albumState = rememberLazyGridState()
                                             AlbumsScreen(catalog, settings.albumLayout, albumState, bottom, ::openAlbum,
@@ -270,14 +276,17 @@ fun ArchiveApp(
                                                 searchInteractive = !detailShown,
                                                 sectionHeader = true,
                                             )
-                                        } else ConcertsScreen(bottom,
+                                        } else if (section == 1) ConcertsScreen(bottom,
                                             onDetailVisibility = { concertDetailOpen = it },
                                             sectionHeader = true)
+                                        else CompositionsScreen(settings.albumLayout, bottom,
+                                            active = pager.currentPage == RootPage.INTRODUCTION.ordinal && introductionPager.currentPage == section,
+                                            onDetailVisibility = { compositionDetailOpen = it })
                                     }
                                 }
                                 RootPage.SETTINGS -> SettingsScreen(settings, settingsState, bottom,
                                     onTheme, onMonet, onBlur, onPredictive, onAlbumLayout, onCustomColor,
-                                    onLiquidGlass, onFloatingBottomBar, onUiStyle)
+                                    onLiquidGlass, onFloatingBottomBar, onUiStyle, onTopAppBarBlur)
                                 RootPage.ABOUT -> AboutScreen(aboutState, bottom, active = pager.currentPage == page)
                             }
                         }
@@ -330,7 +339,7 @@ fun ArchiveApp(
                         uiStyle = settings.uiStyle,
                         selectedIndex = pager.targetPage,
                         onSelect = pageMotion::select,
-                        enabled = !detailShown && !concertDetailOpen,
+                        enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen,
                         modifier = Modifier.align(Alignment.CenterStart)
                             .onSizeChanged { railWidthPx = it.width }
                             .graphicsLayer { alpha = 1f - expansion.value.coerceIn(0f, 1f) }
@@ -342,7 +351,7 @@ fun ArchiveApp(
                     selectedIndex = pager.targetPage,
                     pagePosition = { pager.currentPage + pager.currentPageOffsetFraction },
                     onSelect = pageMotion::select, onScrub = pageMotion::scrub,
-                    enabled = !detailShown && !concertDetailOpen,
+                    enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen,
                     modifier = Modifier.align(Alignment.BottomCenter)
                         .onSizeChanged { navHeightPx = it.height }
                         .graphicsLayer { alpha = 1f - expansion.value.coerceIn(0f, 1f); translationY = expansion.value * 24.dp.toPx() }
@@ -360,13 +369,14 @@ fun ArchiveApp(
     }
     CompositionLocalProvider(
         LocalArchiveBlur provides useBlur,
+        love.yu.jaychou.ui.effects.LocalTopAppBarBlur provides settings.topAppBarBlur,
         LocalArchiveLiquidGlass provides liquidGlass,
         LocalMovingAlbumId provides if (detailShown) lastDetailId else null,
         LocalMovingTrack provides if (lyricShown && lastDetailId != null && lastLyricNumber != null)
             (lastDetailId!! to lastLyricNumber!!) else null,
     ) {
     // Sheets sample this activity layer even when bar blur is switched off.
-    if (Build.VERSION.SDK_INT >= 33 && miuix) {
+    if (Build.VERSION.SDK_INT >= 33) {
         GlassLayer(background, scene)
     } else {
         scene(Modifier, Modifier.background(ArchiveUiTheme.colorScheme.surfaceContainer))
@@ -440,7 +450,6 @@ private fun AnimatedAlbumPanel(
                 val sourceLayer = source?.layer?.takeIf { it.size.width > 0 && it.size.height > 0 }
                 CatalogImage(
                     track?.artwork?.coverUrl ?: album.coverUrl,
-                    track?.artwork?.coverAsset ?: album.coverAsset,
                     AppText.get(R.string.ui_artwork_232, track?.title ?: album.title),
                     Modifier.fillMaxSize().graphicsLayer {
                         alpha = if (sourceLayer == null) 1f else progress()

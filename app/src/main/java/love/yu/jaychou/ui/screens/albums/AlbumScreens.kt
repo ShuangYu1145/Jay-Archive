@@ -85,6 +85,7 @@ fun AlbumsScreen(
         scaleX = 1f - searchProgress * .025f; scaleY = scaleX
         alpha = 1f - searchProgress
     }.then(if (searching) Modifier.clearAndSetSemantics {} else Modifier)) {
+    val inlineSectionHeader = love.yu.jaychou.ui.components.LocalInlineSectionHeader.current
     ArchiveScaffold(AppText.get(R.string.ui_albums), behavior = behavior,
         sectionHeader = sectionHeader,
         actions = {
@@ -103,10 +104,13 @@ fun AlbumsScreen(
                 .then(if (sectionHeader) Modifier else Modifier.nestedScroll(behavior.nestedScrollConnection))
                 .testTag("albums-grid").semantics { stateDescription = layout.label },
             columns = GridCells.Fixed(columns), state = state,
-            contentPadding = PaddingValues(12.dp, padding.calculateTopPadding() + 8.dp, 12.dp, bottom),
+            contentPadding = PaddingValues(
+                if (ArchiveUiTheme.isCoui) 16.dp else 12.dp, padding.calculateTopPadding() + 8.dp,
+                if (ArchiveUiTheme.isCoui) 16.dp else 12.dp, bottom),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalArrangement = Arrangement.spacedBy(if (layout == AlbumLayout.LIST) 12.dp else 18.dp),
         ) {
+            if (inlineSectionHeader != null) item("section-header", span = { GridItemSpan(maxLineSpan) }) { inlineSectionHeader() }
             item("heading", span = { GridItemSpan(maxLineSpan) }) {
                 Column(Modifier.padding(horizontal = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(AppText.get(R.string.ui_releases, albums.size, ReleaseCategory.entries.filter { it.name in categories }.joinToString(" / ") { it.label }), fontSize = 15.sp)
@@ -148,7 +152,7 @@ private fun AlbumCatalogCard(album: Album, layout: AlbumLayout, capture: Modifie
     ) {
         if (layout == AlbumLayout.LIST) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                CatalogImage(album.coverUrl, album.coverAsset, AppText.get(R.string.ui_album_artwork_source, album.title, album.sourceLabel),
+                CatalogImage(album.coverUrl, AppText.get(R.string.ui_album_artwork_source, album.title, album.sourceLabel),
                     coverCapture.size(88.dp).clip(AlbumCoverShape))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(7.dp)) {
                     Text(album.title, fontSize = 18.sp, fontWeight = FontWeight.SemiBold,
@@ -158,7 +162,7 @@ private fun AlbumCatalogCard(album: Album, layout: AlbumLayout, capture: Modifie
                 }
             }
         } else {
-            CatalogImage(album.coverUrl, album.coverAsset, AppText.get(R.string.ui_album_artwork_source, album.title, album.sourceLabel),
+            CatalogImage(album.coverUrl, AppText.get(R.string.ui_album_artwork_source, album.title, album.sourceLabel),
                 coverCapture.fillMaxWidth().aspectRatio(1f).clip(AlbumCoverShape))
             Column(Modifier.padding(start = 3.dp, end = 3.dp, top = 13.dp, bottom = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(if (large) 9.dp else 6.dp)) {
@@ -182,7 +186,7 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
     highlightedTrack: Int? = null,
 ) {
     var coverRatio by remember(album.id) { mutableFloatStateOf(1f) }
-    ArchiveScaffold(AppText.get(R.string.ui_album_archive), small = true, navigationIcon = { BackButton(onBack) },
+    ArchiveScaffold(AppText.get(R.string.ui_album_archive), small = true, progressiveBlur = ArchiveUiTheme.isCoui, navigationIcon = { BackButton(onBack) },
         actions = { Text(album.year, color = ArchiveUiTheme.colorScheme.primary, fontSize = 14.sp) },
     ) { padding ->
         LazyColumn(modifier = Modifier.fillMaxSize().testTag("album-detail-list"), state = state,
@@ -191,13 +195,21 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
                 val detach by rememberUpdatedState(onCoverDetached)
                 DisposableEffect(album.id) { onDispose { detach() } }
                 Box(Modifier.fillMaxWidth().animateContentSize(), contentAlignment = Alignment.Center) {
-                    CatalogImage(album.coverUrl, album.coverAsset, AppText.get(R.string.ui_artwork_source, album.title, album.sourceLabel),
-                        Modifier.widthIn(max = 360.dp).fillMaxWidth()
-                            .aspectRatio(coverRatio.coerceIn(.65f, 1.8f))
-                            .testTag("album-detail-cover").then(coverModifier).clip(AlbumCoverShape),
-                        contentScale = ContentScale.Fit,
-                        onAspectRatio = { coverRatio = it },
-                    )
+                    Card(
+                        modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth()
+                            .aspectRatio(coverRatio.coerceIn(.65f, 1.8f)),
+                        cornerRadius = 12.dp,
+                        pressFeedbackType = PressFeedbackType.Tilt,
+                        showIndication = false,
+                        onClick = {},
+                    ) {
+                        CatalogImage(album.coverUrl, AppText.get(R.string.ui_artwork_source, album.title, album.sourceLabel),
+                            Modifier.fillMaxSize().testTag("album-detail-cover")
+                                .then(coverModifier).clip(AlbumCoverShape),
+                            contentScale = ContentScale.Fit,
+                            onAspectRatio = { coverRatio = it },
+                        )
+                    }
                 }
             }
             item("title") {
@@ -252,7 +264,6 @@ private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, mod
                 fontSize = 13.sp, fontWeight = FontWeight.SemiBold, color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
             CatalogImage(
                 url = track.artwork?.coverUrl ?: album.coverUrl,
-                asset = track.artwork?.coverAsset ?: album.coverAsset,
                 description = AppText.get(R.string.ui_album_artwork, track.title),
                 modifier = Modifier.size(48.dp).then(coverModifier).clip(RoundedCornerShape(8.dp)).testTag("track-cover-${track.number}"),
                 showStatus = false,

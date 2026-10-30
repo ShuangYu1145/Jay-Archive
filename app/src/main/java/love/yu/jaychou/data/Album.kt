@@ -8,7 +8,7 @@ enum class ReleaseCategory(private val sourceLabel: String) {
     val label: String get() = AppText.fromOriginal(sourceLabel)
 }
 
-data class TrackArtwork(val coverUrl: String, val coverAsset: String, val sourceUrl: String)
+data class TrackArtwork(val coverUrl: String, val sourceUrl: String)
 
 data class Track(
     val number: Int, val title: String, val disc: Int = 1, val sourceTrackNumber: Int = number,
@@ -29,7 +29,6 @@ data class Album(
     val sourceDateRaw: String,
     val sourceUrl: String,
     val coverUrl: String,
-    val coverAsset: String,
     val tracks: List<Track>,
     val category: ReleaseCategory = ReleaseCategory.STUDIO,
     val sourceLabel: String = "jvrmusic，QQ Music，Apple Music",
@@ -81,11 +80,10 @@ object AlbumRepository {
                 releaseDate = item.getString("releaseDate"),
                 sourceDateRaw = item.getString("sourceDateRaw"),
                 sourceUrl = item.getString("sourceUrl"), coverUrl = item.getString("coverUrl"),
-                coverAsset = item.getString("coverAsset"),
                 tracks = (0 until songs.length()).map {
                     val song = songs.optJSONObject(it)
                     val artwork = item.optJSONObject("trackArtwork")?.optJSONObject((it + 1).toString())?.let { art ->
-                        TrackArtwork(art.getString("coverUrl"), art.getString("coverAsset"), art.getString("sourceUrl"))
+                        TrackArtwork(art.getString("coverUrl"), art.getString("sourceUrl"))
                     }
                     val credits = song?.optJSONArray("artists")
                         ?: item.optJSONObject("trackArtists")?.optJSONArray((it + 1).toString())

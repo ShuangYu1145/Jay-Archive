@@ -298,7 +298,22 @@ internal val originalTextKeys = mapOf(
     "JVR 官方行程暂不可用（HTTP %1\$s）" to R.string.ui_the_official_jvr_schedule_is_unavailable_http,
     "JVR 官方行程返回内容过大" to R.string.ui_the_official_jvr_schedule_returned_too_much_data,
     "官方行程格式已变化，请稍后重试" to R.string.ui_the_official_schedule_format_has_changed_please_try_again_later,
-    "开发者" to R.string.ui_developer
+    "开发者" to R.string.ui_developer,
+    "作曲" to R.string.ui_compositions,
+    "搜索歌名、歌手或专辑" to R.string.ui_search_compositions,
+    "周杰伦为他人谱写的旋律，按发行时间倒序排列。" to R.string.ui_compositions_intro,
+    "收录已整理的对外作曲作品，目录持续补充；日期对应所列发行版本。" to R.string.ui_compositions_catalog_note,
+    "正在载入歌曲目录…" to R.string.ui_compositions_loading,
+    "歌曲目录暂时无法载入，请重新打开此页面。" to R.string.ui_compositions_load_failed,
+    "没有匹配的歌曲，试试其他歌名或歌手。" to R.string.ui_compositions_empty,
+    "歌曲档案" to R.string.ui_composition_details,
+    "作曲 · 周杰伦" to R.string.ui_composed_by_jay,
+    "作词 · %1\$s" to R.string.ui_composition_lyricist,
+    "收录发行 · %1\$s" to R.string.ui_composition_release,
+    "发行日期 · %1\$s" to R.string.ui_composition_date,
+    "查看创作目录来源" to R.string.ui_compositions_source,
+    "封面采用匹配歌曲的数字发行版本，可能与首版实体唱片不同。" to R.string.ui_composition_artwork_note,
+    "查看封面来源 · Apple Music" to R.string.ui_composition_artwork_source
 )
 
 internal val quantityTextKeys = mapOf(

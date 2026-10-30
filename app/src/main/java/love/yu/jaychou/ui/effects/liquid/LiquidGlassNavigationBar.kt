@@ -88,8 +88,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.Text
+import love.yu.jaychou.ui.designsystem.Icon
+import love.yu.jaychou.ui.designsystem.Text
 import top.yukonga.miuix.kmp.blur.Backdrop
 import top.yukonga.miuix.kmp.blur.blur
 import top.yukonga.miuix.kmp.blur.drawBackdrop
@@ -100,8 +100,7 @@ import top.yukonga.miuix.kmp.blur.highlight.LightSource
 import top.yukonga.miuix.kmp.blur.layerBackdrop
 import top.yukonga.miuix.kmp.blur.rememberLayerBackdrop
 import top.yukonga.miuix.kmp.blur.sensor.rememberDeviceTilt
-import top.yukonga.miuix.kmp.theme.LocalContentColor
-import top.yukonga.miuix.kmp.theme.MiuixTheme
+import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -138,14 +137,16 @@ internal fun LiquidGlassNavigationBar(
                 modifier = Modifier.testTag("tab-${item.key}"),
             ) {
                 item.icon?.let {
-                    Icon(it, contentDescription = null, modifier = Modifier.size(24.dp), tint = LocalContentColor.current)
+                    Icon(it, contentDescription = null, modifier = Modifier.size(24.dp), tint = LocalLiquidContentColor.current)
                 }
-                Text(item.label, color = LocalContentColor.current, fontSize = if (item.icon == null) 16.sp else 11.sp,
-                    lineHeight = if (item.icon == null) 22.sp else 14.sp, maxLines = 1, softWrap = false)
+                Text(item.label, color = LocalLiquidContentColor.current, fontSize = if (item.icon == null) 16.sp else 11.sp,
+                    lineHeight = if (item.icon == null) 22.sp else 14.sp, maxLines = 1)
             }
         }
     }
 }
+private val LocalLiquidContentColor = staticCompositionLocalOf { Color.Unspecified }
+
 private val LocalLiquidTabScale = staticCompositionLocalOf { { 1f } }
 
 private val IndicatorSpecular = Highlight(
@@ -176,7 +177,7 @@ internal fun Modifier.liquidGlassBackground(
     layerBlock: (GraphicsLayerScope.() -> Unit)? = null,
 ): Modifier {
     val highlight = rememberGravityHighlight(IndicatorSpecular, -45f)
-    val color = MiuixTheme.colorScheme.surfaceContainer.copy(alpha = 0.4f)
+    val color = ArchiveUiTheme.colorScheme.surfaceContainer.copy(alpha = 0.4f)
     return drawBackdrop(
         backdrop = backdrop,
         shape = { CircleShape },
@@ -257,11 +258,11 @@ private fun FloatingLiquidBar(
     indicatorTag: String,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val isDark = MiuixTheme.colorScheme.background.luminance() < 0.5f
+    val isDark = ArchiveUiTheme.colorScheme.background.luminance() < 0.5f
     val pillShape = CircleShape
-    val accentColor = MiuixTheme.colorScheme.primary
-    val tabContentColor = MiuixTheme.colorScheme.onSurface
-    val containerColor = MiuixTheme.colorScheme.surfaceContainer.copy(alpha = 0.4f)
+    val accentColor = ArchiveUiTheme.colorScheme.primary
+    val tabContentColor = ArchiveUiTheme.colorScheme.onSurface
+    val containerColor = ArchiveUiTheme.colorScheme.surfaceContainer.copy(alpha = 0.4f)
     val tabsBackdrop = rememberLayerBackdrop()
     val density = LocalDensity.current
     val isLeftToRight = LocalLayoutDirection.current == LayoutDirection.Ltr
@@ -374,12 +375,12 @@ private fun FloatingLiquidBar(
                 .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CompositionLocalProvider(LocalContentColor provides tabContentColor) { content() }
+            CompositionLocalProvider(LocalLiquidContentColor provides tabContentColor) { content() }
         }
 
         CompositionLocalProvider(
             LocalLiquidTabScale provides { lerp(1f, 1.2f, dragAnimation.pressProgress) },
-            LocalContentColor provides accentColor,
+            LocalLiquidContentColor provides accentColor,
         ) {
             Row(
                 modifier = Modifier

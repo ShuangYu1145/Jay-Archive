@@ -15,6 +15,12 @@ import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 internal fun ArchiveIconButton(
     icon: ImageVector, description: String, onClick: () -> Unit, modifier: Modifier = Modifier,
 ) {
+    if (ArchiveUiTheme.isCoui) {
+        love.yu.jaychou.ui.designsystem.CouiToolbarButton(onClick, modifier) {
+            Icon(icon, description, Modifier.size(24.dp), tint = ArchiveUiTheme.colorScheme.onBackground)
+        }
+        return
+    }
     IconButton(onClick = onClick, modifier = modifier.size(48.dp),
         backgroundColor = Color.Transparent, minWidth = 48.dp, minHeight = 48.dp) {
         Icon(icon, contentDescription = description, modifier = Modifier.size(24.dp),

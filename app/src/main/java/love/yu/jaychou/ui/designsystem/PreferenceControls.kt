@@ -38,7 +38,13 @@ fun BasicComponent(
                 .then(if (enabled) Modifier else Modifier.alpha(.38f)),
             colors = androidx.compose.material3.ListItemDefaults.colors(containerColor = Color.Transparent),
         )
-    } else top.yukonga.miuix.kmp.basic.BasicComponent(
+    } else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.BasicComponent(
+        title = title, modifier = modifier.heightIn(min = CouiLayout.RowMinHeight),
+        summary = summary.takeIf { endActions == null }, startAction = startAction,
+        bottomAction = summary?.takeIf { endActions != null }?.let { { CouiPreferenceSummary(it) } },
+        insideMargin = CouiLayout.RowPadding,
+        endActions = endActions, onClick = onClick, enabled = enabled)
+    else top.yukonga.miuix.kmp.basic.BasicComponent(
         title = title, modifier = modifier, summary = summary, startAction = startAction,
         endActions = endActions, onClick = onClick, enabled = enabled)
 }
@@ -48,6 +54,10 @@ fun ArrowPreference(title: String, modifier: Modifier = Modifier, summary: Strin
                     endActions: @Composable RowScope.() -> Unit = {}, onClick: (() -> Unit)? = null) {
     if (ArchiveUiTheme.isMaterial) BasicComponent(title, modifier, summary,
         endActions = { endActions(); Text("›", color = MaterialTheme.colorScheme.onSurfaceVariant) }, onClick = onClick)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.preference.ArrowPreference(title,
+        modifier.heightIn(min = CouiLayout.RowMinHeight),
+        bottomAction = summary?.let { { CouiPreferenceSummary(it) } },
+        insideMargin = CouiLayout.RowPadding, endActions = endActions, onClick = onClick)
     else top.yukonga.miuix.kmp.preference.ArrowPreference(title, modifier, summary = summary,
         endActions = endActions, onClick = onClick)
 }
@@ -59,6 +69,9 @@ fun SwitchPreference(title: String, summary: String, checked: Boolean, onChecked
         modifier.toggleable(checked, enabled = enabled, role = Role.Switch, onValueChange = onCheckedChange), summary,
         endActions = { androidx.compose.material3.Switch(checked, onCheckedChange = null, enabled = enabled) },
         enabled = enabled)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.preference.SwitchPreference(title = title, summary = summary,
+        checked = checked, onCheckedChange = onCheckedChange, enabled = enabled,
+        insideMargin = CouiLayout.RowPadding, modifier = modifier.heightIn(min = CouiLayout.RowMinHeight))
     else top.yukonga.miuix.kmp.preference.SwitchPreference(title = title, summary = summary,
         checked = checked, onCheckedChange = onCheckedChange, enabled = enabled, modifier = modifier)
 }
@@ -69,6 +82,10 @@ fun CheckboxPreference(title: String, summary: String, checked: Boolean, onCheck
     if (ArchiveUiTheme.isMaterial) BasicComponent(title,
         modifier.toggleable(checked, role = Role.Checkbox, onValueChange = onCheckedChange), summary,
         endActions = { androidx.compose.material3.Checkbox(checked, onCheckedChange = null) })
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.preference.CheckboxPreference(title = title, summary = summary,
+        checked = checked, onCheckedChange = onCheckedChange, insideMargin = CouiLayout.RowPadding,
+        checkboxLocation = io.github.suqi8.coui.kmp.preference.CheckboxLocation.valueOf(checkboxLocation.name),
+        modifier = modifier.heightIn(min = CouiLayout.RowMinHeight))
     else top.yukonga.miuix.kmp.preference.CheckboxPreference(title = title, summary = summary,
         checked = checked, onCheckedChange = onCheckedChange, checkboxLocation = checkboxLocation, modifier = modifier)
 }
@@ -77,6 +94,14 @@ fun CheckboxPreference(title: String, summary: String, checked: Boolean, onCheck
 fun OverlayDropdownPreference(title: String, items: List<String>, selectedIndex: Int,
                               onSelectedIndexChange: (Int) -> Unit, modifier: Modifier = Modifier,
                               summary: String? = null) {
+    if (ArchiveUiTheme.isCoui) {
+        io.github.suqi8.coui.kmp.preference.OverlayDropdownPreference(title = title, items = items,
+            selectedIndex = selectedIndex, onSelectedIndexChange = onSelectedIndexChange,
+            modifier = modifier.heightIn(min = CouiLayout.RowMinHeight),
+            insideMargin = CouiLayout.RowPadding,
+            bottomAction = summary?.let { { CouiPreferenceSummary(it) } })
+        return
+    }
     if (!ArchiveUiTheme.isMaterial) {
         top.yukonga.miuix.kmp.preference.OverlayDropdownPreference(title = title, items = items,
             selectedIndex = selectedIndex, onSelectedIndexChange = onSelectedIndexChange, modifier = modifier, summary = summary)

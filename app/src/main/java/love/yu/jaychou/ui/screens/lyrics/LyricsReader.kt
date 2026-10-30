@@ -186,6 +186,10 @@ private fun LyricsTopBar(onBack: () -> Unit, onImport: () -> Unit, onSettings: (
         navigationIcon = back, actions = actions, scrollBehavior = behavior.material,
         colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(containerColor = background,
             scrolledContainerColor = background), modifier = Modifier.testTag("lyrics-top-bar"))
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.SmallTopAppBar(
+        title = AppText.get(R.string.ui_lyrics), navigationIcon = back, actions = actions,
+        scrollBehavior = behavior.coui, color = background,
+        modifier = Modifier.testTag("lyrics-top-bar"), defaultWindowInsetsPadding = true)
     else top.yukonga.miuix.kmp.basic.SmallTopAppBar(
         title = AppText.get(R.string.ui_lyrics), navigationIcon = back, actions = actions,
         scrollBehavior = behavior.miuix, color = background,
@@ -202,7 +206,7 @@ private fun ReaderSongInformation(album: Album, track: Track, source: String, tr
     Card(Modifier.fillMaxWidth().testTag("lyrics-song-card"), cornerRadius = 24.dp,
         insideMargin = PaddingValues(20.dp), colors = CardDefaults.defaultColors(colors.surfaceContainer.copy(alpha = .76f))) {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            CatalogImage(track.artwork?.coverUrl ?: album.coverUrl, track.artwork?.coverAsset ?: album.coverAsset,
+            CatalogImage(track.artwork?.coverUrl ?: album.coverUrl,
                 AppText.get(R.string.ui_album_artwork, track.title),
                 Modifier.size(72.dp).then(coverModifier).clip(RoundedCornerShape(16.dp)).testTag("lyrics-cover"), showStatus = false)
             Column(Modifier.weight(1f).then(bodyModifier), verticalArrangement = Arrangement.spacedBy(5.dp)) {

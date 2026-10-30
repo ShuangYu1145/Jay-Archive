@@ -27,17 +27,14 @@ internal fun rememberReaderPalette(album: Album, track: Track, mode: LyricsBackg
     val colors = ArchiveUiTheme.colorScheme
     val context = LocalContext.current
     val url = track.artwork?.coverUrl ?: album.coverUrl
-    val asset = track.artwork?.coverAsset ?: album.coverAsset
-    val accent by produceState<Color?>(null, url, asset, mode) {
+    val accent by produceState<Color?>(null, url, mode) {
         if (mode != LyricsBackground.ALBUM) return@produceState
         value = withContext(Dispatchers.IO) {
             artworkColors.get(url)?.let { return@withContext Color(it) }
             try {
-                // Reuse Coil's cache; a bundled thumbnail also works without a network connection.
-                suspend fun load(data: String) = context.imageLoader.execute(ImageRequest.Builder(context)
-                    .data(data).size(48).allowHardware(false).build()) as? SuccessResult
-                val bundled = context.assets.runCatching { open(asset).use { } }.isSuccess
-                val result = load(if (bundled) "file:///android_asset/$asset" else url)
+                // Fetch online artwork through the same Coil cache as the cover views.
+                val result = context.imageLoader.execute(ImageRequest.Builder(context)
+                    .data(url).size(48).allowHardware(false).build()) as? SuccessResult
                 val bitmap = (result?.drawable as? BitmapDrawable)?.bitmap ?: return@withContext null
                 val bins = IntArray(512)
                 var winner = -1
@@ -65,17 +62,20 @@ internal fun rememberReaderPalette(album: Album, track: Track, mode: LyricsBackg
             } catch (_: Exception) { null }
         }
     }
-    return remember(mode, accent, colors.background, colors.onSurface) {
+    return remember(mode, accent, colors.background, colors.onSurface, colors.primary) {
         val dark = colors.background.luminance() < .5f
         val base = if (mode == LyricsBackground.PLAIN) {
             if (dark) Color(0xFF17191C) else Color(0xFFFAF7F0)
         } else colors.background
-        val stops = if (mode == LyricsBackground.ALBUM && accent != null) {
+        val stops = if (mode == LyricsBackground.ALBUM) {
             val hsv = FloatArray(3)
-            android.graphics.Color.colorToHSV(accent!!.toArgb(), hsv)
-            hsv[1] = hsv[1].coerceAtMost(.22f)
+            // Keep album mode visible while artwork loads or is unavailable offline.
+            android.graphics.Color.colorToHSV((accent ?: colors.primary).toArgb(), hsv)
+            hsv[1] = hsv[1].coerceAtMost(.5f)
+            hsv[2] = if (dark) hsv[2].coerceIn(.45f, .65f) else hsv[2].coerceIn(.7f, .9f)
             val muted = Color(android.graphics.Color.HSVToColor(hsv))
-            listOf(lerp(base, muted, if (dark) .12f else .09f), lerp(base, muted, .025f), base)
+            // Carry the artwork tint through the lyrics, including the bottom of the page.
+            listOf(lerp(base, muted, .45f), lerp(base, muted, .32f), lerp(base, muted, .24f))
         } else listOf(base, base, base)
         fun contrast(a: Color, b: Color): Float {
             val l1 = a.luminance(); val l2 = b.luminance()

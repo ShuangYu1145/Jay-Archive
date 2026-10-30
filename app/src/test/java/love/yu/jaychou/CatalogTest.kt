@@ -24,7 +24,7 @@ class CatalogTest {
             LocalDate.parse(album.releaseDate)
             assertTrue(album.tracks.all { it.title.isNotBlank() })
             assertEquals((1..album.tracks.size).toList(), album.tracks.map { it.number })
-            assertTrue(File("src/main/assets/${album.coverAsset}").length() > 1000)
+            assertTrue(album.coverUrl.startsWith("https://"))
             assertTrue(album.sourceUrl.startsWith("https://www.jvrmusic.com/artist/gallery/detail/"))
         }
     }
@@ -46,7 +46,7 @@ class CatalogTest {
             assertTrue(album.tracks.isNotEmpty())
             assertEquals(album.tracks.map { it.disc to it.sourceTrackNumber },
                 album.tracks.sortedWith(compareBy({ it.disc }, { it.sourceTrackNumber })).map { it.disc to it.sourceTrackNumber })
-            assertTrue(File("src/main/assets/${album.coverAsset}").length() > 1000)
+            assertTrue(album.coverUrl.startsWith("https://"))
             assertTrue(album.dateNote.contains("数字版"))
             LocalDate.parse(album.releaseDate)
         }

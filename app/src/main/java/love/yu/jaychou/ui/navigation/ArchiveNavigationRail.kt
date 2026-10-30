@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import love.yu.jaychou.data.UiStyle
+import io.github.suqi8.coui.kmp.basic.NavigationRailItem as CouiNavigationRailItem
 import top.yukonga.miuix.kmp.basic.NavigationRail
 import top.yukonga.miuix.kmp.basic.NavigationRailItem
 
@@ -35,6 +36,14 @@ internal fun ArchiveNavigationRail(
                         label = { androidx.compose.material3.Text(item.label) },
                         modifier = Modifier.testTag("tab-${item.key}"),
                     )
+                }
+            }
+        } else if (uiStyle == UiStyle.COUI) {
+            io.github.suqi8.coui.kmp.basic.NavigationRail(modifier = Modifier.testTag("coui-navigation-rail")) {
+                rootNavigationItems().forEachIndexed { index, item ->
+                    CouiNavigationRailItem(selected = selectedIndex == index, onClick = { onSelect(index) },
+                        enabled = enabled, icon = requireNotNull(item.icon), label = item.label,
+                        modifier = Modifier.testTag("tab-${item.key}"))
                 }
             }
         } else {

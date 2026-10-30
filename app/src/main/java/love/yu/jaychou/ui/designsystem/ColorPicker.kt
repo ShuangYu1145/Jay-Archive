@@ -15,6 +15,10 @@ import love.yu.jaychou.data.AppText
 
 @Composable
 fun ColorPicker(color: Color, onColorChanged: (Color) -> Unit, modifier: Modifier = Modifier) {
+    if (ArchiveUiTheme.isCoui) {
+        io.github.suqi8.coui.kmp.basic.ColorPicker(color, onColorChanged = onColorChanged, modifier = modifier)
+        return
+    }
     if (!ArchiveUiTheme.isMaterial) {
         top.yukonga.miuix.kmp.basic.ColorPicker(color, onColorChanged = onColorChanged, modifier = modifier)
         return

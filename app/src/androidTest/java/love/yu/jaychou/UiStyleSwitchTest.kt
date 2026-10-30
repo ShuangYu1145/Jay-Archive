@@ -36,8 +36,40 @@ class UiStyleSwitchTest {
                     onAlbumCategories = { settings = settings.copy(albumCategories = it) },
                     onCustomColor = { settings = settings.copy(customColor = it) },
                     onUiStyle = { settings = settings.copy(uiStyle = it) },
+                    onLiquidGlass = { settings = settings.copy(liquidGlass = it) },
+                    onFloatingBottomBar = { settings = settings.copy(floatingBottomBar = it) },
                     error = null, onDismissError = {})
             }
+        }
+    }
+
+    @Test fun couiFloatingAndGlassSwitchesUpdateTheGlobalBar() = verifyFloatingSwitches(UiStyle.COUI)
+
+    @Test fun materialFloatingAndGlassSwitchesUpdateTheGlobalBar() = verifyFloatingSwitches(UiStyle.MATERIAL3)
+
+    private fun verifyFloatingSwitches(style: UiStyle) {
+        org.junit.Assume.assumeTrue(android.os.Build.VERSION.SDK_INT >= 33)
+        show(style)
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("floating-navigation").assertIsDisplayed()
+        val liquid = AppText.get(R.string.ui_liquid_glass)
+        val floating = AppText.get(R.string.ui_floating_navigation_bar)
+        app.mainClock.autoAdvance = false
+        try {
+            app.onNodeWithContentDescription(liquid).performScrollTo().performClick()
+            app.mainClock.advanceTimeBy(1500)
+            app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
+            app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
+            app.onNodeWithContentDescription(floating).performScrollTo().performClick()
+            app.mainClock.advanceTimeBy(1500)
+            app.onNodeWithTag("standard-navigation").assertIsDisplayed()
+            app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
+            app.onNodeWithContentDescription(floating).performScrollTo().performClick()
+            app.mainClock.advanceTimeBy(1500)
+            app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
+            screenshot("${style.name}-liquid-settings.png")
+        } finally {
+            app.mainClock.autoAdvance = true
         }
     }
 
@@ -48,8 +80,14 @@ class UiStyleSwitchTest {
         app.onNodeWithText("Material Design 3").performClick()
         app.onNodeWithTag("material-navigation").assertIsDisplayed()
         app.onNodeWithTag("settings-list").assertIsDisplayed()
-        app.onAllNodesWithTag("floating-navigation").assertCountEquals(0)
+        app.onNodeWithTag("floating-navigation").assertIsDisplayed()
         screenshot("material-settings.png")
+        app.onNodeWithTag("ui-style").performScrollTo().performClick()
+        app.onNodeWithText("COUI（ColorOS）").performClick()
+        app.onNodeWithTag("coui-navigation").assertIsDisplayed()
+        app.onNodeWithTag("settings-list").assertIsDisplayed()
+        app.onAllNodesWithTag("material-navigation").assertCountEquals(0)
+        screenshot("coui-settings.png")
         app.onNodeWithTag("ui-style").performScrollTo().performClick()
         app.onNodeWithText("Miuix").performClick()
         app.onNodeWithTag("floating-navigation").assertIsDisplayed()
@@ -58,7 +96,11 @@ class UiStyleSwitchTest {
         screenshot("miuix-settings.png")
     }
 
-    @Test fun materialCategoriesSearchAlbumAndLyricsUseTheSameCatalog() {
+    @Test fun materialCategoriesSearchAlbumAndLyricsUseTheSameCatalog() = categoriesSearchAlbumAndLyrics(UiStyle.MATERIAL3)
+
+    @Test fun couiCategoriesSearchAlbumAndLyricsUseTheSameCatalog() = categoriesSearchAlbumAndLyrics(UiStyle.COUI)
+
+    private fun categoriesSearchAlbumAndLyrics(style: UiStyle) {
         val album = AlbumRepository.load(context).find("1152151605810958336")!!
         val track = album.tracks[1]
         val original = runBlocking { LyricsRepository.local(context, album, track) }
@@ -66,12 +108,12 @@ class UiStyleSwitchTest {
         fixture.writeText("界面预览用示例文字\n\n原文在独立阅读卡片中自然换行\n每段之间保留舒适的阅读间距\n\n这里只用于检查字号、留白和封面圆角\n歌词页面不显示主打星标\n")
         runBlocking { LyricsRepository.import(context, album, track, Uri.fromFile(fixture)) }
         try {
-            show(UiStyle.MATERIAL3)
+            show(style)
             app.onNodeWithTag("tab-INTRODUCTION").performClick()
             app.onNodeWithTag("tab-ALBUMS").performClick()
             app.onNodeWithTag("release-filter").performClick()
             app.onNodeWithTag("category-SINGLE").performClick()
-            app.onNodeWithText(AppText.get(R.string.ui_confirm)).performClick()
+            app.onNode(hasText(AppText.get(R.string.ui_confirm)) or hasContentDescription(AppText.get(R.string.ui_confirm))).performClick()
             app.onAllNodesWithTag("category-sheet").assertCountEquals(0)
             app.onNodeWithTag("album-search-open").performClick()
             app.onNodeWithTag("album-search-input").performTextInput("Common")
@@ -79,13 +121,13 @@ class UiStyleSwitchTest {
             app.onNodeWithTag("album-detail").assertIsDisplayed()
             app.onNodeWithTag("album-detail-list").performScrollToIndex(4)
             app.onNodeWithTag("track-2").assertIsDisplayed()
-            screenshot("material-tracks.png")
+            screenshot("${style.name}-tracks.png")
             app.onNodeWithTag("track-2").performClick()
             app.onNodeWithTag("lyrics-song-card").assertIsDisplayed()
             app.onNodeWithTag("lyrics-list").assertIsDisplayed()
             app.onNodeWithText("界面预览用示例文字").assertIsDisplayed()
             app.onAllNodesWithText("🌟").assertCountEquals(0)
-            screenshot("material-lyrics.png")
+            screenshot("${style.name}-lyrics.png")
             app.onNodeWithContentDescription(AppText.get(R.string.ui_back_to_album_details)).performClick()
             app.onNodeWithTag("track-2").assertIsDisplayed()
         } finally {
@@ -149,10 +191,57 @@ class UiStyleSwitchTest {
         }
     }
 
-    private fun screenshot(name: String) {
+    @Test fun couiColorSheetAndAboutDialogUseNativeControls() {
+        show(UiStyle.COUI)
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("custom-color").performScrollTo().performClick()
+        app.onNodeWithTag("color-sheet").assertIsDisplayed()
+        app.onNodeWithTag("color-preset-1").performScrollTo().performClick()
+        screenshot("coui-color-sheet.png", "color-sheet")
+        app.onNodeWithTag("color-apply").performClick()
+        app.onNodeWithTag("color-sheet").assertDoesNotExist()
+        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("about-developer-card").performScrollTo()
+        repeat(4) { app.onNodeWithTag("about-developer-card").performClick() }
+        app.onNodeWithTag("about-easter-egg-input").performTextInput("0118")
+        screenshot("coui-about-dialog.png", "about-easter-egg-dialog")
+        app.onNodeWithTag("about-easter-egg-dismiss").performClick()
+        app.onNodeWithTag("about-easter-egg-dialog").assertDoesNotExist()
+    }
+
+    @Test fun couiSelectionAndAppearanceSurviveRepositoryRecreation() = runBlocking {
+        val repository = SettingsRepository(context)
+        val original = repository.settings.first()
+        repository.setUiStyle(UiStyle.COUI)
+        val saved = repository.settings.first()
+        try {
+            repository.setTheme(ThemeMode.DARK)
+            repository.setMonet(false)
+            repository.setCustomColor(0xFF3482FF.toInt())
+            repository.setAlbumLayout(AlbumLayout.LIST)
+            for (style in listOf(UiStyle.MIUIX, UiStyle.MATERIAL3, UiStyle.COUI)) {
+                repository.setUiStyle(style)
+                assertEquals(style, SettingsRepository(context).settings.first().uiStyle)
+            }
+            val restored = SettingsRepository(context).settings.first()
+            assertEquals(ThemeMode.DARK, restored.theme)
+            assertFalse(restored.monet)
+            assertEquals(0xFF3482FF.toInt(), restored.customColor)
+            assertEquals(AlbumLayout.LIST, restored.albumLayout)
+        } finally {
+            repository.setUiStyle(UiStyle.COUI)
+            repository.setTheme(saved.theme)
+            repository.setMonet(saved.monet)
+            repository.setCustomColor(saved.customColor)
+            repository.setAlbumLayout(saved.albumLayout)
+            repository.setUiStyle(original.uiStyle)
+        }
+    }
+
+    private fun screenshot(name: String, tag: String? = null) {
         val directory = File(context.getExternalFilesDir(null), "dual-ui").apply { mkdirs() }
         File(directory, name).outputStream().use {
-            app.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+            (tag?.let { app.onNodeWithTag(it) } ?: app.onRoot()).captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
         }
     }
 }

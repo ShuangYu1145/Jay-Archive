@@ -1,6 +1,8 @@
 package love.yu.jaychou.ui.screens.concerts
 
 import love.yu.jaychou.ui.components.ArchiveScaffold
+import love.yu.jaychou.ui.components.LocalArchiveBlur
+import love.yu.jaychou.ui.effects.couiFrostedSurface
 import love.yu.jaychou.ui.components.BackButton
 import love.yu.jaychou.ui.components.QuietText
 import love.yu.jaychou.ui.components.SectionTitle
@@ -134,6 +136,7 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
     }
 
     Box(Modifier.fillMaxSize()) {
+        val inlineSectionHeader = love.yu.jaychou.ui.components.LocalInlineSectionHeader.current
         ArchiveScaffold(
             AppText.get(R.string.ui_concerts),
             behavior = behavior,
@@ -142,6 +145,7 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
                 if (sectionHeader) {
                     Box(
                         Modifier.fillMaxWidth().height(48.dp)
+                            .then(if (ArchiveUiTheme.isCoui) Modifier.couiFrostedSurface(LocalArchiveBlur.current) else Modifier)
                             .clickable(enabled = !loading && !refreshing, onClick = refreshNow)
                             .testTag("concerts-refresh"),
                         contentAlignment = Alignment.Center,
@@ -177,6 +181,7 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
                 ),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
+                if (inlineSectionHeader != null) item("section-header") { inlineSectionHeader() }
                 item("concert-intro") {
                     ConcertIntro(
                         updated = snapshot?.updatedLabel,
@@ -539,7 +544,7 @@ private fun ConcertDetailScreen(
     val uriHandler = LocalUriHandler.current
     val status = concert.status(now)
     val timeText = concertTime(concert, now)
-    ArchiveScaffold(
+        ArchiveScaffold(
         AppText.get(R.string.ui_show_details_92), small = true,
         navigationIcon = { BackButton(onBack, AppText.get(R.string.ui_back_to_concerts)) },
     ) { padding ->

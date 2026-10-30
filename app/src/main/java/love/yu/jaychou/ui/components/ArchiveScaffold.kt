@@ -21,6 +21,9 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import top.yukonga.miuix.kmp.basic.*
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import love.yu.jaychou.ui.designsystem.ArchiveScrollBehavior
@@ -32,6 +35,8 @@ val LocalArchiveBlur = staticCompositionLocalOf { false }
 internal class SectionActionHost {
     var content by mutableStateOf<State<@Composable RowScope.() -> Unit>?>(null)
 }
+
+internal val LocalInlineSectionHeader = staticCompositionLocalOf<(@Composable () -> Unit)?> { null }
 
 internal val LocalSectionActionHost = staticCompositionLocalOf<SectionActionHost?> { null }
 
@@ -45,8 +50,10 @@ fun ArchiveScaffold(
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     sectionHeader: Boolean = false,
+    progressiveBlur: Boolean = false,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val inlineHeader = LocalInlineSectionHeader.current.takeIf { sectionHeader }
     val actionHost = LocalSectionActionHost.current.takeIf { sectionHeader }
     val currentActions = rememberUpdatedState(actions)
     DisposableEffect(actionHost) {
@@ -78,6 +85,44 @@ fun ArchiveScaffold(
         }
         return
     }
+    if (ArchiveUiTheme.isCoui) {
+        val couiScene: @Composable (Modifier, Modifier) -> Unit = { capture, header ->
+            io.github.suqi8.coui.kmp.basic.Scaffold(
+                modifier = Modifier.fillMaxSize().clipToBounds(),
+                containerColor = pageBackground, contentWindowInsets = WindowInsets(0),
+                topBar = {
+                    val bar = header.testTag("top-bar-$title")
+                    when {
+                        inlineHeader != null -> Spacer(Modifier.fillMaxWidth().statusBarsPadding())
+                        sectionHeader -> Row(bar.fillMaxWidth().statusBarsPadding().height(74.dp),
+                            horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+                            if (actionHost == null) SectionHeaderActions(actions)
+                        }
+                        // COUI SmallTopAppBar clips its children to the 52dp toolbar bounds,
+                        // cutting off the frosted action's diffuse shadow. Keep actions outside that clip.
+                        small -> Row(bar.fillMaxWidth().statusBarsPadding()
+                            .height(52.dp).padding(horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically) {
+                            navigationIcon()
+                            Spacer(Modifier.width(8.dp))
+                            io.github.suqi8.coui.kmp.basic.Text(title,
+                                modifier = Modifier.weight(1f),
+                                fontSize = 18.sp, fontWeight = FontWeight.Medium,
+                                maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Spacer(Modifier.width(8.dp))
+                            actions()
+                        }
+                        else -> io.github.suqi8.coui.kmp.basic.TopAppBar(title, modifier = bar, color = Color.Transparent,
+                            scrollBehavior = behavior?.coui, navigationIcon = navigationIcon, actions = actions)
+                    }
+                },
+            ) { padding -> Box(Modifier.fillMaxSize().then(capture).background(pageBackground)) { content(padding) } }
+        }
+        if (Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader)
+            HeaderGlassLayer(background, couiScene, progressive = progressiveBlur)
+        else couiScene(Modifier, if (sectionHeader) Modifier else Modifier.background(background))
+        return
+    }
     val scene: @Composable (Modifier, Modifier) -> Unit = { capture, header ->
         Scaffold(
             modifier = Modifier.fillMaxSize().clipToBounds(),
@@ -106,12 +151,18 @@ fun ArchiveScaffold(
     }
     // Section actions sample only the sibling list, never the toolbar containing themselves.
     if (sectionHeader && actionHost == null && Build.VERSION.SDK_INT >= 33 && (LocalArchiveBlur.current || LocalArchiveLiquidGlass.current)) GlassLayer(background, scene)
-    else if (Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader) HeaderGlassLayer(background, scene)
+    else if (Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader) HeaderGlassLayer(background, scene, progressive = love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE)
     else scene(Modifier, if (sectionHeader) Modifier else Modifier.background(background))
 }
 
 @Composable
 internal fun SectionHeaderActions(content: @Composable RowScope.() -> Unit) {
+    if (ArchiveUiTheme.isCoui) {
+        Row(Modifier.width(104.dp).height(64.dp).testTag("introduction-actions"),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically, content = content)
+        return
+    }
     val backdrop = LocalNavigationBackdrop.current
     if (ArchiveUiTheme.isMaterial) {
         Row(Modifier.width(96.dp).height(64.dp).testTag("introduction-actions"),

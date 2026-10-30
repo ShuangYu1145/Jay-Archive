@@ -69,7 +69,7 @@
     <string name="ui_open_the_album_at_this_song">해당 앨범에서 이 노래로 이동</string>
     <string name="ui_artwork">%1$s 커버</string>
     <string name="ui_loading_online_image">온라인 이미지 불러오는 중…</string>
-    <string name="ui_offline_image_tap_to_retry">오프라인 이미지 · 눌러서 다시 시도</string>
+    <string name="ui_offline_image_tap_to_retry">이미지 로드 실패 · 눌러서 다시 시도</string>
     <string name="ui_retry_online_image">온라인 이미지 다시 불러오기</string>
     <string name="ui_back_to_albums">앨범 목록으로 돌아가기</string>
     <string name="ui_upcoming">예정</string>
@@ -415,4 +415,23 @@
     <string name="ui_update_disable_automatic">자동 확인 끄기</string>
     <string name="ui_update_download">업데이트 다운로드</string>
     <string name="ui_update_later">나중에</string>
+    <string name="ui_compositions">작곡</string>
+    <string name="ui_search_compositions">곡, 가수 또는 앨범 검색</string>
+    <string name="ui_compositions_intro">주걸륜이 다른 가수를 위해 작곡한 곡을 최신 발매순으로 모았습니다.</string>
+    <string name="ui_compositions_catalog_note">다른 가수에게 제공한 곡을 계속 추가하고 있습니다. 날짜는 기재된 발매 버전 기준입니다.</string>
+    <string name="ui_compositions_loading">곡 목록을 불러오는 중…</string>
+    <string name="ui_compositions_load_failed">곡을 불러올 수 없습니다. 페이지를 다시 열어 주세요.</string>
+    <string name="ui_compositions_empty">일치하는 곡이 없습니다. 다른 곡명이나 가수로 검색해 보세요.</string>
+    <string name="ui_composition_details">곡 정보</string>
+    <string name="ui_composed_by_jay">작곡 · 주걸륜</string>
+    <string name="ui_composition_lyricist">작사 · %1$s</string>
+    <string name="ui_composition_release">수록 음반 · %1$s</string>
+    <string name="ui_composition_date">발매일 · %1$s</string>
+    <string name="ui_compositions_source">작곡 목록 출처 보기</string>
+    <string name="ui_composition_artwork_note">표지는 해당 곡의 디지털 발매 버전으로, 초판 음반과 다를 수 있습니다.</string>
+    <string name="ui_composition_artwork_source">표지 출처 · Apple Music</string>
+    <string name="ui_top_app_bar_blur">상단 바 흐림</string>
+    <string name="ui_top_app_bar_blur_summary">Gaussian은 균일한 흐림, Progressive는 위에서 아래로 점차 선명해지는 흐림</string>
+    <string name="ui_support_motivation">여러분의 응원이 가장 큰 힘입니다</string>
+    <string name="ui_support_qr">개발자 후원 QR 코드</string>
 </resources>

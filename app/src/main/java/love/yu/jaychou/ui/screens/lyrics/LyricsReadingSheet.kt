@@ -36,16 +36,19 @@ internal fun LyricsReadingSheet(
         endAction = { TextButton(AppText.get(R.string.ui_reader_done), onDismiss) },
     ) {
         Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).navigationBarsPadding()
-            .padding(bottom = 16.dp).testTag("lyrics-reading-sheet"), verticalArrangement = Arrangement.spacedBy(18.dp)) {
+            .padding(bottom = 16.dp).testTag("lyrics-reading-sheet"), verticalArrangement = Arrangement.spacedBy(if (ArchiveUiTheme.isCoui) 12.dp else 18.dp)) {
             Text(AppText.get(R.string.ui_reader_preview), Modifier.fillMaxWidth(),
                 fontSize = settings.fontSize.sp, lineHeight = (settings.fontSize * settings.lineSpacing).sp,
                 textAlign = settings.alignment.textAlign(), color = ArchiveUiTheme.colorScheme.onSurface)
-            ReaderSlider(AppText.get(R.string.ui_reader_font_size), "${settings.fontSize.toInt()} sp",
-                settings.fontSize, 18f..32f, 13, "reader-font-size",
-                { onChange(settings.copy(fontSize = it), false) }, onCommit)
-            ReaderSlider(AppText.get(R.string.ui_reader_line_spacing), String.format(Locale.ROOT, "%.1f×", settings.lineSpacing),
-                settings.lineSpacing, 1.2f..2.2f, 9, "reader-line-spacing",
-                { onChange(settings.copy(lineSpacing = it), false) }, onCommit)
+            ReaderControlGroup {
+                ReaderSlider(AppText.get(R.string.ui_reader_font_size), "${settings.fontSize.toInt()} sp",
+                    settings.fontSize, 18f..32f, 13, "reader-font-size",
+                    { onChange(settings.copy(fontSize = it), false) }, onCommit)
+                PreferenceDivider()
+                ReaderSlider(AppText.get(R.string.ui_reader_line_spacing), String.format(Locale.ROOT, "%.1f×", settings.lineSpacing),
+                    settings.lineSpacing, 1.2f..2.2f, 9, "reader-line-spacing",
+                    { onChange(settings.copy(lineSpacing = it), false) }, onCommit)
+            }
             ReaderChoices(AppText.get(R.string.ui_reader_alignment),
                 listOf(R.string.ui_reader_align_left, R.string.ui_reader_align_center, R.string.ui_reader_align_right),
                 settings.alignment.ordinal, "reader-align") {
@@ -56,16 +59,21 @@ internal fun LyricsReadingSheet(
                 settings.background.ordinal, "reader-background") {
                 onChange(settings.copy(background = LyricsBackground.entries[it]), true)
             }
-            if (translationAvailable) SwitchPreference(
-                title = AppText.get(R.string.ui_bilingual), summary = AppText.get(R.string.ui_toggle_lyric_translations),
-                checked = settings.showTranslation,
-                onCheckedChange = { onChange(settings.copy(showTranslation = it), true) },
-                modifier = Modifier.testTag("reader-translation"),
-            )
-            SwitchPreference(title = AppText.get(R.string.ui_reader_immersive),
-                summary = AppText.get(R.string.ui_reader_immersive_hint), checked = settings.immersive,
-                onCheckedChange = { onChange(settings.copy(immersive = it), true) },
-                modifier = Modifier.testTag("reader-immersive"))
+            ReaderControlGroup {
+                if (translationAvailable) {
+                    SwitchPreference(
+                        title = AppText.get(R.string.ui_bilingual), summary = AppText.get(R.string.ui_toggle_lyric_translations),
+                        checked = settings.showTranslation,
+                        onCheckedChange = { onChange(settings.copy(showTranslation = it), true) },
+                        modifier = Modifier.testTag("reader-translation"),
+                    )
+                    PreferenceDivider()
+                }
+                SwitchPreference(title = AppText.get(R.string.ui_reader_immersive),
+                    summary = AppText.get(R.string.ui_reader_immersive_hint), checked = settings.immersive,
+                    onCheckedChange = { onChange(settings.copy(immersive = it), true) },
+                    modifier = Modifier.testTag("reader-immersive"))
+            }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(AppText.get(R.string.ui_reader_copy_all), onCopy, enabled = canCopy,
                     modifier = Modifier.testTag("reader-copy-all"))
@@ -82,7 +90,8 @@ internal fun LyricsReadingSheet(
 private fun ReaderSlider(label: String, valueLabel: String, value: Float,
                          range: ClosedFloatingPointRange<Float>, steps: Int, tag: String,
                          onChange: (Float) -> Unit, onFinished: () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+    Column(if (ArchiveUiTheme.isCoui) Modifier.padding(horizontal = 16.dp, vertical = 10.dp) else Modifier,
+        verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(label, fontSize = 15.sp, fontWeight = FontWeight.Medium)
             Text(valueLabel, fontSize = 14.sp, color = ArchiveUiTheme.colorScheme.onBackgroundVariant)
@@ -90,6 +99,8 @@ private fun ReaderSlider(label: String, valueLabel: String, value: Float,
         val modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)
             .semantics { contentDescription = label }.testTag(tag)
         if (ArchiveUiTheme.isMaterial) androidx.compose.material3.Slider(value, onChange,
+            modifier = modifier, valueRange = range, steps = steps, onValueChangeFinished = onFinished)
+        else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.Slider(value, onChange,
             modifier = modifier, valueRange = range, steps = steps, onValueChangeFinished = onFinished)
         else top.yukonga.miuix.kmp.basic.Slider(value, onChange,
             modifier = modifier, valueRange = range, steps = steps, onValueChangeFinished = onFinished)
@@ -120,4 +131,11 @@ internal fun LyricsAlignment.textAlign() = when (this) {
     LyricsAlignment.LEFT -> TextAlign.Left
     LyricsAlignment.CENTER -> TextAlign.Center
     LyricsAlignment.RIGHT -> TextAlign.Right
+}
+
+/** Keep related COUI controls in a single surface, as in ColorOS sound settings. */
+@Composable
+private fun ReaderControlGroup(content: @Composable ColumnScope.() -> Unit) {
+    if (ArchiveUiTheme.isCoui) Card(content = content)
+    else Column(verticalArrangement = Arrangement.spacedBy(18.dp), content = content)
 }

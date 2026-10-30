@@ -34,6 +34,8 @@ object ArchiveUiTheme {
         @Composable get() = if (love.yu.jaychou.ui.effects.LocalCustomBackgroundPath.current != null)
             Color.Transparent else colorScheme.background
 
+    val isCoui: Boolean @Composable get() = LocalUiStyle.current == UiStyle.COUI
+
     val isMaterial: Boolean @Composable get() = LocalUiStyle.current == UiStyle.MATERIAL3
 
     val colorScheme: ArchiveColors
@@ -44,6 +46,13 @@ object ArchiveUiTheme {
                 c.surfaceContainerHigh, c.surfaceContainerHighest, c.primary, c.primaryContainer,
                 c.onPrimaryContainer, c.secondaryContainer, c.onSecondaryContainer,
                 c.errorContainer, c.onErrorContainer, c.outlineVariant)
+        } else if (isCoui) {
+            val c = io.github.suqi8.coui.kmp.theme.COUITheme.colorScheme
+            ArchiveColors(c.background, c.onBackground, c.onBackgroundVariant,
+                c.surface, c.onSurface, c.surfaceContainer, c.onSurfaceContainer, c.onSurfaceContainerVariant,
+                c.surfaceContainerHigh, c.surfaceContainerHighest, c.primary, c.primaryContainer,
+                c.onPrimaryContainer, c.secondaryContainer, c.onSecondaryContainer,
+                c.errorContainer, c.onErrorContainer, c.dividerLine)
         } else {
             val c = MiuixTheme.colorScheme
             ArchiveColors(c.background, c.onBackground, c.onBackgroundVariant,
@@ -57,6 +66,9 @@ object ArchiveUiTheme {
         @Composable get() = if (isMaterial) {
             val t = MaterialTheme.typography
             ArchiveTextStyles(t.bodyLarge, t.headlineLarge, t.titleLarge, t.bodyLarge, t.bodySmall)
+        } else if (isCoui) {
+            val t = io.github.suqi8.coui.kmp.theme.COUITheme.textStyles
+            ArchiveTextStyles(t.main, t.title1, t.title2, t.body1, t.footnote1)
         } else {
             val t = MiuixTheme.textStyles
             ArchiveTextStyles(t.main, t.title1, t.title2, t.body1, t.footnote1)

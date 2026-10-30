@@ -44,7 +44,7 @@ class AlbumCoverRenderingTest {
         try {
             app.setContent {
                 Box(Modifier.size(120.dp).background(Color.Magenta).testTag("cover")) {
-                    CatalogImage(file.toURI().toString(), "", "cover", Modifier.fillMaxSize(),
+                    CatalogImage(file.toURI().toString(), "cover", Modifier.fillMaxSize(),
                         contentScale = ContentScale.Fit, onAspectRatio = { loaded.set(true) }, crossfade = false)
                 }
             }
@@ -59,7 +59,7 @@ class AlbumCoverRenderingTest {
     }
 
     @Test fun sourceSnapshotRetainsItsCropAndTracksTheReturningCardBounds() {
-        val album = Album("cover-test", "cover", "", "2026-01-01", "", "", "", "", emptyList())
+        val album = Album("cover-test", "cover", "", "2026-01-01", "", "", "", emptyList())
         var source by mutableStateOf<AlbumOrigin?>(null)
         var moving by mutableStateOf(false)
         var depth by mutableFloatStateOf(1f)

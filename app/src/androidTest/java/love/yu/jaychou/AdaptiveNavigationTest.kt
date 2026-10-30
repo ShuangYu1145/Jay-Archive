@@ -46,7 +46,11 @@ class AdaptiveNavigationTest {
             for (viewport in listOf(DpSize(1200.dp, 800.dp), DpSize(800.dp, 1200.dp), DpSize(560.dp, 360.dp))) {
                 app.runOnIdle { size = viewport }
                 app.onNodeWithTag("bottom-navigation").assertDoesNotExist()
-                val nativeTag = if (style == UiStyle.MIUIX) "miuix-navigation-rail" else "material-navigation-rail"
+                val nativeTag = when (style) {
+                    UiStyle.MIUIX -> "miuix-navigation-rail"
+                    UiStyle.COUI -> "coui-navigation-rail"
+                    UiStyle.MATERIAL3 -> "material-navigation-rail"
+                }
                 app.onNodeWithTag(nativeTag).assertIsDisplayed()
                 app.onNodeWithTag("tab-ABOUT").assertIsSelected()
                 if (viewport.width == 1200.dp) {

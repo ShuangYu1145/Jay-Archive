@@ -33,7 +33,12 @@ fun Text(
         text, modifier, color = color, fontSize = fontSize, fontWeight = fontWeight,
         letterSpacing = letterSpacing, textAlign = textAlign, lineHeight = lineHeight,
         overflow = overflow, maxLines = maxLines, minLines = minLines, style = style,
-    ) else top.yukonga.miuix.kmp.basic.Text(
+    ) else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.Text(
+        text, modifier, color = color, fontSize = fontSize, fontWeight = fontWeight,
+        letterSpacing = letterSpacing, textAlign = textAlign, lineHeight = lineHeight,
+        overflow = overflow, maxLines = maxLines, minLines = minLines, style = style,
+    )
+    else top.yukonga.miuix.kmp.basic.Text(
         text, modifier, color = color, fontSize = fontSize, fontWeight = fontWeight,
         letterSpacing = letterSpacing, textAlign = textAlign, lineHeight = lineHeight,
         overflow = overflow, maxLines = maxLines, minLines = minLines, style = style,
@@ -51,7 +56,7 @@ object CardDefaults {
 @Composable
 fun Card(
     modifier: Modifier = Modifier,
-    cornerRadius: Dp = if (ArchiveUiTheme.isMaterial) 12.dp else top.yukonga.miuix.kmp.basic.CardDefaults.CornerRadius,
+    cornerRadius: Dp = if (ArchiveUiTheme.isMaterial) 12.dp else if (ArchiveUiTheme.isCoui) CouiLayout.CardRadius else top.yukonga.miuix.kmp.basic.CardDefaults.CornerRadius,
     insideMargin: PaddingValues = PaddingValues(0.dp),
     colors: CardColors = CardDefaults.defaultColors(),
     pressFeedbackType: PressFeedbackType = PressFeedbackType.None,
@@ -71,7 +76,12 @@ fun Card(
         else androidx.compose.material3.Card(
             onClick = onClick, modifier = cardModifier, shape = RoundedCornerShape(cornerRadius), colors = palette,
         ) { Column(Modifier.padding(insideMargin), content = content) }
-    } else top.yukonga.miuix.kmp.basic.Card(
+    } else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.Card(
+        cardModifier, cornerRadius, insideMargin, io.github.suqi8.coui.kmp.basic.CardDefaults.defaultColors(color = cardColors.color, contentColor = cardColors.contentColor),
+        io.github.suqi8.coui.kmp.utils.PressFeedbackType.valueOf(pressFeedbackType.name), showIndication,
+        onClick = onClick, content = content,
+    )
+    else top.yukonga.miuix.kmp.basic.Card(
         cardModifier, cornerRadius, insideMargin, cardColors, pressFeedbackType, showIndication,
         onClick = onClick, content = content,
     )
@@ -81,6 +91,7 @@ fun Card(
 fun Button(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true,
            content: @Composable RowScope.() -> Unit) {
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.Button(onClick, modifier, enabled, content = content)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.Button(onClick, modifier, enabled, content = content)
     else top.yukonga.miuix.kmp.basic.Button(onClick, modifier, enabled, content = content)
 }
 
@@ -88,13 +99,15 @@ fun Button(onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean 
 fun TextButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.TextButton(onClick, modifier, enabled) {
         androidx.compose.material3.Text(text)
-    } else top.yukonga.miuix.kmp.basic.TextButton(text, onClick = onClick, modifier = modifier, enabled = enabled)
+    } else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.TextButton(text, onClick = onClick, modifier = modifier, enabled = enabled)
+    else top.yukonga.miuix.kmp.basic.TextButton(text, onClick = onClick, modifier = modifier, enabled = enabled)
 }
 
 @Composable
 fun Icon(imageVector: ImageVector, contentDescription: String?, modifier: Modifier = Modifier,
          tint: Color = ArchiveUiTheme.colorScheme.onBackground) {
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.Icon(imageVector, contentDescription, modifier, tint)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.Icon(imageVector, contentDescription, modifier, tint)
     else top.yukonga.miuix.kmp.basic.Icon(imageVector, contentDescription, modifier, tint)
 }
 
@@ -103,6 +116,8 @@ fun IconButton(onClick: () -> Unit, modifier: Modifier = Modifier,
                backgroundColor: Color = Color.Transparent, minWidth: Dp = 48.dp, minHeight: Dp = 48.dp,
                content: @Composable () -> Unit) {
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.IconButton(onClick, modifier, content = content)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.IconButton(onClick = onClick, modifier = modifier,
+        backgroundColor = backgroundColor, minWidth = minWidth, minHeight = minHeight, content = content)
     else top.yukonga.miuix.kmp.basic.IconButton(onClick = onClick, modifier = modifier,
         backgroundColor = backgroundColor, minWidth = minWidth, minHeight = minHeight, content = content)
 }
@@ -113,17 +128,20 @@ fun SmallTitle(text: String, modifier: Modifier = Modifier,
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.Text(text,
         modifier.padding(insideMargin), color = androidx.compose.material3.MaterialTheme.colorScheme.primary,
         style = androidx.compose.material3.MaterialTheme.typography.labelLarge)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.SmallTitle(text, modifier, insideMargin = insideMargin)
     else top.yukonga.miuix.kmp.basic.SmallTitle(text, modifier, insideMargin = insideMargin)
 }
 
 @Composable
 fun HorizontalDivider(modifier: Modifier = Modifier, color: Color = ArchiveUiTheme.colorScheme.dividerLine) {
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.HorizontalDivider(modifier, color = color)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.HorizontalDivider(modifier, color = color)
     else top.yukonga.miuix.kmp.basic.HorizontalDivider(modifier, color = color)
 }
 
 @Composable
 fun CircularProgressIndicator(modifier: Modifier = Modifier, size: Dp = if (ArchiveUiTheme.isMaterial) 40.dp else 30.dp) {
     if (ArchiveUiTheme.isMaterial) androidx.compose.material3.CircularProgressIndicator(modifier.size(size), strokeWidth = 3.dp)
+    else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.basic.CircularProgressIndicator(modifier = modifier, size = size)
     else top.yukonga.miuix.kmp.basic.CircularProgressIndicator(modifier = modifier, size = size)
 }

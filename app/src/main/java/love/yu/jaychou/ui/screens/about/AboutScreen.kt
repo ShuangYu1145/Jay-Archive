@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,9 +41,12 @@ import love.yu.jaychou.BuildConfig
 import love.yu.jaychou.R
 import love.yu.jaychou.data.AlbumRepository
 import love.yu.jaychou.data.AppText
+import love.yu.jaychou.ui.components.AlbumCoverShape
+import love.yu.jaychou.ui.components.CatalogImage
 import love.yu.jaychou.ui.components.PreferenceCard
 import love.yu.jaychou.ui.components.PreferenceTitle
 import love.yu.jaychou.ui.components.PreferenceValue
+import love.yu.jaychou.ui.components.QuietText
 import love.yu.jaychou.ui.designsystem.BasicComponent
 import love.yu.jaychou.ui.designsystem.Card
 import love.yu.jaychou.ui.designsystem.Text
@@ -56,9 +60,21 @@ fun AboutScreen(
 ) {
     var developerCardTaps by remember { mutableIntStateOf(0) }
     var showEasterEgg by rememberSaveable { mutableStateOf(false) }
+    if (ArchiveUiTheme.isCoui) {
+        CouiAboutScreen(state, bottom, active) {
+            developerCardTaps++
+            if (developerCardTaps == 4) {
+                developerCardTaps = 0
+                showEasterEgg = true
+            }
+        }
+        AboutEasterEggDialog(showEasterEgg && active) { showEasterEgg = false }
+        return
+    }
     val availableUpdate = love.yu.jaychou.ui.updates.LocalUpdateController.current?.availableUpdate
     val background = ArchiveUiTheme.pageBackground
     val density = LocalDensity.current
+    AboutTopEdge {
     BoxWithConstraints(Modifier.fillMaxSize().background(background).clipToBounds()) {
         val heroHeight = (maxHeight * .60f).coerceAtLeast(300.dp * density.fontScale)
         val heroPx = with(density) { heroHeight.toPx() }
@@ -165,6 +181,26 @@ fun AboutScreen(
                 }
             }
 
+            item { PreferenceTitle(text = "你们的支持是我最大的动力") }
+            item {
+                Card(
+                    insideMargin = PaddingValues(15.dp),
+                    pressFeedbackType = PressFeedbackType.Tilt,
+                    showIndication = false,
+                ) {
+                  Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                      AsyncImage(
+                          model = "file:///android_asset/help.png",
+                          contentDescription = "支持作者二维码",
+                          contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+                          modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth()
+                              .aspectRatio(1171f / 1171f)
+                              .testTag("about-support-qr"),
+                      )
+                  }
+                }
+            }
+
             item("footer") {
                 Text(AppText.get(R.string.ui_for_the_music_of_our_youth), Modifier.fillMaxWidth().padding(vertical = 28.dp),
                     textAlign = TextAlign.Center, style = ArchiveUiTheme.textStyles.footnote1,
@@ -182,6 +218,7 @@ fun AboutScreen(
                 },
         )
     }
+    }
     AboutEasterEggDialog(show = showEasterEgg && active, onDismiss = { showEasterEgg = false })
 }
 
@@ -198,6 +235,7 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
             "1008" -> "庭庭，不管怎样，我会永远爱你的"
             "庭庭" -> "永远爱你哟"
             "度蜜月卡" -> "蜜蜜蜜蜜"
+            "同性恋" -> "我理解你可能出于信仰、传统或对陌生事物的不安而持有不同看法，你可以保留自己的道德或宗教观点；但请把“不认同”停留在个人信念层面，而不是变成对身边人的羞辱、排斥、歧视或要求剥夺他们平等生活、工作和相爱的权利。同性恋者和你一样，是努力生活、爱家人、希望被尊重的普通人，他们相爱的方式并没有伤害你。社会可以有不同的声音，但文明底线是不因一个人爱谁而否定他的人格与尊严。你可以不祝福，但请别伤害；如果愿意，先听一个真实的人讲讲他的生活，很多敌意会变成理解。"
             else -> null
         }
         if (message != null) keyboard?.hide()
@@ -229,6 +267,24 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
                 ) { androidx.compose.material3.Text(dismissLabel) }
             },
         )
+        return
+    }
+    if (ArchiveUiTheme.isCoui) {
+        io.github.suqi8.coui.kmp.window.WindowDialog(show = show, title = "彩蛋", summary = message,
+            modifier = Modifier.testTag("about-easter-egg-dialog"), onDismissRequest = onDismiss) {
+            Column {
+                if (message == null) Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp)) {
+                    io.github.suqi8.coui.kmp.basic.TextField(
+                        value = code, onValueChange = onCodeChange, label = "输入彩蛋口令", singleLine = true,
+                        modifier = Modifier.fillMaxWidth().testTag("about-easter-egg-input"))
+                }
+                io.github.suqi8.coui.kmp.layout.DialogButtonBar(
+                    modifier = Modifier.testTag("about-easter-egg-dismiss"), negative = null,
+                    positive = io.github.suqi8.coui.kmp.layout.DialogButtonBarAction(
+                        text = dismissLabel, onClick = onDismiss),
+                )
+            }
+        }
         return
     }
     CenteredEasterEggDialog(
@@ -294,13 +350,7 @@ private fun CenteredEasterEggDialog(
 
 @Composable
 private fun AboutIdentity(modifier: Modifier) {
-    val dark = ArchiveUiTheme.colorScheme.background.luminance() < .5f
-    val titleBrush = remember(dark) {
-        Brush.horizontalGradient(
-            if (dark) listOf(Color(0xFFB9CBFF), Color(0xFFF2B6DA))
-            else listOf(Color(0xFF234EAB), Color(0xFF8C326B)),
-        )
-    }
+    val titleBrush = rememberAboutTitleBrush()
     Column(modifier.testTag("about-identity"), horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
         Image(painterResource(R.drawable.feature_graphic),
@@ -327,4 +377,25 @@ private fun AboutIdentity(modifier: Modifier) {
 private fun LinkRow(title: String, subtitle: String, url: String) {
     val uri = LocalUriHandler.current
     ArrowPreference(title = title, summary = subtitle, onClick = { uri.openUri(url) })
+}
+
+/** The about page has no toolbar; sample its scrolling content for the top edge. */
+@Composable
+private fun AboutTopEdge(content: @Composable () -> Unit) {
+    val progressive = android.os.Build.VERSION.SDK_INT >= 33 &&
+        !ArchiveUiTheme.isMaterial && !ArchiveUiTheme.isCoui &&
+        love.yu.jaychou.ui.components.LocalArchiveBlur.current &&
+        love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE
+    if (progressive) {
+        love.yu.jaychou.ui.effects.HeaderGlassLayer(
+            ArchiveUiTheme.colorScheme.background, progressive = true,
+            content = { capture, header ->
+                Box(Modifier.fillMaxSize()) {
+                    Box(Modifier.fillMaxSize().then(capture)) { content() }
+                    Box(header.fillMaxWidth().statusBarsPadding().height(74.dp)
+                        .testTag("about-progressive-header"))
+                }
+            },
+        )
+    } else content()
 }

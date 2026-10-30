@@ -85,7 +85,7 @@ class MotionAndLyricsTest {
         category: ReleaseCategory = ReleaseCategory.STUDIO,
     ) = Album(
         id = "test-album", title = title, englishTitle = "", releaseDate = releaseDate,
-        sourceDateRaw = "", sourceUrl = "", coverUrl = "", coverAsset = "", tracks = emptyList(),
+        sourceDateRaw = "", sourceUrl = "", coverUrl = "", tracks = emptyList(),
         category = category,
     )
 

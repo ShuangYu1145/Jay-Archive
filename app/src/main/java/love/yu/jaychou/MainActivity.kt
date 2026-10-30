@@ -111,6 +111,7 @@ class MainActivity : AppCompatActivity() {
                                 onUiStyle = { save { repository.setUiStyle(it) } },
                                 onMonet = { save { repository.setMonet(it) } },
                                 onBlur = { save { repository.setBlur(it) } },
+                                onTopAppBarBlur = { save { repository.setTopAppBarBlur(it) } },
                                 onLiquidGlass = { save { repository.setLiquidGlass(it) } },
                                 onFloatingBottomBar = { save { repository.setFloatingBottomBar(it) } },
                                 onPredictive = { save { repository.setPredictiveBack(it) } },
