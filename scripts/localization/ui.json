@@ -2374,5 +2374,157 @@
     "en": "Developer",
     "ja": "開発者",
     "ko": "개발자"
+  },
+  {
+    "key": "ui_compositions",
+    "zh-Hans": "作曲",
+    "zh-Hant": "作曲",
+    "en": "Writing",
+    "ja": "作曲",
+    "ko": "작곡"
+  },
+  {
+    "key": "ui_search_compositions",
+    "zh-Hans": "搜索歌名、歌手或专辑",
+    "zh-Hant": "搜尋歌名、歌手或專輯",
+    "en": "Search songs, artists or albums",
+    "ja": "曲名・歌手・アルバムを検索",
+    "ko": "곡, 가수 또는 앨범 검색"
+  },
+  {
+    "key": "ui_compositions_intro",
+    "zh-Hans": "周杰伦为他人谱写的旋律，按发行时间倒序排列。",
+    "zh-Hant": "周杰倫為他人譜寫的旋律，按發行時間倒序排列。",
+    "en": "Songs composed by Jay Chou for other artists, newest first.",
+    "ja": "ジェイ・チョウが他の歌手に提供した楽曲。発売日の新しい順。",
+    "ko": "주걸륜이 다른 가수를 위해 작곡한 곡을 최신 발매순으로 모았습니다."
+  },
+  {
+    "key": "ui_compositions_catalog_note",
+    "zh-Hans": "收录已整理的对外作曲作品，目录持续补充；日期对应所列发行版本。",
+    "zh-Hant": "收錄已整理的對外作曲作品，目錄持續補充；日期對應所列發行版本。",
+    "en": "A growing catalogue of songs written for other artists. Dates refer to the listed releases.",
+    "ja": "他の歌手への提供曲を順次収録しています。日付は記載のリリースに対応します。",
+    "ko": "다른 가수에게 제공한 곡을 계속 추가하고 있습니다. 날짜는 기재된 발매 버전 기준입니다."
+  },
+  {
+    "key": "ui_compositions_loading",
+    "zh-Hans": "正在载入歌曲目录…",
+    "zh-Hant": "正在載入歌曲目錄…",
+    "en": "Loading songs…",
+    "ja": "楽曲を読み込み中…",
+    "ko": "곡 목록을 불러오는 중…"
+  },
+  {
+    "key": "ui_compositions_load_failed",
+    "zh-Hans": "歌曲目录暂时无法载入，请重新打开此页面。",
+    "zh-Hant": "歌曲目錄暫時無法載入，請重新開啟此頁面。",
+    "en": "Unable to load songs. Please reopen this page.",
+    "ja": "楽曲を読み込めません。このページを開き直してください。",
+    "ko": "곡을 불러올 수 없습니다. 페이지를 다시 열어 주세요."
+  },
+  {
+    "key": "ui_compositions_empty",
+    "zh-Hans": "没有匹配的歌曲，试试其他歌名或歌手。",
+    "zh-Hant": "沒有符合的歌曲，試試其他歌名或歌手。",
+    "en": "No matching songs. Try another title or artist.",
+    "ja": "該当する楽曲がありません。別の曲名や歌手をお試しください。",
+    "ko": "일치하는 곡이 없습니다. 다른 곡명이나 가수로 검색해 보세요."
+  },
+  {
+    "key": "ui_composition_details",
+    "zh-Hans": "歌曲档案",
+    "zh-Hant": "歌曲檔案",
+    "en": "Song archive",
+    "ja": "楽曲アーカイブ",
+    "ko": "곡 정보"
+  },
+  {
+    "key": "ui_composed_by_jay",
+    "zh-Hans": "作曲 · 周杰伦",
+    "zh-Hant": "作曲 · 周杰倫",
+    "en": "Composer · Jay Chou",
+    "ja": "作曲 · ジェイ・チョウ",
+    "ko": "작곡 · 주걸륜"
+  },
+  {
+    "key": "ui_composition_lyricist",
+    "zh-Hans": "作词 · %1$s",
+    "zh-Hant": "作詞 · %1$s",
+    "en": "Lyrics · %1$s",
+    "ja": "作詞 · %1$s",
+    "ko": "작사 · %1$s"
+  },
+  {
+    "key": "ui_composition_release",
+    "zh-Hans": "收录发行 · %1$s",
+    "zh-Hant": "收錄發行 · %1$s",
+    "en": "Release · %1$s",
+    "ja": "収録作品 · %1$s",
+    "ko": "수록 음반 · %1$s"
+  },
+  {
+    "key": "ui_composition_date",
+    "zh-Hans": "发行日期 · %1$s",
+    "zh-Hant": "發行日期 · %1$s",
+    "en": "Released · %1$s",
+    "ja": "発売日 · %1$s",
+    "ko": "발매일 · %1$s"
+  },
+  {
+    "key": "ui_compositions_source",
+    "zh-Hans": "查看创作目录来源",
+    "zh-Hant": "查看創作目錄來源",
+    "en": "View composition catalogue source",
+    "ja": "楽曲一覧の出典を見る",
+    "ko": "작곡 목록 출처 보기"
+  },
+  {
+    "key": "ui_composition_artwork_note",
+    "zh-Hans": "封面采用匹配歌曲的数字发行版本，可能与首版实体唱片不同。",
+    "zh-Hant": "封面採用符合歌曲的數位發行版本，可能與首版實體唱片不同。",
+    "en": "Artwork is from a matching digital release and may differ from the original physical edition.",
+    "ja": "ジャケットは一致する楽曲のデジタル版です。初版のものと異なる場合があります。",
+    "ko": "표지는 해당 곡의 디지털 발매 버전으로, 초판 음반과 다를 수 있습니다."
+  },
+  {
+    "key": "ui_composition_artwork_source",
+    "zh-Hans": "查看封面来源 · Apple Music",
+    "zh-Hant": "查看封面來源 · Apple Music",
+    "en": "Artwork source · Apple Music",
+    "ja": "ジャケットの出典 · Apple Music",
+    "ko": "표지 출처 · Apple Music"
+  },
+  {
+    "key": "ui_top_app_bar_blur",
+    "zh-Hans": "顶栏模糊",
+    "zh-Hant": "頂欄模糊",
+    "en": "Top app bar blur",
+    "ja": "トップバーのぼかし",
+    "ko": "상단 바 흐림"
+  },
+  {
+    "key": "ui_top_app_bar_blur_summary",
+    "zh-Hans": "Gaussian 为均匀高斯模糊，Progressive 为从上到下逐渐变清晰的渐变模糊",
+    "zh-Hant": "Gaussian 為均勻高斯模糊，Progressive 為由上到下逐漸清晰的漸變模糊",
+    "en": "Gaussian blurs evenly; Progressive fades from blurred at the top to clear at the bottom",
+    "ja": "Gaussian は均一なぼかし、Progressive は上から下へ徐々に鮮明になるぼかし",
+    "ko": "Gaussian은 균일한 흐림, Progressive는 위에서 아래로 점차 선명해지는 흐림"
+  },
+  {
+    "key": "ui_support_motivation",
+    "zh-Hans": "你们的支持是我最大的动力",
+    "zh-Hant": "你們的支持是我最大的動力",
+    "en": "Your support keeps this project going",
+    "ja": "皆さまの応援が制作の励みです",
+    "ko": "여러분의 응원이 가장 큰 힘입니다"
+  },
+  {
+    "key": "ui_support_qr",
+    "zh-Hans": "支持作者二维码",
+    "zh-Hant": "支持作者 QR 碼",
+    "en": "QR code to support the developer",
+    "ja": "開発者支援用のQRコード",
+    "ko": "개발자 후원 QR 코드"
   }
 ]

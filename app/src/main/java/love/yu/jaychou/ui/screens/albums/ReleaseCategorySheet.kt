@@ -24,6 +24,7 @@ import top.yukonga.miuix.kmp.icon.extended.Ok
 fun ReleaseCategorySheet(show: Boolean, selected: List<String>, catalog: AlbumCatalog,
                          onDismiss: () -> Unit, onApply: (List<String>) -> Unit) {
     var draft by rememberSaveable(show) { mutableStateOf(selected) }
+    val coui = ArchiveUiTheme.isCoui
     WindowBottomSheet(show = show, title = AppText.get(R.string.ui_album_categories), onDismissRequest = onDismiss,
         startAction = { SheetActionButton(MiuixIcons.Close, AppText.get(R.string.ui_cancel), onClick = onDismiss,
             modifier = Modifier.testTag("category-cancel")) },
@@ -33,7 +34,22 @@ fun ReleaseCategorySheet(show: Boolean, selected: List<String>, catalog: AlbumCa
     ) {
         LazyColumn(Modifier.fillMaxWidth().testTag("category-sheet"), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             item("scope") { QuietText(AppText.get(R.string.ui_select_one_or_more_categories_live_albums_are_released_recording)) }
-            ReleaseCategory.entries.forEach { category ->
+            if (coui) item("categories") {
+                Card {
+                    ReleaseCategory.entries.forEachIndexed { index, category ->
+                        if (index > 0) PreferenceDivider()
+                        CheckboxPreference(
+                            title = category.label,
+                            summary = AppText.get(R.string.ui_releases_202, catalog.albums.count { it.category == category }),
+                            checked = category.name in draft,
+                            onCheckedChange = { checked ->
+                                draft = if (checked) (draft + category.name).distinct() else draft - category.name
+                            },
+                            modifier = Modifier.testTag("category-${category.name}"),
+                        )
+                    }
+                }
+            } else ReleaseCategory.entries.forEach { category ->
                 item(category.name) {
                     Card(insideMargin = PaddingValues(0.dp),
                         colors = CardDefaults.defaultColors(color = ArchiveUiTheme.colorScheme.surfaceContainerHigh)) {

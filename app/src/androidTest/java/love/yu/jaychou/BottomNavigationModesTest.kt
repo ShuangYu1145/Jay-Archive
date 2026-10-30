@@ -1,5 +1,6 @@
 package love.yu.jaychou
 
+import love.yu.jaychou.data.UiStyle
 import love.yu.jaychou.ui.components.LocalArchiveBlur
 import love.yu.jaychou.ui.effects.GlassLayer
 import love.yu.jaychou.ui.effects.LocalArchiveLiquidGlass
@@ -40,11 +41,17 @@ import org.junit.Test
 class BottomNavigationModesTest {
     @get:Rule val app = createComposeRule()
 
-    @Test fun nativeBarsBlurAndModeChangesKeepSelection() {
+    @Test fun nativeBarsBlurAndModeChangesKeepSelection() = verifyModes(UiStyle.MIUIX)
+
+    @Test fun couiBarsBlurAndModeChangesKeepSelection() = verifyModes(UiStyle.COUI)
+
+    @Test fun materialBarsBlurAndModeChangesKeepSelection() = verifyModes(UiStyle.MATERIAL3)
+
+    private fun verifyModes(style: UiStyle) {
         assumeTrue(Build.VERSION.SDK_INT >= 33)
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         AppText.update(context.resources)
-        val settings = mutableStateOf(AppSettings())
+        val settings = mutableStateOf(AppSettings(uiStyle = style, ))
         app.mainClock.autoAdvance = false
         app.setContent {
             val current = settings.value
@@ -77,13 +84,14 @@ class BottomNavigationModesTest {
         for (floating in listOf(true, false)) {
             var solid: Bitmap? = null
             for (blur in listOf(false, true)) {
-                app.runOnIdle { settings.value = AppSettings(floatingBottomBar = floating, liquidGlass = false, blur = blur) }
+                app.runOnIdle { settings.value = AppSettings(uiStyle = style, floatingBottomBar = floating, liquidGlass = false, blur = blur) }
                 settle()
                 app.onNodeWithTag("tab-ABOUT").assertIsSelected()
                 app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
                 val tag = if (floating) "floating-navigation" else "standard-navigation"
                 val bitmap = screenshot(tag, "${if (floating) "floating" else "standard"}-${if (blur) "blur" else "solid"}.png")
-                if (!blur) solid = bitmap else {
+                if (!blur) solid = bitmap else if (style != UiStyle.MATERIAL3 || floating) {
+                    // Material's standard bar keeps its native opaque surface; its floating bar supports blur.
                     // Sample the bar surface above the icons, between the middle two items.
                     val before = solid!!
                     val x = bitmap.width / 2
@@ -104,20 +112,26 @@ class BottomNavigationModesTest {
         }
         // Liquid needs both switches, and keeps its material when general blur is off.
         for (blur in listOf(false, true)) {
-            app.runOnIdle { settings.value = AppSettings(blur = blur) }
+            app.runOnIdle { settings.value = AppSettings(uiStyle = style, blur = blur) }
             settle()
             app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
             app.onNodeWithTag("tab-ABOUT").assertIsSelected()
             screenshot("floating-navigation", "liquid-${if (blur) "blur" else "solid"}.png")
         }
-        app.runOnIdle { settings.value = AppSettings(floatingBottomBar = false, liquidGlass = true) }
+        app.runOnIdle { settings.value = AppSettings(uiStyle = style, floatingBottomBar = false, liquidGlass = true) }
         settle()
         app.onNodeWithTag("standard-navigation").assertIsDisplayed()
         app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
         app.onNodeWithTag("tab-ABOUT").assertIsSelected()
     }
 
-    @Test fun settingsSwitchesPersistIndependently() {
+    @Test fun settingsSwitchesPersistIndependently() = verifyPersistence(UiStyle.MIUIX)
+
+    @Test fun couiSettingsSwitchesPersistIndependently() = verifyPersistence(UiStyle.COUI)
+
+    @Test fun materialSettingsSwitchesPersistIndependently() = verifyPersistence(UiStyle.MATERIAL3)
+
+    private fun verifyPersistence(style: UiStyle) {
         assumeTrue(Build.VERSION.SDK_INT >= 33)
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         AppText.update(context.resources)
@@ -125,11 +139,12 @@ class BottomNavigationModesTest {
         val original = runBlocking { repository.settings.first() }
         try {
             runBlocking {
+                repository.setUiStyle(style)
                 repository.setLiquidGlass(true)
                 repository.setFloatingBottomBar(true)
             }
             app.setContent {
-                val settings by repository.settings.collectAsState(initial = original.copy(liquidGlass = true, floatingBottomBar = true))
+                val settings by repository.settings.collectAsState(initial = original.copy(uiStyle = style, liquidGlass = true, floatingBottomBar = true))
                 val scope = rememberCoroutineScope()
                 ArchiveTheme(settings) {
                     SettingsScreen(settings, rememberLazyListState(), 24.dp, {}, {}, {}, {}, {}, {},
@@ -152,9 +167,12 @@ class BottomNavigationModesTest {
             }
             app.onNodeWithContentDescription(floating).assertIsOff()
             val persisted = runBlocking { SettingsRepository(context).settings.first() }
-            assertEquals(original.copy(liquidGlass = false, floatingBottomBar = false), persisted)
+            assertEquals(style, persisted.uiStyle)
+            assertEquals(false, persisted.liquidGlass)
+            assertEquals(false, persisted.floatingBottomBar)
         } finally {
             runBlocking {
+                repository.setUiStyle(original.uiStyle)
                 repository.setLiquidGlass(original.liquidGlass)
                 repository.setFloatingBottomBar(original.floatingBottomBar)
             }

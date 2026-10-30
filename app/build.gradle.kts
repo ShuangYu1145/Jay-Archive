@@ -10,8 +10,8 @@ android {
         applicationId = "love.yu.jaychou"
         minSdk = 26
         targetSdk = 37
-        versionCode = 6
-        versionName = "0.5"
+        versionCode = 7
+        versionName = "0.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.compose.animation)
     implementation(libs.compose.material3)
     implementation(libs.compose.tooling.preview)
+    implementation(libs.coui.ui)
+    implementation(libs.coui.preference)
     implementation(libs.miuix.ui)
     implementation(libs.miuix.icons)
     implementation(libs.miuix.blur)

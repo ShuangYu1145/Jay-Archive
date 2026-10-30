@@ -102,6 +102,13 @@ class UpdateFlowTest {
             screenshot("update-dialog-material", "update-material.png")
             app.onNodeWithTag("update-dismiss").performClick()
 
+            app.runOnIdle { style.value = UiStyle.COUI }
+            app.onNodeWithTag("check-updates").performClick()
+            waitForDialog("update-dialog-coui")
+            screenshot("update-dialog-coui", "update-coui.png")
+            app.onNodeWithText(AppText.get(R.string.ui_update_later)).performClick()
+            app.runOnIdle { style.value = UiStyle.MATERIAL3 }
+
             // Reset the throttle before enabling automatic checks.
             runBlocking { store.recordUpdateCheck(0) }
             app.onNodeWithContentDescription(AppText.get(R.string.ui_update_auto_check)).performClick()

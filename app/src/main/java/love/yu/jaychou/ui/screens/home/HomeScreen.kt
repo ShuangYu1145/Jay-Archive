@@ -35,11 +35,13 @@ import top.yukonga.miuix.kmp.utils.PressFeedbackType
 fun HomeScreen(catalog: AlbumCatalog, state: LazyListState, bottom: androidx.compose.ui.unit.Dp, onAlbum: (Album, AlbumOrigin) -> Unit, onAlbums: () -> Unit,
     profile: AppSettings = AppSettings(),
 ) {
+    val pageInset = if (ArchiveUiTheme.isCoui) 16.dp else 24.dp
+    val groupSpacing = if (ArchiveUiTheme.isCoui) 16.dp else 20.dp
     val behavior = love.yu.jaychou.ui.designsystem.rememberArchiveScrollBehavior()
     ArchiveScaffold(AppText.get(R.string.ui_home), behavior = behavior,
         actions = { HomeProfileButton(profile) },
     ) { padding ->
-    LazyColumn(modifier = Modifier.nestedScroll(behavior.nestedScrollConnection), state = state, contentPadding = PaddingValues(start = 24.dp, end = 24.dp, top = padding.calculateTopPadding() + 12.dp, bottom = bottom), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+    LazyColumn(modifier = Modifier.nestedScroll(behavior.nestedScrollConnection), state = state, contentPadding = PaddingValues(start = pageInset, end = pageInset, top = padding.calculateTopPadding() + 12.dp, bottom = bottom), verticalArrangement = Arrangement.spacedBy(groupSpacing)) {
         item("heading") {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(AppText.get(R.string.ui_jay_archive_music_archive), color = ArchiveUiTheme.colorScheme.primary, fontSize = 12.sp, letterSpacing = 2.sp)
@@ -54,7 +56,7 @@ fun HomeScreen(catalog: AlbumCatalog, state: LazyListState, bottom: androidx.com
                     pressFeedbackType = PressFeedbackType.Tilt, showIndication = false,
                 ) {
                 Box(Modifier.fillMaxWidth().height(118.dp)) {
-                    CatalogImage(AlbumRepository.portraitUrl, "jay-portrait.jpg", AppText.get(R.string.ui_official_jay_chou_portrait_source_jvr_music), Modifier.fillMaxSize())
+                    CatalogImage(AlbumRepository.portraitUrl, AppText.get(R.string.ui_official_jay_chou_portrait_source_jvr_music), Modifier.fillMaxSize())
                     Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = .8f)), startY = 180f)))
                     Column(
                         Modifier.align(Alignment.BottomEnd).padding(22.dp),
@@ -103,7 +105,7 @@ fun HomeScreen(catalog: AlbumCatalog, state: LazyListState, bottom: androidx.com
                     showIndication = false,
                     insideMargin = PaddingValues(12.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        CatalogImage(album.coverUrl, album.coverAsset, AppText.get(R.string.ui_album_artwork, album.title), coverCapture.size(82.dp).clip(AlbumCoverShape))
+                        CatalogImage(album.coverUrl, AppText.get(R.string.ui_album_artwork, album.title), coverCapture.size(82.dp).clip(AlbumCoverShape))
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(7.dp)) {
                             Text(album.title, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
                             QuietText(caption)

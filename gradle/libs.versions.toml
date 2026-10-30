@@ -4,6 +4,7 @@ kotlin = "2.4.20"
 compose = "1.11.2"
 material3 = "1.4.0"
 miuix = "0.9.3"
+coui = "1.1.0"
 activity = "1.12.4"
 lifecycle = "2.10.0"
 datastore = "1.2.1"
@@ -11,6 +12,8 @@ coil = "2.7.0"
 espresso = "3.7.0"
 
 [libraries]
+coui-ui = { module = "io.github.suqi8.coui.kmp:coui-ui", version.ref = "coui" }
+coui-preference = { module = "io.github.suqi8.coui.kmp:coui-preference", version.ref = "coui" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 miuix-icons = { module = "top.yukonga.miuix.kmp:miuix-icons-android", version.ref = "miuix" }
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }

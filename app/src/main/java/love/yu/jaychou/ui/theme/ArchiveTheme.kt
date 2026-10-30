@@ -40,6 +40,7 @@ fun ArchiveTheme(settings: AppSettings, content: @Composable () -> Unit) {
     val scene = remember { movableContentOf { currentContent() } }
     CompositionLocalProvider(LocalUiStyle provides settings.uiStyle) {
         if (settings.uiStyle == UiStyle.MATERIAL3) MaterialArchiveTheme(settings) { scene() }
+        else if (settings.uiStyle == UiStyle.COUI) CouiArchiveTheme(settings) { scene() }
         else MiuixArchiveTheme(settings) { scene() }
     }
 }

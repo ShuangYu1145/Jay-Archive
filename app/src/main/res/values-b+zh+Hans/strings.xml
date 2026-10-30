@@ -69,7 +69,7 @@
     <string name="ui_open_the_album_at_this_song">打开所属专辑，定位到这首歌</string>
     <string name="ui_artwork">%1$s封面</string>
     <string name="ui_loading_online_image">正在加载网络图片…</string>
-    <string name="ui_offline_image_tap_to_retry">离线图片 · 点此重试</string>
+    <string name="ui_offline_image_tap_to_retry">图片加载失败 · 点此重试</string>
     <string name="ui_retry_online_image">重试加载网络图片</string>
     <string name="ui_back_to_albums">返回专辑列表</string>
     <string name="ui_upcoming">即将举行</string>
@@ -350,7 +350,7 @@
     <string name="ui_avatar_import_failed">无法读取头像，请选择 20 MB 以内的图片。</string>
     <string name="ui_read_lyrics">阅读歌词</string>
     <string name="ui_interface_style">界面风格</string>
-    <string name="ui_interface_style_summary">两套界面分别保存外观设置，随时切换</string>
+    <string name="ui_interface_style_summary">三种界面风格分别保存外观设置，随时切换</string>
     <string name="ui_choose_seed_color_for_current_style">为当前界面设置独立的自定义配色</string>
     <string name="ui_seed_color_current_style_summary">关闭动态配色时使用；仅改变当前界面的配色。</string>
     <string name="ui_default_material_color">默认紫色</string>
@@ -415,4 +415,23 @@
     <string name="ui_update_disable_automatic">关闭自动检查</string>
     <string name="ui_update_download">下载更新</string>
     <string name="ui_update_later">稍后</string>
+    <string name="ui_compositions">作曲</string>
+    <string name="ui_search_compositions">搜索歌名、歌手或专辑</string>
+    <string name="ui_compositions_intro">周杰伦为他人谱写的旋律，按发行时间倒序排列。</string>
+    <string name="ui_compositions_catalog_note">收录已整理的对外作曲作品，目录持续补充；日期对应所列发行版本。</string>
+    <string name="ui_compositions_loading">正在载入歌曲目录…</string>
+    <string name="ui_compositions_load_failed">歌曲目录暂时无法载入，请重新打开此页面。</string>
+    <string name="ui_compositions_empty">没有匹配的歌曲，试试其他歌名或歌手。</string>
+    <string name="ui_composition_details">歌曲档案</string>
+    <string name="ui_composed_by_jay">作曲 · 周杰伦</string>
+    <string name="ui_composition_lyricist">作词 · %1$s</string>
+    <string name="ui_composition_release">收录发行 · %1$s</string>
+    <string name="ui_composition_date">发行日期 · %1$s</string>
+    <string name="ui_compositions_source">查看创作目录来源</string>
+    <string name="ui_composition_artwork_note">封面采用匹配歌曲的数字发行版本，可能与首版实体唱片不同。</string>
+    <string name="ui_composition_artwork_source">查看封面来源 · Apple Music</string>
+    <string name="ui_top_app_bar_blur">顶栏模糊</string>
+    <string name="ui_top_app_bar_blur_summary">Gaussian 为均匀高斯模糊，Progressive 为从上到下逐渐变清晰的渐变模糊</string>
+    <string name="ui_support_motivation">你们的支持是我最大的动力</string>
+    <string name="ui_support_qr">支持作者二维码</string>
 </resources>

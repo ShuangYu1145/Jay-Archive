@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import love.yu.jaychou.ui.designsystem.Text
@@ -139,10 +138,10 @@ fun QuietText(
         color = ArchiveUiTheme.colorScheme.onBackgroundVariant)
 }
 
-/** Network loading, explicit progress/error states, retry, and a bundled offline fallback. */
+/** Online artwork with Coil caching, explicit progress/error states and retry. */
 @Composable
 fun CatalogImage(
-    url: String, asset: String, description: String, modifier: Modifier = Modifier,
+    url: String, description: String, modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     onAspectRatio: ((Float) -> Unit)? = null,
     crossfade: Boolean = true,
@@ -167,19 +166,13 @@ fun CatalogImage(
             modifier = modifier,
             loading = {
                 Box(Modifier.fillMaxSize()) {
-                    AsyncImage("file:///android_asset/$asset", null, Modifier.fillMaxSize(), contentScale = contentScale)
+                    ArchiveGlyph(Glyph.ALBUMS, Modifier.align(Alignment.Center).size(32.dp))
                     if (showStatus) ImageStatus(loadingLabel, Modifier.align(Alignment.BottomStart))
                 }
             },
             error = {
                 Box(Modifier.fillMaxSize()) {
-                    AsyncImage("file:///android_asset/$asset", description, Modifier.fillMaxSize(), contentScale = contentScale,
-                        onSuccess = { state ->
-                            val drawable = state.result.drawable
-                            if (drawable.intrinsicWidth > 0 && drawable.intrinsicHeight > 0) {
-                                onAspectRatio?.invoke(drawable.intrinsicWidth.toFloat() / drawable.intrinsicHeight)
-                            }
-                        })
+                    ArchiveGlyph(Glyph.ALBUMS, Modifier.align(Alignment.Center).size(32.dp))
                     if (showStatus) ImageStatus(offlineLabel, Modifier.align(Alignment.BottomStart)
                         .clickable(role = Role.Button, onClickLabel = retryLabel) { attempt++ })
                 }
@@ -196,6 +189,13 @@ private fun ImageStatus(label: String, modifier: Modifier) {
 
 @Composable
 fun BackButton(onClick: () -> Unit, label: String = AppText.get(R.string.ui_back_to_albums)) {
+    if (ArchiveUiTheme.isCoui) {
+        love.yu.jaychou.ui.designsystem.CouiToolbarButton(onClick,
+            Modifier.semantics { contentDescription = label }) {
+            ArchiveGlyph(Glyph.BACK)
+        }
+        return
+    }
     Box(Modifier.size(48.dp).clip(CircleShape)
         .clickable(role = Role.Button, onClickLabel = label, onClick = onClick)
         .semantics { contentDescription = label }, contentAlignment = Alignment.Center) {

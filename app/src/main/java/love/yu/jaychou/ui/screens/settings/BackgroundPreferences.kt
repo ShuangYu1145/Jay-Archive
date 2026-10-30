@@ -15,6 +15,7 @@ import love.yu.jaychou.data.*
 import love.yu.jaychou.ui.components.PreferenceCard
 import love.yu.jaychou.ui.components.SettingSwitch
 import love.yu.jaychou.ui.designsystem.ArrowPreference
+import love.yu.jaychou.ui.designsystem.PreferenceDivider
 import love.yu.jaychou.ui.designsystem.BasicComponent
 
 @Composable
@@ -52,6 +53,7 @@ internal fun BackgroundPreferences(settings: AppSettings) {
             onClick = { if (!busy) picker.launch(arrayOf("image/*")) },
             modifier = Modifier.testTag("custom-background"),
         )
+        PreferenceDivider()
         SettingSwitch(
             AppText.get(R.string.ui_background_card_blur),
             AppText.get(if (Build.VERSION.SDK_INT >= 33) R.string.ui_background_card_blur_summary
@@ -63,23 +65,26 @@ internal fun BackgroundPreferences(settings: AppSettings) {
             } },
             !busy && settings.customBackgroundPath != null && Build.VERSION.SDK_INT >= 33,
         )
-        if (settings.customBackgroundPath != null) ArrowPreference(
-            title = AppText.get(R.string.ui_background_reset),
-            onClick = { if (!busy) scope.launch {
-                busy = true
-                withContext(NonCancellable) {
-                    try {
-                        val previous = currentPath
-                        repository.setCustomBackground(null)
-                        BackgroundImageStore.remove(context, previous)
-                        error = null
-                    } catch (_: Exception) {
-                        error = AppText.get(R.string.ui_unable_to_save_settings_please_try_again)
-                    } finally { busy = false }
-                }
-            } },
-            modifier = Modifier.testTag("custom-background-reset"),
-        )
-        error?.let { BasicComponent(title = it, modifier = Modifier.testTag("custom-background-error")) }
+        if (settings.customBackgroundPath != null) {
+            PreferenceDivider()
+            ArrowPreference(
+                title = AppText.get(R.string.ui_background_reset),
+                onClick = { if (!busy) scope.launch {
+                    busy = true
+                    withContext(NonCancellable) {
+                        try {
+                            val previous = currentPath
+                            repository.setCustomBackground(null)
+                            BackgroundImageStore.remove(context, previous)
+                            error = null
+                        } catch (_: Exception) {
+                            error = AppText.get(R.string.ui_unable_to_save_settings_please_try_again)
+                        } finally { busy = false }
+                    }
+                } },
+                modifier = Modifier.testTag("custom-background-reset"),
+            )
+        }
+        error?.let { PreferenceDivider(); BasicComponent(title = it, modifier = Modifier.testTag("custom-background-error")) }
     }
 }

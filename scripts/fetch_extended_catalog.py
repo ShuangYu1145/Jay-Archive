@@ -38,13 +38,11 @@ def fetch(item):
     else:
         category = "OTHER"
     image = re.sub(r"\d+x\d+bb", "600x600bb", item["artworkUrl100"])
-    asset = f"covers/apple-{ident}.jpg"
-    (ASSETS / asset).write_bytes(get(image))
     return {"id": "apple-" + ident, "title": re.sub(r" - (Single|EP)$", "", name),
             "englishTitle": "", "category": category,
             "releaseDate": item["releaseDate"][:10], "sourceDateRaw": item["releaseDate"],
             "sourceUrl": item["collectionViewUrl"], "sourceLabel": "Apple Music 台湾目录",
-            "coverUrl": image, "coverAsset": asset,
+            "coverUrl": image,
             "dateNote": "日期与曲序采用 Apple Music 台湾数字版目录；不代表首版实体 CD 日期。不同地区、CD/DVD 与数字版收录可能不同。",
             "summary": f"Apple Music 台湾目录收录的{name}，共 {len(songs)} 首曲目。下方依该数字发行版本的碟片号、曲目号排序；现场录音与录音室版本分开归类。",
             "tracks": [{"title": x["trackName"], "disc": x.get("discNumber", 1),

@@ -25,7 +25,7 @@ with zipfile.ZipFile(source) as archive:
     assert "JayArchive/gradle/wrapper/gradle-wrapper.jar" in archive.namelist()
     studio = json.loads((root / "app/src/main/assets/albums.json").read_text(encoding="utf-8"))["albums"]
     extra = json.loads((root / "app/src/main/assets/extended-albums.json").read_text(encoding="utf-8"))["albums"]
-    assert len([n for n in archive.namelist() if "/assets/covers/" in n]) == len(studio) + len(extra)
+    assert not any("/assets/" in n and n.lower().endswith((".jpg", ".jpeg", ".png", ".webp")) for n in archive.namelist())
 apk = out / f"JayArchive-{version}-debug.apk"
 shutil.copy2(root / "app/build/outputs/apk/debug/app-debug.apk", apk)
 manifest = {path.name: {"bytes": path.stat().st_size, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}

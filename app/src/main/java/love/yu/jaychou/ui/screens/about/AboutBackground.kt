@@ -31,6 +31,18 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
+/** Both about layouts use the same title palette over the shared color field. */
+@Composable
+internal fun rememberAboutTitleBrush(): Brush {
+    val dark = ArchiveUiTheme.colorScheme.background.luminance() < .5f
+    return remember(dark) {
+        Brush.horizontalGradient(
+            if (dark) listOf(Color(0xFFB9CBFF), Color(0xFFF2B6DA))
+            else listOf(Color(0xFF234EAB), Color(0xFF8C326B)),
+        )
+    }
+}
+
 /** Soft overlapping color fields; no platform blur or RuntimeShader is required. */
 @Composable
 internal fun AboutBackground(active: Boolean, modifier: Modifier = Modifier) {

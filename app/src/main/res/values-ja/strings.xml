@@ -69,7 +69,7 @@
     <string name="ui_open_the_album_at_this_song">アルバムを開いてこの曲を表示</string>
     <string name="ui_artwork">『%1$s』のジャケット</string>
     <string name="ui_loading_online_image">画像を読み込み中…</string>
-    <string name="ui_offline_image_tap_to_retry">オフライン画像 · タップして再試行</string>
+    <string name="ui_offline_image_tap_to_retry">画像を読み込めません · タップして再試行</string>
     <string name="ui_retry_online_image">画像の読み込みを再試行</string>
     <string name="ui_back_to_albums">アルバム一覧に戻る</string>
     <string name="ui_upcoming">開催予定</string>
@@ -415,4 +415,23 @@
     <string name="ui_update_disable_automatic">自動確認をオフにする</string>
     <string name="ui_update_download">更新をダウンロード</string>
     <string name="ui_update_later">後で</string>
+    <string name="ui_compositions">作曲</string>
+    <string name="ui_search_compositions">曲名・歌手・アルバムを検索</string>
+    <string name="ui_compositions_intro">ジェイ・チョウが他の歌手に提供した楽曲。発売日の新しい順。</string>
+    <string name="ui_compositions_catalog_note">他の歌手への提供曲を順次収録しています。日付は記載のリリースに対応します。</string>
+    <string name="ui_compositions_loading">楽曲を読み込み中…</string>
+    <string name="ui_compositions_load_failed">楽曲を読み込めません。このページを開き直してください。</string>
+    <string name="ui_compositions_empty">該当する楽曲がありません。別の曲名や歌手をお試しください。</string>
+    <string name="ui_composition_details">楽曲アーカイブ</string>
+    <string name="ui_composed_by_jay">作曲 · ジェイ・チョウ</string>
+    <string name="ui_composition_lyricist">作詞 · %1$s</string>
+    <string name="ui_composition_release">収録作品 · %1$s</string>
+    <string name="ui_composition_date">発売日 · %1$s</string>
+    <string name="ui_compositions_source">楽曲一覧の出典を見る</string>
+    <string name="ui_composition_artwork_note">ジャケットは一致する楽曲のデジタル版です。初版のものと異なる場合があります。</string>
+    <string name="ui_composition_artwork_source">ジャケットの出典 · Apple Music</string>
+    <string name="ui_top_app_bar_blur">トップバーのぼかし</string>
+    <string name="ui_top_app_bar_blur_summary">Gaussian は均一なぼかし、Progressive は上から下へ徐々に鮮明になるぼかし</string>
+    <string name="ui_support_motivation">皆さまの応援が制作の励みです</string>
+    <string name="ui_support_qr">開発者支援用のQRコード</string>
 </resources>

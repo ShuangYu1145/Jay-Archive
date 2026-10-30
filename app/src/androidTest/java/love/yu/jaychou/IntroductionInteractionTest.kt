@@ -111,6 +111,9 @@ class IntroductionInteractionTest {
         app.onNodeWithTag("album-search-open").assertIsDisplayed()
         app.onNodeWithTag("release-filter").performClick()
         settle()
+        // The sheet has its own Dialog composition and can start on the next frame.
+        app.mainClock.advanceTimeBy(500)
+        app.waitForIdle()
         app.onNodeWithTag("category-sheet").assertIsDisplayed()
     }
 
@@ -141,20 +144,20 @@ class IntroductionInteractionTest {
         }
         if (blur) {
             val initialWidth = indicator.fetchSemanticsNode().boundsInRoot.width
-            top.performTouchInput { down(Offset(width * .25f, centerY)) }
+            top.performTouchInput { down(Offset(width / 6f, centerY)) }
             app.mainClock.advanceTimeBy(600)
             app.waitForIdle()
             assertTrue("Top lens expands on press like the bottom lens",
                 indicator.fetchSemanticsNode().boundsInRoot.width > initialWidth * 1.2f)
             screenshot("top-liquid-pressed.png")
-            top.performTouchInput { moveTo(Offset(width * .75f, centerY), 500) }
+            top.performTouchInput { moveTo(Offset(width * .5f, centerY), 500) }
             app.mainClock.advanceTimeBy(500)
             assertContentStill()
             top.performTouchInput { up() }
         } else {
             top.performTouchInput {
-                down(Offset(width * .25f, centerY))
-                moveTo(Offset(width * .75f, centerY), 500)
+                down(Offset(width / 6f, centerY))
+                moveTo(Offset(width * .5f, centerY), 500)
             }
             app.mainClock.advanceTimeBy(500)
             app.waitForIdle()
@@ -172,16 +175,16 @@ class IntroductionInteractionTest {
         verifyScroll("concerts-list")
         screenshot(if (blur) "concerts-liquid.png" else "concerts-solid.png")
         top.performTouchInput {
-            down(Offset(width * .75f, centerY))
-            moveTo(Offset(width * .25f, centerY), 500)
+            down(Offset(width * .5f, centerY))
+            moveTo(Offset(width / 6f, centerY), 500)
             cancel()
         }
         settle()
         app.onNodeWithTag("tab-CONCERTS").assertIsSelected()
-        // A drag from the unselected half must not reach the outer root pager either.
+        // A drag from an unselected segment must not reach the outer root pager either.
         top.performTouchInput {
-            down(Offset(width * .25f, centerY))
-            moveTo(Offset(width * .75f, centerY), 500)
+            down(Offset(width / 6f, centerY))
+            moveTo(Offset(width * .5f, centerY), 500)
         }
         app.mainClock.advanceTimeBy(300)
         app.waitForIdle()

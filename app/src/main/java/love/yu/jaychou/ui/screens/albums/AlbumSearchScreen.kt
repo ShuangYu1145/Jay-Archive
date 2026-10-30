@@ -54,6 +54,10 @@ import top.yukonga.miuix.kmp.icon.extended.Close
 import top.yukonga.miuix.kmp.icon.extended.Back
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import love.yu.jaychou.ui.effects.CustomBackgroundImage
+import love.yu.jaychou.ui.effects.GlassLayer
+import love.yu.jaychou.ui.effects.LocalNavigationBackdrop
+import love.yu.jaychou.ui.components.LocalArchiveBlur
+import android.os.Build
 
 @Composable
 internal fun AlbumSearchScreen(
@@ -61,6 +65,7 @@ internal fun AlbumSearchScreen(
     onAlbum: (Album, AlbumOrigin) -> Unit,
     onSong: (Album, Track, AlbumOrigin) -> Unit,
 ) {
+    val coui = ArchiveUiTheme.isCoui
     val colors = ArchiveUiTheme.colorScheme
     val index = remember(catalog) { AlbumSearchIndex(catalog) }
     val results = remember(index, query) { index.search(query) }
@@ -69,77 +74,90 @@ internal fun AlbumSearchScreen(
     val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(Unit) { delay(200); focus.requestFocus() }
     LaunchedEffect(query) { list.scrollToItem(0) }
-    Box(Modifier.fillMaxSize().background(colors.background)) {
-    CustomBackgroundImage()
-    Column(Modifier.fillMaxSize().statusBarsPadding()
-        .navigationBarsPadding().imePadding().testTag("album-search")) {
-        Row(Modifier.fillMaxWidth().padding(start = 20.dp, end = 8.dp, top = 12.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            ArchiveIconButton(MiuixIcons.Back, AppText.get(R.string.ui_close_search), { keyboard?.hide(); onClose() },
-                Modifier.testTag("album-search-close"))
-            BasicTextField(
-                value = query, onValueChange = onQuery, singleLine = true,
-                textStyle = TextStyle(color = colors.onBackground, fontSize = 16.sp),
-                cursorBrush = SolidColor(colors.primary),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
-                modifier = Modifier.weight(1f).focusRequester(focus).testTag("album-search-input")
-                    .semantics { contentDescription = AppText.get(R.string.ui_search_albums_or_songs) },
-                decorationBox = { field ->
-                    Row(Modifier.background(colors.surfaceContainer, RoundedCornerShape(20.dp))
-                        .heightIn(min = 52.dp).padding(start = 15.dp, end = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        Icon(MiuixIcons.Search, contentDescription = null, modifier = Modifier.size(21.dp), tint = colors.onBackgroundVariant)
-                        Box(Modifier.weight(1f).padding(horizontal = 10.dp)) {
-                            if (query.isEmpty()) Text(AppText.get(R.string.ui_search_albums_or_songs), fontSize = 16.sp, color = colors.onBackgroundVariant)
-                            field()
-                        }
-                        if (query.isNotEmpty()) ArchiveIconButton(MiuixIcons.Close, AppText.get(R.string.ui_clear_search), { onQuery(""); focus.requestFocus() },
-                            Modifier.testTag("album-search-clear"))
-                    }
-                },
-            )
-        }
-        val mode = if (query.isBlank()) "prompt" else if (results.albums.isEmpty() && results.songs.isEmpty()) "empty" else "results"
-        AnimatedContent(mode, transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(120)) },
-            label = "search-results", modifier = Modifier.weight(1f)) { state ->
-            if (state != "results") {
-                Column(Modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically)) {
-                    Icon(MiuixIcons.Search, contentDescription = null, modifier = Modifier.size(40.dp), tint = colors.onBackgroundVariant)
-                    Text(if (state == "prompt") AppText.get(R.string.ui_find_an_album_or_a_favorite_song) else AppText.get(R.string.ui_no_matching_albums_or_songs),
-                        fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
-                    QuietText(if (state == "prompt") AppText.get(R.string.ui_search_original_titles_localized_titles_and_song_names_nall_rele) else AppText.get(R.string.ui_try_a_shorter_keyword_or_check_the_song_title))
+    // The search overlay is inside the introduction's capture. Its toolbar must
+    // sample a separate background, never that ancestor layer containing itself.
+    val scene: @Composable (Modifier) -> Unit = { backgroundCapture ->
+        Box(Modifier.fillMaxSize()) {
+            Box(Modifier.fillMaxSize().then(backgroundCapture).background(colors.background)) {
+                CustomBackgroundImage()
+            }
+            Column(Modifier.fillMaxSize().statusBarsPadding()
+                .navigationBarsPadding().imePadding().testTag("album-search")) {
+                Row(Modifier.fillMaxWidth().padding(start = if (coui) 16.dp else 20.dp,
+                    end = if (coui) 16.dp else 8.dp, top = 12.dp, bottom = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(if (coui) 10.dp else 0.dp),
+                    verticalAlignment = Alignment.CenterVertically) {
+                    ArchiveIconButton(MiuixIcons.Back, AppText.get(R.string.ui_close_search), { keyboard?.hide(); onClose() },
+                        Modifier.testTag("album-search-close"))
+                    BasicTextField(
+                        value = query, onValueChange = onQuery, singleLine = true,
+                        textStyle = TextStyle(color = colors.onBackground, fontSize = 16.sp),
+                        cursorBrush = SolidColor(colors.primary),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { keyboard?.hide() }),
+                        modifier = Modifier.weight(1f).focusRequester(focus).testTag("album-search-input")
+                            .semantics { contentDescription = AppText.get(R.string.ui_search_albums_or_songs) },
+                        decorationBox = { field ->
+                            Row(Modifier.background(colors.surfaceContainer, RoundedCornerShape(if (coui) 28.dp else 20.dp))
+                                .heightIn(min = if (coui) 56.dp else 52.dp).padding(start = 15.dp, end = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically) {
+                                Icon(MiuixIcons.Search, contentDescription = null, modifier = Modifier.size(21.dp), tint = colors.onBackgroundVariant)
+                                Box(Modifier.weight(1f).padding(horizontal = 10.dp)) {
+                                    if (query.isEmpty()) Text(AppText.get(R.string.ui_search_albums_or_songs), fontSize = 16.sp, color = colors.onBackgroundVariant)
+                                    field()
+                                }
+                                if (query.isNotEmpty()) ArchiveIconButton(MiuixIcons.Close, AppText.get(R.string.ui_clear_search), { onQuery(""); focus.requestFocus() },
+                                    Modifier.testTag("album-search-clear"))
+                            }
+                        },
+                    )
                 }
-            } else {
-                LazyColumn(state = list, modifier = Modifier.fillMaxSize().testTag("album-search-results"),
-                    contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    item("count") {
-                        Text(AppText.get(R.string.ui_albums_songs,
-                            AppText.quantity(R.plurals.album_count, results.albums.size),
-                            AppText.quantity(R.plurals.song_count, results.songs.size)), fontSize = 13.sp,
-                            color = colors.onBackgroundVariant, modifier = Modifier.padding(vertical = 8.dp).animateContentSize())
-                    }
-                    if (results.albums.isNotEmpty()) item("albums-heading") { SectionTitle(AppText.get(R.string.ui_albums)) }
-                    items(results.albums, key = { "album-${it.id}" }) { album ->
-                        AlbumMotionSource(album, { a, origin -> keyboard?.hide(); onAlbum(a, origin) }) { capture, cover, open ->
-                            SearchResultRow(album, album.title, AppText.get(R.string.ui_tracks_42, album.year, album.category.label, album.tracks.size),
-                                Modifier.animateItem().then(capture).testTag("search-album-${album.id}"), cover, open)
+                val mode = if (query.isBlank()) "prompt" else if (results.albums.isEmpty() && results.songs.isEmpty()) "empty" else "results"
+                AnimatedContent(mode, transitionSpec = { fadeIn(tween(180)) togetherWith fadeOut(tween(120)) },
+                    label = "search-results", modifier = Modifier.weight(1f)) { state ->
+                    if (state != "results") {
+                        Column(Modifier.fillMaxSize().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.CenterVertically)) {
+                            Icon(MiuixIcons.Search, contentDescription = null, modifier = Modifier.size(40.dp), tint = colors.onBackgroundVariant)
+                            Text(if (state == "prompt") AppText.get(R.string.ui_find_an_album_or_a_favorite_song) else AppText.get(R.string.ui_no_matching_albums_or_songs),
+                                fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                            QuietText(if (state == "prompt") AppText.get(R.string.ui_search_original_titles_localized_titles_and_song_names_nall_rele) else AppText.get(R.string.ui_try_a_shorter_keyword_or_check_the_song_title))
                         }
-                    }
-                    if (results.songs.isNotEmpty()) item("songs-heading") { SectionTitle(AppText.get(R.string.ui_songs), AppText.get(R.string.ui_open_the_album_at_this_song)) }
-                    items(results.songs, key = { "song-${it.album.id}-${it.track.number}" }) { result ->
-                        AlbumMotionSource(result.album, { a, origin -> keyboard?.hide(); onSong(a, result.track, origin) }) { capture, cover, open ->
-                            SearchResultRow(result.album, result.track.title, "${result.album.title} · ${result.album.year}",
-                                Modifier.animateItem().then(capture).testTag("search-song-${result.album.id}-${result.track.number}"), cover, open)
+                    } else {
+                        LazyColumn(state = list, modifier = Modifier.fillMaxSize().testTag("album-search-results"),
+                            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 24.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            item("count") {
+                                Text(AppText.get(R.string.ui_albums_songs,
+                                    AppText.quantity(R.plurals.album_count, results.albums.size),
+                                    AppText.quantity(R.plurals.song_count, results.songs.size)), fontSize = 13.sp,
+                                    color = colors.onBackgroundVariant, modifier = Modifier.padding(vertical = 8.dp).animateContentSize())
+                            }
+                            if (results.albums.isNotEmpty()) item("albums-heading") { SectionTitle(AppText.get(R.string.ui_albums)) }
+                            items(results.albums, key = { "album-${it.id}" }) { album ->
+                                AlbumMotionSource(album, { a, origin -> keyboard?.hide(); onAlbum(a, origin) }) { capture, cover, open ->
+                                    SearchResultRow(album, album.title, AppText.get(R.string.ui_tracks_42, album.year, album.category.label, album.tracks.size),
+                                        Modifier.animateItem().then(capture).testTag("search-album-${album.id}"), cover, open)
+                                }
+                            }
+                            if (results.songs.isNotEmpty()) item("songs-heading") { SectionTitle(AppText.get(R.string.ui_songs), AppText.get(R.string.ui_open_the_album_at_this_song)) }
+                            items(results.songs, key = { "song-${it.album.id}-${it.track.number}" }) { result ->
+                                AlbumMotionSource(result.album, { a, origin -> keyboard?.hide(); onSong(a, result.track, origin) }) { capture, cover, open ->
+                                    SearchResultRow(result.album, result.track.title, "${result.album.title} · ${result.album.year}",
+                                        Modifier.animateItem().then(capture).testTag("search-song-${result.album.id}-${result.track.number}"), cover, open)
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
+    if (coui && Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current) {
+        GlassLayer(colors.background) { capture, _ -> scene(capture) }
+    } else CompositionLocalProvider(LocalNavigationBackdrop provides null) {
+        scene(Modifier)
+    }
 }
 
 @Composable
@@ -148,7 +166,7 @@ private fun SearchResultRow(album: Album, title: String, subtitle: String,
 ) {
     Card(modifier.fillMaxWidth(), onClick = onClick, insideMargin = PaddingValues(12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            CatalogImage(album.coverUrl, album.coverAsset, AppText.get(R.string.ui_artwork, album.title), cover.size(56.dp).clip(AlbumCoverShape))
+            CatalogImage(album.coverUrl, AppText.get(R.string.ui_artwork, album.title), cover.size(56.dp).clip(AlbumCoverShape))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(title, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 QuietText(subtitle, maxLines = 2, overflow = TextOverflow.Ellipsis)

@@ -10,12 +10,10 @@
       "sourceDateRaw": "2026-03-24T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/2037128764168736768?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/2037180941100781568/%E5%A4%AA%E9%99%BD%E4%B9%8B%E5%AD%90%E5%B0%88%E8%BC%AF%E5%B0%81%E9%9D%A2.jpg",
-      "coverAsset": "covers/2037128764168736768.jpg",
       "leadTrackNumbers": [1, 2, 5, 6, 7, 8, 10, 11, 12],
       "trackArtwork": {
         "13": {
           "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000001ln9YB420a7b_2.jpg?max_age=2592000",
-          "coverAsset": "track-covers/christmas-star.jpg",
           "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/457240977"
         }
       },
@@ -45,32 +43,26 @@
       "sourceDateRaw": "2022-07-14T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1551833317039542272?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1641037103418707968/%E5%B0%81%E9%9D%A2(%E6%9C%89%E5%AD%97)%20(002).jpg",
-      "coverAsset": "covers/1551833317039542272.jpg",
       "leadTrackNumbers": [2, 3, 5, 8, 10, 11],
       "trackArtwork": {
         "4": {
           "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000002gBTVk4JEE2T_2.jpg?max_age=2592000",
-          "coverAsset": "track-covers/wont-cry.jpg",
           "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/237773700"
         },
         "6": {
           "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000001CnPE31iJ899_1.jpg?max_age=2592000",
-          "coverAsset": "track-covers/if-you-dont-love-me.jpg",
           "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/213922043"
         },
         "7": {
           "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M0000009C3rp3Kfwg0_3.jpg?max_age=2592000",
-          "coverAsset": "track-covers/mojito.jpg",
           "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/268352018"
         },
         "9": {
           "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000003bSL0v4bpKAx_1.jpg?max_age=2592000",
-          "coverAsset": "track-covers/waiting-for-you.jpg",
           "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/212877900"
         },
         "12": {
           "coverUrl": "https://y.qq.com/music/photo_new/T002R300x300M000001hGx1Z0so1YX_1.jpg?max_age=2592000",
-          "coverAsset": "track-covers/i-truly-believe.jpg",
           "sourceUrl": "https://y.qq.com/n/ryqq_v2/songDetail/247261229"
         }
       },
@@ -99,7 +91,6 @@
       "sourceDateRaw": "2016-06-23T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1150824720824930304?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1150824722091610112/d_pic2.jpg",
-      "coverAsset": "covers/1150824720824930304.jpg",
       "leadTrackNumbers": [1, 4, 6, 8],
       "leadTrackSources": ["https://www.jvrmusic.com/artist/gallery/detail/1150824720824930304?type=album", "https://zh.wikipedia.org/wiki/周杰倫的床邊故事"],
       "tracks": [
@@ -124,7 +115,6 @@
       "sourceDateRaw": "2014-12-25T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151759216223064064?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983503407386624/album_carousel_13.jpg",
-      "coverAsset": "covers/1151759216223064064.jpg",
       "leadTrackNumbers": [3, 8, 9, 12],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/哎呦，不錯哦", "https://www.jvrmusic.com/news/detail/1154657981707718656?lang=en_US"],
       "tracks": [
@@ -151,7 +141,6 @@
       "sourceDateRaw": "2012-12-27T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151769443223867392?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983304018563072/album_carousel_12.jpg",
-      "coverAsset": "covers/1151769443223867392.jpg",
       "leadTrackNumbers": [3, 4, 9],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/12新作", "https://ent.sina.com.cn/y/2012-12-28/17063823373.shtml"],
       "tracks": [
@@ -177,7 +166,6 @@
       "sourceDateRaw": "2011-11-10T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151771029539000320?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983176436224000/album_carousel_11.jpg",
-      "coverAsset": "covers/1151771029539000320.jpg",
       "leadTrackNumbers": [1, 3, 5, 8, 10],
       "leadTrackSources": ["https://www.sonymusic.com.tw/album/驚嘆號-周杰倫-jay-chou-88691903047/"],
       "tracks": [
@@ -203,7 +191,6 @@
       "sourceDateRaw": "2010-05-17T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151771608675913728?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153983020114513920/album_carousel_10.jpg",
-      "coverAsset": "covers/1151771608675913728.jpg",
       "leadTrackNumbers": [1, 2, 3, 6, 11],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/跨時代", "https://www.5music.com.tw/CDList-C.asp?cdno=431425679028"],
       "tracks": [
@@ -229,7 +216,6 @@
       "sourceDateRaw": "2008-10-13T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151772159916511232?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982897393373184/album_carousel_9.jpg",
-      "coverAsset": "covers/1151772159916511232.jpg",
       "leadTrackNumbers": [2, 6, 7, 11],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/魔杰座", "https://ent.sina.com.cn/y/2008-10-08/03162196152.shtml"],
       "tracks": [
@@ -254,7 +240,6 @@
       "sourceDateRaw": "2007-10-31T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151772542550282240?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982773002899456/album_carousel_8.jpg",
-      "coverAsset": "covers/1151772542550282240.jpg",
       "leadTrackNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       "leadTrackSources": ["https://www.sonymusic.com.tw/album/我很忙-周杰倫-jay-chou-88697197022/"],
       "tracks": [
@@ -279,7 +264,6 @@
       "sourceDateRaw": "2006-09-04T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151773902062620672?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982630778245120/album_carousel_6.jpg",
-      "coverAsset": "covers/1151773902062620672.jpg",
       "leadTrackNumbers": [1, 2, 3, 5, 10],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/依然范特西", "https://www.shsmusic.tw/tw/product/show.php?num=112555"],
       "tracks": [
@@ -304,7 +288,6 @@
       "sourceDateRaw": "2005-10-31T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1151774270238625792?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982509097291776/album_carousel_7.jpg",
-      "coverAsset": "covers/1151774270238625792.jpg",
       "leadTrackNumbers": [1, 3, 4, 6, 10],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/11月的蕭邦"],
       "tracks": [
@@ -330,7 +313,6 @@
       "sourceDateRaw": "2004-08-02T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152151605810958336?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982365807284224/album_carousel_5.jpg",
-      "coverAsset": "covers/1152151605810958336.jpg",
       "leadTrackNumbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       "leadTrackSources": ["https://www.hitoradio.com/newweb//7album", "https://www.kiss.com.tw/music/album.php?id=1040"],
       "tracks": [
@@ -354,7 +336,6 @@
       "sourceDateRaw": "2003-07-28T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152152148126076928?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153982098533650432/album_carousel_4.jpg",
-      "coverAsset": "covers/1152152148126076928.jpg",
       "leadTrackNumbers": [1, 3, 5],
       "leadTrackSources": ["https://www.jvrmusic.com/artist/gallery/detail/1152152148126076928?type=album", "https://zh.wikipedia.org/wiki/葉惠美"],
       "tracks": [
@@ -379,7 +360,6 @@
       "sourceDateRaw": "2002-07-17T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152152649680949248?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153981956778758144/album_carousel_3.jpg",
-      "coverAsset": "covers/1152152649680949248.jpg",
       "leadTrackNumbers": [1, 3, 4, 10],
       "leadTrackSources": ["https://zh.wikipedia.org/wiki/八度空間_(專輯)"],
       "tracks": [
@@ -403,7 +383,6 @@
       "sourceDateRaw": "2001-09-13T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152155344949088256?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153981839883505664/album_carousel_2.jpg",
-      "coverAsset": "covers/1152155344949088256.jpg",
       "leadTrackNumbers": [3, 5, 9],
       "leadTrackSources": ["https://music-tw.line.me/album/1018305"],
       "tracks": [
@@ -427,7 +406,6 @@
       "sourceDateRaw": "2000-11-05T16:00:00.0000000+00:00",
       "sourceUrl": "https://www.jvrmusic.com/artist/gallery/detail/1152155845522493440?type=album",
       "coverUrl": "https://www.jvrmusic.com/upload/1153981674854420480/album_carousel_1.jpg",
-      "coverAsset": "covers/1152155845522493440.jpg",
       "leadTrackNumbers": [1, 3, 6, 9],
       "leadTrackSources": ["https://www.hk01.com/眾樂迷/131261/周杰倫首張專輯-jay-17年前今日面世-夠膽講10首都係主打歌"],
       "tracks": [

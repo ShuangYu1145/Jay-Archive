@@ -36,10 +36,18 @@ fun IntroductionScreen(
     onSelect: (Int) -> Unit,
     content: @Composable (Int) -> Unit,
 ) {
-    val actionHosts = remember { List(2) { SectionActionHost() } }
+    val sections = listOf(
+        ArchiveNavigationItem("ALBUMS", AppText.get(R.string.ui_albums)),
+        ArchiveNavigationItem("CONCERTS", AppText.get(R.string.ui_concerts)),
+        ArchiveNavigationItem("COMPOSITIONS", AppText.get(R.string.ui_compositions)),
+    )
+    val actionHosts = remember { List(3) { SectionActionHost() } }
     val background = ArchiveUiTheme.colorScheme.background
+    val coui = ArchiveUiTheme.isCoui
     val material = ArchiveUiTheme.isMaterial
-    val scene: @Composable (Modifier, Modifier) -> Unit = { capture, glass ->
+    val progressive = LocalArchiveBlur.current && (coui || (!material &&
+        love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE))
+    val scene: @Composable (Modifier, Modifier, Modifier) -> Unit = { capture, glass, header ->
         Box(Modifier.fillMaxSize()) {
             HorizontalPager(
                 state = pager, beyondViewportPageCount = 1,
@@ -50,10 +58,18 @@ fun IntroductionScreen(
                     content(section)
                 }
             }
-            if (headerVisible) Row(
+            if (headerVisible && coui) CouiIntroductionHeader(
+                sections, pager.currentPage, onSelect, enabled,
+                modifier = header.fillMaxWidth().statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .pointerInput(enabled) {
+                        if (enabled) detectHorizontalDragGestures { change, _ -> change.consume() }
+                    },
+            ) { actionHosts[pager.currentPage].content?.value?.invoke(this) }
+            else if (headerVisible) Row(
                 (if (material) Modifier.fillMaxWidth().background(background).statusBarsPadding()
                     .height(74.dp).padding(horizontal = 8.dp)
-                else Modifier.fillMaxWidth().statusBarsPadding()
+                else header.fillMaxWidth().statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 8.dp).heightIn(min = 58.dp))
                     .testTag("introduction-header")
                     .pointerInput(enabled) {
@@ -66,23 +82,19 @@ fun IntroductionScreen(
                         selectedTabIndex = pager.currentPage,
                         modifier = Modifier.testTag("introduction-tabs"),
                     ) {
-                        listOf("ALBUMS" to AppText.get(R.string.ui_albums), "CONCERTS" to AppText.get(R.string.ui_concerts))
-                            .forEachIndexed { index, (key, label) ->
-                                androidx.compose.material3.Tab(selected = pager.currentPage == index,
-                                    onClick = { onSelect(index) }, enabled = enabled,
-                                    modifier = Modifier.testTag("tab-$key"),
-                                    text = { androidx.compose.material3.Text(label) })
-                            }
+                        sections.forEachIndexed { index, (key, label) ->
+                            androidx.compose.material3.Tab(selected = pager.currentPage == index,
+                                onClick = { onSelect(index) }, enabled = enabled,
+                                modifier = Modifier.testTag("tab-$key"),
+                                text = { androidx.compose.material3.Text(label) })
+                        }
                     } else DraggableNavigationBar(
                         selectedIndex = pager.targetPage,
                         pagePosition = { pager.currentPage + pager.currentPageOffsetFraction },
                         // Only the lens follows the finger; content switches on release.
                         onSelect = onSelect, onScrub = {},
                         glass = glass, enabled = enabled,
-                        items = listOf(
-                            ArchiveNavigationItem("ALBUMS", AppText.get(R.string.ui_albums)),
-                            ArchiveNavigationItem("CONCERTS", AppText.get(R.string.ui_concerts)),
-                        ),
+                        items = sections,
                         barTag = "introduction-tabs",
                     )
                 }
@@ -92,6 +104,17 @@ fun IntroductionScreen(
             }
         }
     }
-    if (Build.VERSION.SDK_INT >= 33 && (LocalArchiveBlur.current || LocalArchiveLiquidGlass.current)) GlassLayer(background, scene)
-    else scene(Modifier, Modifier.background(ArchiveUiTheme.colorScheme.surfaceContainer))
+    if (coui && Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current) {
+        love.yu.jaychou.ui.effects.HeaderGlassLayer(background, progressive = true, content = { capture, header ->
+            scene(capture, Modifier, header)
+        })
+    } else if (Build.VERSION.SDK_INT >= 33 && (LocalArchiveBlur.current || LocalArchiveLiquidGlass.current)) {
+        GlassLayer(background) { capture, glass ->
+            if (progressive && headerVisible) love.yu.jaychou.ui.effects.HeaderGlassLayer(
+                background, progressive = true, content = { headerCapture, header ->
+                    scene(capture.then(headerCapture), glass, header)
+                },
+            ) else scene(capture, glass, Modifier)
+        }
+    } else scene(Modifier, Modifier.background(ArchiveUiTheme.colorScheme.surfaceContainer), Modifier)
 }

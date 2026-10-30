@@ -12,9 +12,14 @@ import org.junit.Test
 class AlbumSearchNavigationTest {
     @get:Rule val app = createComposeRule()
 
-    @Test fun searchesAlbumsAndTracksAndReturnsToResults() {
+    @Test fun searchesAlbumsAndTracksAndReturnsToResults() = verifySearch(AppSettings(blur = false))
+
+    @Test fun couiSearchWithBlurReturnsToResults() = verifySearch(AppSettings(
+        uiStyle = UiStyle.COUI, blur = true, liquidGlass = false, floatingBottomBar = true))
+
+    private fun verifySearch(settings: AppSettings) {
+        AppText.update(InstrumentationRegistry.getInstrumentation().targetContext.resources)
         val catalog = AlbumRepository.load(InstrumentationRegistry.getInstrumentation().targetContext)
-        val settings = AppSettings(blur = false)
         app.mainClock.autoAdvance = false
         app.setContent {
             ArchiveTheme(settings) {

@@ -39,14 +39,14 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.Text
+import love.yu.jaychou.ui.designsystem.Icon
+import love.yu.jaychou.ui.designsystem.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Album
 import top.yukonga.miuix.kmp.icon.extended.Home
 import top.yukonga.miuix.kmp.icon.extended.Info
 import top.yukonga.miuix.kmp.icon.extended.Settings
-import top.yukonga.miuix.kmp.theme.MiuixTheme
+import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import kotlin.math.roundToInt
 
 data class ArchiveNavigationItem(val key: String, val label: String, val icon: ImageVector? = null)
@@ -74,7 +74,7 @@ fun DraggableNavigationBar(
         )
         return
     }
-    val colors = MiuixTheme.colorScheme
+    val colors = ArchiveUiTheme.colorScheme
     val count = items.size
     val lastIndex = items.lastIndex.toFloat()
     val density = LocalDensity.current
@@ -116,10 +116,13 @@ fun DraggableNavigationBar(
                     dragging = true
                     currentScrub(dragPosition)
                 },
-                onHorizontalDrag = { change, delta ->
+                onHorizontalDrag = { change, _ ->
                     change.consume()
                     val step = ((widthPx - paddingPx * 2) / count).coerceAtLeast(1f)
-                    dragPosition = (dragPosition + (if (rtl) -delta else delta) / step).coerceIn(0f, lastIndex)
+                    // onDragStart already contains the first movement past touch slop.
+                    // Read the finger position so that movement is never counted twice.
+                    val x = if (rtl) widthPx - change.position.x else change.position.x
+                    dragPosition = ((x - paddingPx) / step - .5f).coerceIn(0f, lastIndex)
                     val detent = dragPosition.roundToInt()
                     if (detent != lastDetent) {
                         haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)

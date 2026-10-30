@@ -42,12 +42,9 @@ def fetch(match):
     images = re.findall(r'<img src="(/upload/[^\"]+)"', page)
     image = BASE + html.unescape(images[0])
     encoded_image = urllib.parse.quote(image, safe=":/()")
-    filename = f"covers/{album_id}.jpg"
-    (ASSETS / filename).parent.mkdir(parents=True, exist_ok=True)
-    (ASSETS / filename).write_bytes(get(encoded_image))
     return {"id": album_id, "title": title, "englishTitle": english, "releaseDate": date,
             "sourceDateRaw": date_raw, "sourceUrl": url, "coverUrl": encoded_image,
-            "coverAsset": filename, "tracks": tracks}
+            "tracks": tracks}
 
 if __name__ == "__main__":
     RESEARCH.mkdir(parents=True, exist_ok=True)
@@ -66,7 +63,5 @@ if __name__ == "__main__":
         albums = list(pool.map(fetch, ordered))
     albums.sort(key=lambda x: x["releaseDate"], reverse=True)
     (ASSETS / "albums.json").write_text(json.dumps({"verifiedAt": "2026-10-17", "albums": albums}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    portrait = BASE + "/upload/1153987416726573056/album_carousel_14.jpg"
-    (ASSETS / "jay-portrait.jpg").write_bytes(get(portrait))
     for album in albums:
         print(album["title"], album["releaseDate"], len(album["tracks"]))

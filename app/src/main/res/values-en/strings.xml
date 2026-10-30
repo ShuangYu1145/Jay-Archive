@@ -69,7 +69,7 @@
     <string name="ui_open_the_album_at_this_song">Open the album at this song</string>
     <string name="ui_artwork">%1$s artwork</string>
     <string name="ui_loading_online_image">Loading online image…</string>
-    <string name="ui_offline_image_tap_to_retry">Offline image · Tap to retry</string>
+    <string name="ui_offline_image_tap_to_retry">Image failed to load · Tap to retry</string>
     <string name="ui_retry_online_image">Retry online image</string>
     <string name="ui_back_to_albums">Back to albums</string>
     <string name="ui_upcoming">Upcoming</string>
@@ -415,4 +415,23 @@
     <string name="ui_update_disable_automatic">Turn off automatic checks</string>
     <string name="ui_update_download">Download update</string>
     <string name="ui_update_later">Later</string>
+    <string name="ui_compositions">Writing</string>
+    <string name="ui_search_compositions">Search songs, artists or albums</string>
+    <string name="ui_compositions_intro">Songs composed by Jay Chou for other artists, newest first.</string>
+    <string name="ui_compositions_catalog_note">A growing catalogue of songs written for other artists. Dates refer to the listed releases.</string>
+    <string name="ui_compositions_loading">Loading songs…</string>
+    <string name="ui_compositions_load_failed">Unable to load songs. Please reopen this page.</string>
+    <string name="ui_compositions_empty">No matching songs. Try another title or artist.</string>
+    <string name="ui_composition_details">Song archive</string>
+    <string name="ui_composed_by_jay">Composer · Jay Chou</string>
+    <string name="ui_composition_lyricist">Lyrics · %1$s</string>
+    <string name="ui_composition_release">Release · %1$s</string>
+    <string name="ui_composition_date">Released · %1$s</string>
+    <string name="ui_compositions_source">View composition catalogue source</string>
+    <string name="ui_composition_artwork_note">Artwork is from a matching digital release and may differ from the original physical edition.</string>
+    <string name="ui_composition_artwork_source">Artwork source · Apple Music</string>
+    <string name="ui_top_app_bar_blur">Top app bar blur</string>
+    <string name="ui_top_app_bar_blur_summary">Gaussian blurs evenly; Progressive fades from blurred at the top to clear at the bottom</string>
+    <string name="ui_support_motivation">Your support keeps this project going</string>
+    <string name="ui_support_qr">QR code to support the developer</string>
 </resources>

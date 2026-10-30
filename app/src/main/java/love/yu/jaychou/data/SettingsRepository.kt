@@ -19,16 +19,28 @@ enum class ThemeMode(private val sourceLabel: String) {
 }
 
 enum class UiStyle(val label: String) {
-    MIUIX("Miuix"), MATERIAL3("Material Design 3");
+    MIUIX("Miuix"), COUI("COUI（ColorOS）"), MATERIAL3("Material Design 3");
 
     companion object {
         fun fromStored(value: String?): UiStyle = entries.find { it.name == value } ?: MIUIX
     }
 }
 
-/** Existing Miuix keys stay compatible; Material owns a separate appearance profile. */
+/** Preserve legacy keys; each additional style owns its appearance profile in the same store. */
 internal fun appearanceKey(style: UiStyle, name: String): String =
-    if (style == UiStyle.MIUIX) name else "material3_$name"
+    when (style) {
+        UiStyle.MIUIX -> name
+        UiStyle.COUI -> "coui_$name"
+        UiStyle.MATERIAL3 -> "material3_$name"
+    }
+
+enum class TopAppBarBlur {
+    GAUSSIAN, PROGRESSIVE;
+
+    companion object {
+        fun fromStored(value: String?): TopAppBarBlur = entries.find { it.name == value } ?: GAUSSIAN
+    }
+}
 
 enum class AlbumLayout(private val sourceLabel: String, private val sourceDescription: String) {
     LIST("横向列表", "小封面在左，专辑信息在右"),
@@ -42,6 +54,7 @@ data class AppSettings(
     val theme: ThemeMode = ThemeMode.SYSTEM,
     val monet: Boolean = false,
     val blur: Boolean = true,
+    val topAppBarBlur: TopAppBarBlur = TopAppBarBlur.GAUSSIAN,
     val predictiveBack: Boolean = true,
     val albumLayout: AlbumLayout = AlbumLayout.GRID,
     val customColor: Int? = null,
@@ -62,6 +75,7 @@ private val Context.settingsDataStore by preferencesDataStore("appearance")
 
 class SettingsRepository(context: Context) {
     private val store = context.applicationContext.settingsDataStore
+    private val topAppBarBlurKey = stringPreferencesKey("miuix_top_app_bar_blur")
     private val blurKey = booleanPreferencesKey("blur")
     private val liquidGlassKey = booleanPreferencesKey("liquid_glass")
     private val floatingBottomBarKey = booleanPreferencesKey("floating_bottom_bar")
@@ -101,6 +115,7 @@ class SettingsRepository(context: Context) {
             theme = ThemeMode.entries.find { it.name == prefs[stringPreferencesKey(appearanceKey(style, "theme"))] } ?: ThemeMode.SYSTEM,
             monet = prefs[booleanPreferencesKey(appearanceKey(style, "monet"))] ?: (style == UiStyle.MATERIAL3),
             blur = prefs[blurKey] ?: true,
+            topAppBarBlur = TopAppBarBlur.fromStored(prefs[topAppBarBlurKey]),
             liquidGlass = prefs[liquidGlassKey] ?: true,
             floatingBottomBar = prefs[floatingBottomBarKey] ?: true,
             predictiveBack = prefs[predictiveKey] ?: true,
@@ -125,6 +140,7 @@ class SettingsRepository(context: Context) {
     suspend fun setMonet(value: Boolean) {
         store.edit { it[booleanPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "monet"))] = value }
     }
+    suspend fun setTopAppBarBlur(value: TopAppBarBlur) { store.edit { it[topAppBarBlurKey] = value.name } }
     suspend fun setBlur(value: Boolean) { store.edit { it[blurKey] = value } }
     suspend fun setAutoCheckUpdates(value: Boolean) { store.edit { it[autoCheckUpdatesKey] = value } }
     suspend fun setIncludePrereleaseUpdates(value: Boolean) {

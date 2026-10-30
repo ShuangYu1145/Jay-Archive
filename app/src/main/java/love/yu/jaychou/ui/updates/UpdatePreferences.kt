@@ -12,6 +12,7 @@ import love.yu.jaychou.data.*
 import love.yu.jaychou.ui.components.PreferenceCard
 import love.yu.jaychou.ui.components.SettingSwitch
 import love.yu.jaychou.ui.designsystem.ArrowPreference
+import love.yu.jaychou.ui.designsystem.PreferenceDivider
 import love.yu.jaychou.ui.designsystem.BasicComponent
 
 @Composable
@@ -29,10 +30,12 @@ internal fun UpdatePreferences(settings: AppSettings) {
     PreferenceCard {
         SettingSwitch(AppText.get(R.string.ui_update_auto_check), AppText.get(R.string.ui_update_auto_summary),
             settings.autoCheckUpdates, { save { store.setAutoCheckUpdates(it) } }, true)
+        PreferenceDivider()
         SettingSwitch(AppText.get(R.string.ui_update_prereleases), AppText.get(R.string.ui_update_prereleases_summary),
             settings.includePrereleaseUpdates, { save { store.setIncludePrereleaseUpdates(it) } }, true)
+        PreferenceDivider()
         UpdateCheckRow()
-        error?.let { BasicComponent(title = it) }
+        error?.let { PreferenceDivider(); BasicComponent(title = it) }
     }
 }
 

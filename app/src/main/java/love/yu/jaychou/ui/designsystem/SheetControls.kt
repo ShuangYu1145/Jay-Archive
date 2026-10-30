@@ -18,6 +18,12 @@ fun WindowBottomSheet(show: Boolean, title: String, onDismissRequest: () -> Unit
                       startAction: @Composable () -> Unit = {}, endAction: @Composable () -> Unit = {},
                       expanded: Boolean = false,
                       content: @Composable ColumnScope.() -> Unit) {
+    if (ArchiveUiTheme.isCoui) {
+        io.github.suqi8.coui.kmp.window.WindowBottomSheet(show, title = title,
+            onDismissRequest = onDismissRequest, startAction = startAction, endAction = endAction,
+            content = { Column(content = content) })
+        return
+    }
     if (!ArchiveUiTheme.isMaterial) {
         if (expanded) {
             MiuixModalSheet(show, title, onDismissRequest, startAction, endAction, content)
@@ -55,6 +61,11 @@ internal fun SheetActionButton(
 ) {
     if (ArchiveUiTheme.isMaterial) {
         TextButton(label, onClick, modifier, enabled)
+    } else if (ArchiveUiTheme.isCoui) {
+        CouiToolbarButton(onClick = onClick, enabled = enabled,
+            modifier = modifier) {
+            Icon(icon, label, Modifier.size(28.dp))
+        }
     } else {
         top.yukonga.miuix.kmp.basic.IconButton(
             onClick = onClick, enabled = enabled,

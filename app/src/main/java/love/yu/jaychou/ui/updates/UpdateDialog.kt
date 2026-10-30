@@ -67,6 +67,26 @@ internal fun UpdateDialog(
             title = { Text(title) }, text = body, confirmButton = confirm,
             dismissButton = if (update == null) null else dismiss,
         )
+    } else if (ArchiveUiTheme.isCoui) {
+        val customBody = update != null || saveError != null
+        io.github.suqi8.coui.kmp.window.WindowDialog(show = true, title = title,
+            summary = if (customBody) null else message,
+            modifier = Modifier.testTag("update-dialog-coui"), onDismissRequest = onDismiss) {
+            Column {
+                // COUI leaves the custom slot unpadded to accommodate its edge-to-edge button bar.
+                if (customBody) Column(Modifier.weight(1f, fill = false).fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp)) {
+                    body()
+                }
+                io.github.suqi8.coui.kmp.layout.DialogButtonBar(
+                    modifier = Modifier.testTag("update-actions-coui"),
+                    negative = if (update == null) null else io.github.suqi8.coui.kmp.layout.DialogButtonBarAction(
+                        text = AppText.get(R.string.ui_update_later), enabled = !saving, onClick = onDismiss),
+                    positive = io.github.suqi8.coui.kmp.layout.DialogButtonBarAction(
+                        text = AppText.get(if (update == null) R.string.ui_ok else R.string.ui_update_download),
+                        enabled = !saving, onClick = if (update == null) onDismiss else onDownload),
+                )
+            }
+        }
     } else {
         Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
             top.yukonga.miuix.kmp.basic.Card(

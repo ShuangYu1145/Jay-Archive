@@ -41,9 +41,10 @@ fun SettingsScreen(
     onLiquidGlass: (Boolean) -> Unit = {},
     onFloatingBottomBar: (Boolean) -> Unit = {},
     onUiStyle: (UiStyle) -> Unit = {},
+    onTopAppBarBlur: (love.yu.jaychou.data.TopAppBarBlur) -> Unit = {},
 ) {
     var colorPicker by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
-    val customColorVisible = settings.uiStyle != UiStyle.MIUIX || !settings.monet
+    val customColorVisible = settings.uiStyle == UiStyle.MATERIAL3 || !settings.monet
     LaunchedEffect(customColorVisible) {
         if (!customColorVisible) colorPicker = false
     }
@@ -52,7 +53,10 @@ fun SettingsScreen(
         LazyColumn(
             state = state,
             modifier = Modifier.fillMaxSize().nestedScroll(behavior.nestedScrollConnection).testTag("settings-list"),
-            contentPadding = PaddingValues(12.dp, padding.calculateTopPadding() + 8.dp, 12.dp, bottom),
+            contentPadding = PaddingValues(
+                start = if (ArchiveUiTheme.isCoui) CouiLayout.PageInset else 12.dp,
+                end = if (ArchiveUiTheme.isCoui) CouiLayout.PageInset else 12.dp,
+                top = padding.calculateTopPadding() + 8.dp, bottom = bottom),
         ) {
             item("language") {
                 PreferenceCard {
@@ -93,16 +97,16 @@ fun SettingsScreen(
                         onSelectedIndexChange = { onUiStyle(UiStyle.entries[it]) },
                         modifier = Modifier.testTag("ui-style"),
                     )
-                    if (settings.uiStyle == UiStyle.MIUIX) {
+                    PreferenceDivider()
                     SettingSwitch(AppText.get(R.string.ui_floating_navigation_bar),
                         AppText.get(R.string.ui_floating_bottom_bar_summary),
                         settings.floatingBottomBar, onFloatingBottomBar, true)
                     AnimatedSetting(visible = settings.floatingBottomBar) {
+                        PreferenceDivider()
                         SettingSwitch(AppText.get(R.string.ui_liquid_glass),
                             if (Build.VERSION.SDK_INT >= 33) AppText.get(R.string.ui_liquid_glass_summary)
                             else AppText.get(R.string.ui_requires_android_13_using_solid_surfaces_on_this_device),
                             settings.liquidGlass, onLiquidGlass, Build.VERSION.SDK_INT >= 33)
-                    }
                     }
                 }
             }
@@ -116,13 +120,28 @@ fun SettingsScreen(
                         onSelectedIndexChange = { onTheme(ThemeMode.entries[it]) },
                         modifier = Modifier.testTag("theme-mode"),
                     )
+                    PreferenceDivider()
                     SettingSwitch(AppText.get(R.string.ui_enable_monet_dynamic_colors),
                         if (Build.VERSION.SDK_INT >= 31) AppText.get(R.string.ui_use_colors_from_your_wallpaper) else AppText.get(R.string.ui_requires_android_12_using_the_app_theme_color_on_this_device),
                         settings.monet, onMonet, Build.VERSION.SDK_INT >= 31)
-                    if (settings.uiStyle == UiStyle.MIUIX) SettingSwitch(AppText.get(R.string.ui_enable_blur),
+                    if (settings.uiStyle != UiStyle.MATERIAL3) {
+                        PreferenceDivider()
+                        SettingSwitch(AppText.get(R.string.ui_enable_blur),
                         if (Build.VERSION.SDK_INT >= 33) AppText.get(R.string.ui_blur_content_behind_top_bars_and_the_floating_navigation_bar) else AppText.get(R.string.ui_requires_android_13_using_solid_surfaces_on_this_device),
                         settings.blur, onBlur, Build.VERSION.SDK_INT >= 33)
+                    }
+                    if (settings.uiStyle == UiStyle.MIUIX && settings.blur && Build.VERSION.SDK_INT >= 33) {
+                        OverlayDropdownPreference(
+                            title = AppText.get(R.string.ui_top_app_bar_blur),
+                            items = listOf("Gaussian", "Progressive"),
+                            summary = AppText.get(R.string.ui_top_app_bar_blur_summary),
+                            selectedIndex = settings.topAppBarBlur.ordinal,
+                            onSelectedIndexChange = { onTopAppBarBlur(TopAppBarBlur.entries[it]) },
+                            modifier = Modifier.testTag("top-app-bar-blur"),
+                        )
+                    }
                     AnimatedSetting(visible = customColorVisible) {
+                        PreferenceDivider()
                         ArrowPreference(title = AppText.get(R.string.ui_custom_color),
                             summary = if (settings.monet && Build.VERSION.SDK_INT >= 31) AppText.get(R.string.ui_monet_is_enabled_system_colors_take_priority) else AppText.get(R.string.ui_choose_seed_color_for_current_style),
                             endActions = { PreferenceValue(settings.customColor?.let { "#%06X".format(it and 0xFFFFFF) } ?: AppText.get(if (settings.uiStyle == UiStyle.MATERIAL3) R.string.ui_default_material_color else R.string.ui_default_blue)) },
@@ -141,7 +160,9 @@ fun SettingsScreen(
             item("motion") {
                 PreferenceCard {
                     BasicComponent(title = AppText.get(R.string.ui_page_transitions), summary = AppText.get(R.string.ui_swipe_pages_or_drag_the_navigation_bar), endActions = { PreferenceValue(AppText.get(R.string.ui_swipe)) })
+                    PreferenceDivider()
                     BasicComponent(title = AppText.get(R.string.ui_album_transition), summary = AppText.get(R.string.ui_artwork_moves_independently_as_details_appear_background_blur_in), endActions = { PreferenceValue(AppText.get(R.string.ui_zoom)) })
+                    PreferenceDivider()
                     SettingSwitch(AppText.get(R.string.ui_predictive_back_gesture),
                         if (Build.VERSION.SDK_INT >= 34) AppText.get(R.string.ui_preview_the_list_while_swiping_cancel_to_stay_on_details) else AppText.get(R.string.ui_requires_android_14_for_progress_previews_using_standard_back_na),
                         settings.predictiveBack, onPredictive, Build.VERSION.SDK_INT >= 34)

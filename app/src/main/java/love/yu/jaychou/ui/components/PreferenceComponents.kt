@@ -12,8 +12,8 @@ import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 
 @Composable
 internal fun PreferenceTitle(text: String) {
-    SmallTitle(text, Modifier.padding(top = 18.dp).semantics { heading() },
-        insideMargin = PaddingValues(start = 16.dp, top = 8.dp, bottom = 10.dp))
+    SmallTitle(text, Modifier.padding(top = if (ArchiveUiTheme.isCoui) 12.dp else 18.dp).semantics { heading() },
+        insideMargin = PaddingValues(start = 16.dp, top = 8.dp, bottom = if (ArchiveUiTheme.isCoui) 8.dp else 10.dp))
 }
 
 @Composable
@@ -23,7 +23,9 @@ internal fun PreferenceCard(content: @Composable ColumnScope.() -> Unit) {
 
 @Composable
 internal fun PreferenceValue(value: String) {
-    Text(value, style = ArchiveUiTheme.textStyles.body1, color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
+    Text(value, modifier = if (ArchiveUiTheme.isCoui) Modifier.widthIn(max = 112.dp) else Modifier,
+        style = ArchiveUiTheme.textStyles.body1, color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant,
+        textAlign = if (ArchiveUiTheme.isCoui) androidx.compose.ui.text.style.TextAlign.End else null)
 }
 
 @Composable
