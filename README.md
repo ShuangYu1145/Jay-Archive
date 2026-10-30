@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/banner.png" alt="杰作 · Jay Archive" width="100%" />
+<img src="docs/assets/images/banner.png" alt="杰作 · Jay Archive" width="100%" />
 
 # 杰作 · Jay Archive
 
@@ -27,26 +27,26 @@
 
 前往 [GitHub Releases](https://github.com/ShuangYu1145/Jay-Archive/releases) 选择适合的 APK，支持 **Android 8.0 / API 26 及以上**。
 
-应用内可在设置中手动检查更新，也可开启自动检查、选择是否接收测试版更新。覆盖安装时需保持签名一致；自行构建与发布的签名说明见[更新发布指南](docs/updates.md)。
+应用内可在设置中手动检查更新，也可开启自动检查、选择是否接收测试版更新。覆盖安装时需保持签名一致；自行构建与发布的签名说明见[更新发布指南](docs/guides/updates.md)。
 
 ## 📱 界面预览
 
 <table align="center">
   <tr>
     <td align="center" width="25%">
-      <img src="docs/screenshots/01-home.jpg" width="210" alt="首页与作品概览" /><br />
+      <img src="docs/assets/screenshots/01-home.jpg" width="210" alt="首页与作品概览" /><br />
       <sub><b>首页</b> · 作品概览</sub>
     </td>
     <td align="center" width="25%">
-      <img src="docs/screenshots/02-albums-list.jpg" width="210" alt="专辑横向列表" /><br />
+      <img src="docs/assets/screenshots/02-albums-list.jpg" width="210" alt="专辑横向列表" /><br />
       <sub><b>专辑</b> · 横向列表</sub>
     </td>
     <td align="center" width="25%">
-      <img src="docs/screenshots/04-about.jpg" width="210" alt="关于页与资料来源" /><br />
+      <img src="docs/assets/screenshots/04-about.jpg" width="210" alt="关于页与资料来源" /><br />
       <sub><b>关于</b> · 项目与来源</sub>
     </td>
     <td align="center" width="25%">
-      <img src="docs/media/jay-launch.gif" width="210" alt="应用启动动画演示" /><br />
+      <img src="docs/assets/media/jay-launch.gif" width="210" alt="应用启动动画演示" /><br />
       <sub><b>动效</b> · 启动演示</sub>
     </td>
   </tr>
@@ -70,7 +70,7 @@
 - **分体悬浮底栏**：关闭「液态玻璃」并保留「悬浮底部栏」时，呈现两侧圆形入口与中间胶囊组成的 COUI 底栏；也可切换标准底栏或启用液态玻璃。
 - **配套控件**：设置分组、开关、分类面板、颜色选择器与弹窗使用 COUI 组件，主题色和按压反馈随风格统一。
 
-三种风格均可在应用支持的 Android 设备上选择。真实背景模糊与液态玻璃需要 Android 13+；旧系统保留实色表面和基本交互。更多说明见[界面风格](docs/ui-styles.md)与 [COUI 接入说明](docs/coui-ui.md)。
+三种风格均可在应用支持的 Android 设备上选择。真实背景模糊与液态玻璃需要 Android 13+；旧系统保留实色表面和基本交互。更多说明见[界面风格](docs/guides/ui-styles.md)与 [COUI 接入说明](docs/guides/coui-ui.md)。
 
 ## ✨ 功能特性
 
@@ -86,7 +86,7 @@
 | 🌐 多语言 | 支持简体中文、繁体中文、英语、日语与韩语，默认跟随系统，也可单独选择应用语言。 |
 | 🔄 应用更新 | 支持手动与自动检查 GitHub Releases，可选择接收测试版；下载交由浏览器处理。 |
 
-对外作曲目录独立统计，不计入个人专辑曲目数，也不宣称覆盖全部作品。目录范围与版本说明见[对外作曲目录](docs/compositions.md)。
+对外作曲目录独立统计，不计入个人专辑曲目数，也不宣称覆盖全部作品。目录范围与版本说明见[对外作曲目录](docs/guides/compositions.md)。
 
 ## 🫧 视觉与交互
 
@@ -163,7 +163,7 @@ app/src/main/
       └─ updates/           # 更新设置与弹窗
 app/src/test/               # 数据、搜索、设置及模型测试
 app/src/androidTest/        # 导航、界面风格、搜索与渲染回归测试
-docs/                       # 功能说明、横幅、截图与演示
+docs/                       # index.html 网站入口、assets 素材与 guides 功能文档
 scripts/                    # 目录抓取、本地化生成与交付辅助脚本
 ```
 
@@ -179,7 +179,9 @@ scripts/                    # 目录抓取、本地化生成与交付辅助脚�
 - **行程来源**：巡演资料参考 [JVR 官方行程](https://www.jvrmusic.com/activity/list/1150822038412333056)、[维基百科](https://zh.wikipedia.org/wiki/%E5%98%89%E5%B9%B4%E8%8F%AFII%E4%B8%96%E7%95%8C%E5%B7%A1%E8%BF%B4%E6%BC%94%E5%94%B1%E6%9C%83)及各站票务公告。票价、开票时间与售票状态仅在来源明确公布时显示，最终以主办方和票务平台为准。
 - **项目性质**：本项目与周杰伦本人、杰威尔音乐及任何唱片公司无关联。封面、人物照片、歌词与商标版权归各自权利人所有，仅作资料展示。
 
-功能与维护文档：[界面风格](docs/ui-styles.md) · [COUI 接入](docs/coui-ui.md) · [对外作曲](docs/compositions.md) · [多语言](docs/localization.md) · [主打曲目](docs/lead-tracks.md) · [更新发布](docs/updates.md)。
+网站入口为 [`docs/index.html`](docs/index.html)：网页样式与脚本位于 `docs/assets/css/`、`docs/assets/js/`，图片、截图与演示存放于 `docs/assets/`，功能文档集中在 `docs/guides/`。
+
+功能与维护文档：[界面风格](docs/guides/ui-styles.md) · [COUI 接入](docs/guides/coui-ui.md) · [对外作曲](docs/guides/compositions.md) · [多语言](docs/guides/localization.md) · [主打曲目](docs/guides/lead-tracks.md) · [更新发布](docs/guides/updates.md)。
 
 ## ⚖️ 许可与致谢
 
