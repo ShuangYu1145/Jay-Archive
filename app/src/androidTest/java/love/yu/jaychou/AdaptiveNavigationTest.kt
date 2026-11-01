@@ -55,16 +55,25 @@ class AdaptiveNavigationTest {
                 app.onNodeWithTag("tab-ABOUT").assertIsSelected()
                 if (viewport.width == 1200.dp) {
                     app.onNodeWithTag("root-pager").performTouchInput { swipeDown() }
-                    app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
+                    if (style == UiStyle.COUI) {
+                        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+                        app.onNodeWithTag("tab-SETTINGS").performClick()
+                    } else app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
                     app.mainClock.autoAdvance = false
                     try {
                         app.onNodeWithTag("tab-ABOUT").performScrollTo().performClick()
                         app.mainClock.advanceTimeBy(96)
                         val page = app.onNodeWithTag("page-ABOUT").getUnclippedBoundsInRoot()
                         val host = app.onNodeWithTag("root-pager").getUnclippedBoundsInRoot()
-                        assertTrue("Rail navigation must slide pages vertically", page.top > host.top)
-                        assertTrue("Rail navigation must not slide pages horizontally",
-                            kotlin.math.abs((page.left - host.left).value) < 1f)
+                        if (style == UiStyle.COUI) {
+                            assertTrue("COUI rail navigation must slide horizontally", page.left > host.left)
+                            assertTrue("COUI pages must keep their vertical position",
+                                kotlin.math.abs((page.top - host.top).value) < 1f)
+                        } else {
+                            assertTrue("Rail navigation must slide pages vertically", page.top > host.top)
+                            assertTrue("Rail navigation must not slide pages horizontally",
+                                kotlin.math.abs((page.left - host.left).value) < 1f)
+                        }
                     } finally {
                         app.mainClock.autoAdvance = true
                     }

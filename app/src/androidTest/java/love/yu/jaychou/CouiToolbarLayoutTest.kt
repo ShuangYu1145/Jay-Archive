@@ -24,6 +24,10 @@ import love.yu.jaychou.ui.screens.albums.AlbumDetailScreen
 import love.yu.jaychou.ui.theme.ArchiveTheme
 import love.yu.jaychou.ui.components.LocalArchiveBlur
 import love.yu.jaychou.ui.effects.HeaderGlassLayer
+import love.yu.jaychou.ui.components.ArchiveScaffold
+import love.yu.jaychou.ui.designsystem.rememberArchiveScrollBehavior
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
@@ -31,6 +35,37 @@ import org.junit.Test
 class CouiToolbarLayoutTest {
     @get:Rule val app = createComposeRule()
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Test fun headerMatchesPageAtTopAndRestoresItsSurfaceOnlyAfterScrolling() {
+        app.mainClock.autoAdvance = false
+        app.setContent {
+            ArchiveTheme(AppSettings(uiStyle = UiStyle.COUI, theme = ThemeMode.DARK)) {
+                val behavior = rememberArchiveScrollBehavior()
+                CompositionLocalProvider(LocalArchiveBlur provides true) {
+                    ArchiveScaffold("Scroll surface", behavior = behavior) { padding ->
+                        LazyColumn(Modifier.fillMaxSize().nestedScroll(behavior.nestedScrollConnection)
+                            .testTag("surface-scroll-list"), contentPadding = padding) {
+                            items(30) { Spacer(Modifier.fillMaxWidth().height(96.dp)) }
+                        }
+                    }
+                }
+            }
+        }
+        fun headerRed(): Float {
+            val bounds = app.onNodeWithTag("top-bar-Scroll surface").fetchSemanticsNode().boundsInRoot
+            val image = app.onRoot().captureToImage().toPixelMap()
+            return image[image.width - 8, (bounds.bottom - 4).toInt()].red
+        }
+        settle()
+        val initial = headerRed()
+        assertEquals("Unscrolled header must match the dark page", 16f / 255, initial, .015f)
+        val list = app.onNodeWithTag("surface-scroll-list")
+        list.performTouchInput { swipeUp() }
+        settle()
+        assertTrue("Scrolling must reveal the toolbar surface", headerRed() > initial + .025f)
+        repeat(5) { list.performTouchInput { swipeDown() }; settle() }
+        assertEquals("Returning to the top must remove the surface again", initial, headerRed(), .015f)
+    }
 
     @Test fun introductionHeaderStaysFixedDuringScrollAndSwipe() {
         AppText.update(context.resources)

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="concert_damai_cover">大麦演出封面</string>
+    <string name="concert_damai_content">大麦演出资料</string>
+    <string name="concert_damai_search">在大麦查询周杰伦演唱会</string>
+    <string name="concert_media_loading">正在获取大麦演出资料…</string>
+    <string name="concert_media_failed">大麦资料暂时无法加载，请重试或前往大麦查看。</string>
+    <string name="concert_media_missing">暂未找到与本场城市、日期相符的大麦资料。</string>
+    <string name="concert_media_source_note">资料在线获取自大麦，场次安排与座位布局请以大麦最新公告为准。</string>
+    <string name="concert_seating_plan">座位图</string>
+    <string name="concert_introduction">演出介绍</string>
+    <string name="concert_no_seating_plan">大麦暂未公布本场座位图。</string>
+    <string name="concert_no_introduction">大麦暂未公布本场演出介绍。</string>
+    <string name="concert_zoom_hint">点击查看大图 · 双击或双指缩放</string>
+    <string name="concert_image_failed">图片加载失败，点击重试查看大图</string>
+    <string name="concert_close_image">关闭大图</string>
+    <string name="concert_expand">展开全文</string>
+    <string name="concert_collapse">收起</string>
+</resources>

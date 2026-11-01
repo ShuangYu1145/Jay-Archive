@@ -42,6 +42,27 @@ enum class TopAppBarBlur {
     }
 }
 
+enum class PredictiveBackAnimation {
+    NONE, AOSP, MIUIX, SCALE, CLASSIC;
+    companion object {
+        fun fromStored(value: String?) = entries.find { it.name == value } ?: SCALE
+    }
+}
+
+enum class PredictiveBackExitDirection {
+    FOLLOW_GESTURE, ALWAYS_RIGHT, ALWAYS_LEFT;
+
+    fun sign(swipeEdgeSign: Float): Float = when (this) {
+        FOLLOW_GESTURE -> swipeEdgeSign
+        ALWAYS_RIGHT -> 1f
+        ALWAYS_LEFT -> -1f
+    }
+
+    companion object {
+        fun fromStored(value: String?) = entries.find { it.name == value } ?: FOLLOW_GESTURE
+    }
+}
+
 enum class AlbumLayout(private val sourceLabel: String, private val sourceDescription: String) {
     LIST("横向列表", "小封面在左，专辑信息在右"),
     GRID("双列网格", "两列卡片并排，快速浏览全部专辑"),
@@ -56,6 +77,8 @@ data class AppSettings(
     val blur: Boolean = true,
     val topAppBarBlur: TopAppBarBlur = TopAppBarBlur.GAUSSIAN,
     val predictiveBack: Boolean = true,
+    val predictiveBackAnimation: PredictiveBackAnimation = PredictiveBackAnimation.SCALE,
+    val predictiveBackExitDirection: PredictiveBackExitDirection = PredictiveBackExitDirection.FOLLOW_GESTURE,
     val albumLayout: AlbumLayout = AlbumLayout.GRID,
     val customColor: Int? = null,
     val albumCategories: List<String> = listOf(ReleaseCategory.STUDIO.name),
@@ -69,6 +92,7 @@ data class AppSettings(
     val autoCheckUpdates: Boolean = true,
     val includePrereleaseUpdates: Boolean = true,
     val lastUpdateCheckAt: Long = 0L,
+    val onboardingCompleted: Boolean = false,
 )
 
 private val Context.settingsDataStore by preferencesDataStore("appearance")
@@ -79,6 +103,8 @@ class SettingsRepository(context: Context) {
     private val blurKey = booleanPreferencesKey("blur")
     private val liquidGlassKey = booleanPreferencesKey("liquid_glass")
     private val floatingBottomBarKey = booleanPreferencesKey("floating_bottom_bar")
+    private val predictiveExitDirectionKey = stringPreferencesKey("predictive_back_exit_direction")
+    private val predictiveAnimationKey = stringPreferencesKey("predictive_back_animation")
     private val predictiveKey = booleanPreferencesKey("predictive_back")
     private val albumCategoriesKey = stringSetPreferencesKey("album_categories")
     private val userNameKey = stringPreferencesKey("user_name")
@@ -89,6 +115,7 @@ class SettingsRepository(context: Context) {
     private val autoCheckUpdatesKey = booleanPreferencesKey("auto_check_updates")
     private val prereleaseUpdatesKey = booleanPreferencesKey("prerelease_updates")
     private val lastUpdateCheckKey = longPreferencesKey("last_update_check")
+    private val onboardingCompletedKey = booleanPreferencesKey("onboarding_completed")
 
     val lyricsReadingSettings = store.data.catch { error ->
         if (error is IOException) emit(emptyPreferences()) else throw error
@@ -119,6 +146,8 @@ class SettingsRepository(context: Context) {
             liquidGlass = prefs[liquidGlassKey] ?: true,
             floatingBottomBar = prefs[floatingBottomBarKey] ?: true,
             predictiveBack = prefs[predictiveKey] ?: true,
+            predictiveBackAnimation = PredictiveBackAnimation.fromStored(prefs[predictiveAnimationKey]),
+            predictiveBackExitDirection = PredictiveBackExitDirection.fromStored(prefs[predictiveExitDirectionKey]),
             albumLayout = AlbumLayout.entries.find { it.name == prefs[stringPreferencesKey(appearanceKey(style, "album_layout"))] } ?: AlbumLayout.GRID,
             customColor = prefs[intPreferencesKey(appearanceKey(style, "custom_color"))],
             albumCategories = normalizeAlbumCategories(prefs[albumCategoriesKey].orEmpty()),
@@ -129,11 +158,20 @@ class SettingsRepository(context: Context) {
             autoCheckUpdates = prefs[autoCheckUpdatesKey] ?: true,
             includePrereleaseUpdates = prefs[prereleaseUpdatesKey] ?: true,
             lastUpdateCheckAt = prefs[lastUpdateCheckKey] ?: 0L,
+            onboardingCompleted = prefs[onboardingCompletedKey] ?: false,
         )
     }
 
     // Update only the changed field, so quick independent changes cannot overwrite each other.
     suspend fun setUiStyle(value: UiStyle) { store.edit { it[uiStyleKey] = value.name } }
+    // Commit the first-run choices together; a failed write must leave the welcome flow available.
+    suspend fun completeOnboarding(style: UiStyle, theme: ThemeMode) {
+        store.edit {
+            it[uiStyleKey] = style.name
+            it[stringPreferencesKey(appearanceKey(style, "theme"))] = theme.name
+            it[onboardingCompletedKey] = true
+        }
+    }
     suspend fun setTheme(value: ThemeMode) {
         store.edit { it[stringPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "theme"))] = value.name }
     }
@@ -155,6 +193,8 @@ class SettingsRepository(context: Context) {
     }
     suspend fun setLiquidGlass(value: Boolean) { store.edit { it[liquidGlassKey] = value } }
     suspend fun setFloatingBottomBar(value: Boolean) { store.edit { it[floatingBottomBarKey] = value } }
+    suspend fun setPredictiveBackExitDirection(value: PredictiveBackExitDirection) { store.edit { it[predictiveExitDirectionKey] = value.name } }
+    suspend fun setPredictiveBackAnimation(value: PredictiveBackAnimation) { store.edit { it[predictiveAnimationKey] = value.name } }
     suspend fun setPredictiveBack(value: Boolean) { store.edit { it[predictiveKey] = value } }
     suspend fun setAlbumLayout(value: AlbumLayout) {
         store.edit { it[stringPreferencesKey(appearanceKey(UiStyle.fromStored(it[uiStyleKey]), "album_layout"))] = value.name }

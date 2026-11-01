@@ -31,7 +31,7 @@ internal fun MaterialArchiveTheme(settings: AppSettings, content: @Composable ()
             dark -> darkColorScheme()
             else -> lightColorScheme()
         }
-        if (dark) palette.copy(background = Color.Black, surface = Color.Black) else palette
+        palette.copy(background = palette.surfaceContainerLowest)
     }
     MaterialTheme(colorScheme = colors) {
         Surface(Modifier.fillMaxSize(), color = colors.background, contentColor = colors.onBackground,

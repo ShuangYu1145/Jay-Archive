@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -52,7 +54,10 @@ fun ReleaseCategorySheet(show: Boolean, selected: List<String>, catalog: AlbumCa
             } else ReleaseCategory.entries.forEach { category ->
                 item(category.name) {
                     Card(insideMargin = PaddingValues(0.dp),
-                        colors = CardDefaults.defaultColors(color = ArchiveUiTheme.colorScheme.surfaceContainerHigh)) {
+                        colors = CardDefaults.defaultColors(color =
+                            if (!ArchiveUiTheme.isMaterial && ArchiveUiTheme.colorScheme.background.luminance() < .5f)
+                                Color(0xFF383838)
+                            else ArchiveUiTheme.colorScheme.surfaceContainerHigh)) {
                         CheckboxPreference(
                             title = category.label,
                             summary = AppText.get(R.string.ui_releases_202, catalog.albums.count { it.category == category }),

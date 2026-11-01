@@ -41,7 +41,8 @@ class CouiPreferenceLayoutTest {
                 }
             }
         }
-        app.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("ui-style"))
+        app.onNodeWithTag("theme-settings").performClick()
+            app.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("ui-style"))
         val style = app.onNodeWithTag("ui-style").getUnclippedBoundsInRoot()
         assertTrue("A selected value must not squeeze the description into a tall column", (style.bottom - style.top).value < 110)
         capture("settings-light")

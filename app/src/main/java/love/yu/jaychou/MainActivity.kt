@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
                             }
                         }
                         JayLaunchAnimation(playOnLaunch = savedInstanceState == null, ready = launchAnimationReady) {
+                            love.yu.jaychou.ui.screens.welcome.FirstRunHost(current, repository::completeOnboarding) {
                             love.yu.jaychou.ui.updates.UpdateHost(current) {
                             ArchiveApp(
                                 catalog = data, settings = current,
@@ -120,6 +121,7 @@ class MainActivity : AppCompatActivity() {
                                 onCustomColor = { save { repository.setCustomColor(it) } },
                                 error = error, onDismissError = { error = null },
                             )
+                            }
                             }
                         }
                     }

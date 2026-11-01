@@ -15,10 +15,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import love.yu.jaychou.ui.components.LocalArchiveBlur
-import love.yu.jaychou.ui.effects.couiFrostedSurface
+import love.yu.jaychou.ui.effects.couiSectionSurface
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
-import love.yu.jaychou.ui.designsystem.CouiLayout
 import love.yu.jaychou.ui.designsystem.Text
+import love.yu.jaychou.ui.designsystem.rememberCouiWindowMetrics
 import love.yu.jaychou.ui.navigation.ArchiveNavigationItem
 
 /** Fixed section capsule, sharing the floating bottom navigation surface. */
@@ -28,14 +28,15 @@ internal fun CouiIntroductionHeader(items: List<ArchiveNavigationItem>, selected
                                     modifier: Modifier = Modifier,
                                     actions: @Composable RowScope.() -> Unit) {
     val colors = ArchiveUiTheme.colorScheme
+    val metrics = rememberCouiWindowMetrics()
     Row(modifier.fillMaxWidth().testTag("introduction-header"),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(Modifier.weight(1f).heightIn(min = CouiLayout.ActionSize)
-            .couiFrostedSurface(LocalArchiveBlur.current).padding(4.dp)
+        Row(Modifier.weight(1f).heightIn(min = metrics.headerActionSize)
+            .couiSectionSurface(LocalArchiveBlur.current).padding(4.dp)
             .selectableGroup().testTag("introduction-tabs"),
             verticalAlignment = Alignment.CenterVertically) {
             items.forEachIndexed { index, item ->
-                Box(Modifier.weight(1f).heightIn(min = CouiLayout.ActionSize - 8.dp)
+                Box(Modifier.weight(1f).heightIn(min = metrics.headerActionSize - 8.dp)
                     .clip(CircleShape)
                     .background(if (selected == index) colors.onBackground.copy(alpha = .08f) else Color.Transparent)
                     .selectable(selected == index, enabled = enabled, role = Role.Tab, onClick = { onSelect(index) })
@@ -48,7 +49,7 @@ internal fun CouiIntroductionHeader(items: List<ArchiveNavigationItem>, selected
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.width(104.dp).height(CouiLayout.ActionSize)
+            modifier = Modifier.width(metrics.headerActionWidth).height(metrics.headerActionSize)
                 .testTag("introduction-actions"), content = actions)
     }
 }

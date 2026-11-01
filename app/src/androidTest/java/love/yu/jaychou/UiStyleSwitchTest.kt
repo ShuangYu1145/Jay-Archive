@@ -3,6 +3,8 @@ package love.yu.jaychou
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -17,6 +19,7 @@ import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalTestApi::class)
 class UiStyleSwitchTest {
     @get:Rule val app = createComposeRule()
     private val context get() = InstrumentationRegistry.getInstrumentation().targetContext
@@ -26,6 +29,7 @@ class UiStyleSwitchTest {
         app.setContent {
             var settings by remember { mutableStateOf(AppSettings(
                 uiStyle = initial, theme = ThemeMode.LIGHT, monet = false, blur = false, liquidGlass = false)) }
+            DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(DpSize(400.dp, 800.dp))) {
             ArchiveTheme(settings) {
                 ArchiveApp(catalog, settings,
                     onTheme = { settings = settings.copy(theme = it) },
@@ -40,6 +44,7 @@ class UiStyleSwitchTest {
                     onFloatingBottomBar = { settings = settings.copy(floatingBottomBar = it) },
                     error = null, onDismissError = {})
             }
+            }
         }
     }
 
@@ -49,47 +54,56 @@ class UiStyleSwitchTest {
 
     private fun verifyFloatingSwitches(style: UiStyle) {
         org.junit.Assume.assumeTrue(android.os.Build.VERSION.SDK_INT >= 33)
-        show(style)
-        app.onNodeWithTag("tab-SETTINGS").performClick()
-        app.onNodeWithTag("floating-navigation").assertIsDisplayed()
-        val liquid = AppText.get(R.string.ui_liquid_glass)
-        val floating = AppText.get(R.string.ui_floating_navigation_bar)
+        // Backdrop invalidations keep Espresso busy with an automatically advancing clock.
+        // Match LiquidNavigationTest and advance finite transitions explicitly.
         app.mainClock.autoAdvance = false
-        try {
-            app.onNodeWithContentDescription(liquid).performScrollTo().performClick()
-            app.mainClock.advanceTimeBy(1500)
-            app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
-            app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
-            app.onNodeWithContentDescription(floating).performScrollTo().performClick()
-            app.mainClock.advanceTimeBy(1500)
-            app.onNodeWithTag("standard-navigation").assertIsDisplayed()
-            app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
-            app.onNodeWithContentDescription(floating).performScrollTo().performClick()
-            app.mainClock.advanceTimeBy(1500)
-            app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
-            screenshot("${style.name}-liquid-settings.png")
-        } finally {
-            app.mainClock.autoAdvance = true
+        fun settle() { app.mainClock.advanceTimeBy(1500); app.waitForIdle() }
+        show(style)
+        settle()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        settle()
+        fun toggle(label: String) {
+            app.onNodeWithTag("theme-settings").performClick()
+            settle()
+            app.onNodeWithContentDescription(label).performScrollTo().performClick()
+            settle()
+            app.onNodeWithTag("settings-back").performClick()
+            settle()
         }
+        toggle(AppText.get(R.string.ui_liquid_glass))
+        app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
+        toggle(AppText.get(R.string.ui_floating_navigation_bar))
+        app.onNodeWithTag("standard-navigation").assertIsDisplayed()
+        app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
+        toggle(AppText.get(R.string.ui_floating_navigation_bar))
+        app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
+        screenshot("${style.name}-liquid-settings.png")
     }
 
     @Test fun switchingNativeControlsKeepsTheCurrentPageAndCanSwitchBack() {
         show(UiStyle.MIUIX)
         app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("theme-settings").performClick()
         app.onNodeWithTag("ui-style").performScrollTo().performClick()
         app.onNodeWithText("Material Design 3").performClick()
+        app.onNodeWithTag("settings-back").performClick()
         app.onNodeWithTag("material-navigation").assertIsDisplayed()
         app.onNodeWithTag("settings-list").assertIsDisplayed()
         app.onNodeWithTag("floating-navigation").assertIsDisplayed()
         screenshot("material-settings.png")
-        app.onNodeWithTag("ui-style").performScrollTo().performClick()
-        app.onNodeWithText("COUI（ColorOS）").performClick()
+        app.onNodeWithTag("theme-settings").performClick()
+        app.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("ui-style-COUI"))
+        app.onNodeWithTag("ui-style-COUI").performClick()
+        app.onNodeWithTag("settings-back").performClick()
         app.onNodeWithTag("coui-navigation").assertIsDisplayed()
         app.onNodeWithTag("settings-list").assertIsDisplayed()
         app.onAllNodesWithTag("material-navigation").assertCountEquals(0)
         screenshot("coui-settings.png")
+        app.onNodeWithTag("theme-settings").performClick()
         app.onNodeWithTag("ui-style").performScrollTo().performClick()
         app.onNodeWithText("Miuix").performClick()
+        app.onNodeWithTag("settings-back").performClick()
         app.onNodeWithTag("floating-navigation").assertIsDisplayed()
         app.onNodeWithTag("settings-list").assertIsDisplayed()
         app.onAllNodesWithTag("material-navigation").assertCountEquals(0)
@@ -194,12 +208,14 @@ class UiStyleSwitchTest {
     @Test fun couiColorSheetAndAboutDialogUseNativeControls() {
         show(UiStyle.COUI)
         app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("theme-settings").performClick()
         app.onNodeWithTag("custom-color").performScrollTo().performClick()
         app.onNodeWithTag("color-sheet").assertIsDisplayed()
         app.onNodeWithTag("color-preset-1").performScrollTo().performClick()
         screenshot("coui-color-sheet.png", "color-sheet")
         app.onNodeWithTag("color-apply").performClick()
         app.onNodeWithTag("color-sheet").assertDoesNotExist()
+        app.onNodeWithTag("settings-back").performClick()
         app.onNodeWithTag("tab-ABOUT").performClick()
         app.onNodeWithTag("about-developer-card").performScrollTo()
         repeat(4) { app.onNodeWithTag("about-developer-card").performClick() }

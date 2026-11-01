@@ -1,6 +1,7 @@
 package love.yu.jaychou.ui.navigation
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -51,11 +52,15 @@ private fun CouiNavigationDestination(item: ArchiveNavigationItem, selected: Boo
                                       onClick: () -> Unit, enabled: Boolean, modifier: Modifier,
                                       showLabel: Boolean) {
     val colors = ArchiveUiTheme.colorScheme
+    val selection by animateColorAsState(
+        if (selected) colors.primary.copy(alpha = .12f) else androidx.compose.ui.graphics.Color.Transparent,
+        label = "coui-navigation-selection")
     val color by animateColorAsState(
         if (!enabled) colors.onBackground.copy(alpha = .38f)
-        else if (selected) colors.onBackground else colors.onBackground.copy(alpha = .64f),
+        else if (selected) colors.primary else colors.onBackground.copy(alpha = .64f),
         label = "coui-navigation-color")
-    Column(modifier.clip(CircleShape).selectable(selected, enabled = enabled, role = Role.Tab, onClick = onClick)
+    Column(modifier.clip(CircleShape).background(selection)
+        .selectable(selected, enabled = enabled, role = Role.Tab, onClick = onClick)
         .semantics { contentDescription = item.label }.testTag("tab-${item.key}")
         .padding(horizontal = 4.dp, vertical = if (showLabel) 3.dp else 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

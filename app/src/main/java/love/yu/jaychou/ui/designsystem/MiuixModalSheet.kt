@@ -1,6 +1,11 @@
 package love.yu.jaychou.ui.designsystem
 
 import android.os.Build
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.RectangleShape
+import love.yu.jaychou.ui.effects.LocalNavigationBackdrop
+import love.yu.jaychou.ui.effects.nativeBackdropBlur
+import top.yukonga.miuix.kmp.blur.drawBackdrop
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animate
@@ -24,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -36,12 +40,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import love.yu.jaychou.ui.effects.LocalNavigationBackdrop
-import love.yu.jaychou.ui.effects.nativeBackdropBlur
-import top.yukonga.miuix.kmp.blur.drawBackdrop
 import kotlin.math.roundToInt
 
-/** One measured surface owns its blur, tint, contents and movement. No outer blur rectangle. */
+/** Expanded sheet with a dark backdrop and distinct raised content cards. */
 @Composable
 internal fun MiuixModalSheet(
     show: Boolean, title: String, onDismiss: () -> Unit,
@@ -56,15 +57,16 @@ internal fun MiuixModalSheet(
         visibility.targetState = show
     }
     if (!show && !visibility.currentState && !visibility.targetState) return
+    val dark = ArchiveUiTheme.colorScheme.background.luminance() < .5f
+    val tint = if (dark) Color(0xFF161616) else ArchiveUiTheme.colorScheme.surfaceContainer
     val backdrop = LocalNavigationBackdrop.current
     val blurAvailable = Build.VERSION.SDK_INT >= 33 && backdrop != null
-    val tint = top.yukonga.miuix.kmp.layout.BottomSheetDefaults.backgroundColor()
     val dim by animateFloatAsState(if (show) .36f else 0f, tween(220), label = "sheet-dim")
 
     Dialog(onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false)) {
         BoxWithConstraints(Modifier.fillMaxSize().testTag("sheet-window")) {
-            val sheetHeight = maxHeight * .75f
+            val sheetHeight = maxHeight - WindowInsets.statusBars.asPaddingValues().calculateTopPadding() - 12.dp
             val density = LocalDensity.current
             val heightPx = with(density) { sheetHeight.toPx() }
             val flingThreshold = with(density) { 900.dp.toPx() }
@@ -86,7 +88,7 @@ internal fun MiuixModalSheet(
                     Modifier.widthIn(max = 560.dp).fillMaxWidth().height(sheetHeight)
                         .offset { IntOffset(0, dragOffset.roundToInt()) }
                         .clip(shape).then(blur)
-                        .background(tint.copy(alpha = if (blurAvailable) .82f else 1f))
+                        .background(tint.copy(alpha = if (blurAvailable) .86f else 1f))
                         .testTag("raised-sheet")
                         .pointerInput(Unit) { detectTapGestures { /* Keep blank surface taps inside. */ } },
                 ) {
@@ -118,7 +120,7 @@ internal fun MiuixModalSheet(
                     }
                     Column(
                         Modifier.weight(1f).fillMaxWidth().navigationBarsPadding()
-                            .padding(start = 24.dp, end = 24.dp, top = 12.dp, bottom = 16.dp),
+                            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 16.dp),
                         content = content,
                     )
                 }

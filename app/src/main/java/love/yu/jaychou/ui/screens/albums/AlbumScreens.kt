@@ -59,6 +59,8 @@ import love.yu.jaychou.ui.designsystem.Text
 import love.yu.jaychou.ui.designsystem.rememberArchiveScrollBehavior
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import love.yu.jaychou.ui.designsystem.couiContentColumn
+import love.yu.jaychou.ui.designsystem.rememberCouiWindowMetrics
 
 @Composable
 fun AlbumsScreen(
@@ -71,20 +73,17 @@ fun AlbumsScreen(
     sectionHeader: Boolean = false,
 ) {
     val behavior = rememberArchiveScrollBehavior()
+    val coui = ArchiveUiTheme.isCoui
+    val metrics = rememberCouiWindowMetrics()
+    val pageInset = if (coui) metrics.pageInset else 12.dp
     var showCategories by rememberSaveable { mutableStateOf(false) }
     var searching by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     val visibilityCallback by rememberUpdatedState(onSearchVisibility)
-    LaunchedEffect(searching) { visibilityCallback(searching) }
-    DisposableEffect(Unit) { onDispose { visibilityCallback(false) } }
-    BackHandler(searching && searchInteractive) { searching = false }
-    val searchProgress by animateFloatAsState(if (searching) 1f else 0f, tween(260), label = "search-open")
     val albums = catalog.albums.filter { it.category.name in categories }
-    Box(Modifier.fillMaxSize()) {
-    Box(Modifier.fillMaxSize().graphicsLayer {
-        scaleX = 1f - searchProgress * .025f; scaleY = scaleX
-        alpha = 1f - searchProgress
-    }.then(if (searching) Modifier.clearAndSetSemantics {} else Modifier)) {
+    love.yu.jaychou.ui.animation.SecondaryPageHost(
+        page = Unit.takeIf { searching }, enabled = searchInteractive,
+        onBack = { searching = false }, onVisibilityChanged = { visibilityCallback(it) }, root = {
     val inlineSectionHeader = love.yu.jaychou.ui.components.LocalInlineSectionHeader.current
     ArchiveScaffold(AppText.get(R.string.ui_albums), behavior = behavior,
         sectionHeader = sectionHeader,
@@ -95,8 +94,8 @@ fun AlbumsScreen(
     ) { padding ->
         BoxWithConstraints(Modifier.fillMaxSize()) {
         val columns = when (layout) {
-            AlbumLayout.GRID -> maxOf(2, ((maxWidth - 24.dp + 14.dp) / 194.dp).toInt())
-            AlbumLayout.LARGE -> maxOf(1, ((maxWidth - 24.dp + 14.dp) / 374.dp).toInt())
+            AlbumLayout.GRID -> maxOf(2, ((maxWidth - pageInset * 2 + 14.dp) / 194.dp).toInt())
+            AlbumLayout.LARGE -> maxOf(1, ((maxWidth - pageInset * 2 + 14.dp) / 374.dp).toInt())
             AlbumLayout.LIST -> 1
         }
         LazyVerticalGrid(
@@ -105,8 +104,8 @@ fun AlbumsScreen(
                 .testTag("albums-grid").semantics { stateDescription = layout.label },
             columns = GridCells.Fixed(columns), state = state,
             contentPadding = PaddingValues(
-                if (ArchiveUiTheme.isCoui) 16.dp else 12.dp, padding.calculateTopPadding() + 8.dp,
-                if (ArchiveUiTheme.isCoui) 16.dp else 12.dp, bottom),
+                pageInset, padding.calculateTopPadding() + 8.dp,
+                pageInset, bottom),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalArrangement = Arrangement.spacedBy(if (layout == AlbumLayout.LIST) 12.dp else 18.dp),
         ) {
@@ -131,14 +130,9 @@ fun AlbumsScreen(
         }
         }
     }
-    }
-    AnimatedVisibility(searching,
-        enter = fadeIn(tween(220)) + slideInVertically(tween(260)) { -it / 24 },
-        exit = fadeOut(tween(180)) + slideOutVertically(tween(220)) { -it / 30 },
-    ) {
+    }, content = {
         AlbumSearchScreen(catalog, query, { query = it }, { searching = false }, onAlbum, onSearchSong)
-    }
-    }
+    })
     ReleaseCategorySheet(showCategories, categories, catalog, { showCategories = false }, onCategories)
 }
 
@@ -186,17 +180,24 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
     highlightedTrack: Int? = null,
 ) {
     var coverRatio by remember(album.id) { mutableFloatStateOf(1f) }
-    ArchiveScaffold(AppText.get(R.string.ui_album_archive), small = true, progressiveBlur = ArchiveUiTheme.isCoui, navigationIcon = { BackButton(onBack) },
+    val detailMetrics = rememberCouiWindowMetrics()
+    val detailMaxWidth = if (ArchiveUiTheme.isCoui) detailMetrics.detailMaxWidth else null
+    // A square cover sized from the landscape height keeps the title and track list in the first view.
+    val coverWidth = if (ArchiveUiTheme.isCoui && detailMetrics.isLandscape)
+        (detailMetrics.windowHeight * .62f).coerceIn(200.dp, 300.dp) else 360.dp
+    ArchiveScaffold(AppText.get(R.string.ui_album_archive), small = true, progressiveBlur = ArchiveUiTheme.isCoui,
+        contentMaxWidth = detailMaxWidth, navigationIcon = { BackButton(onBack) },
         actions = { Text(album.year, color = ArchiveUiTheme.colorScheme.primary, fontSize = 14.sp) },
     ) { padding ->
-        LazyColumn(modifier = Modifier.fillMaxSize().testTag("album-detail-list"), state = state,
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        LazyColumn(modifier = Modifier.couiContentColumn(detailMaxWidth).testTag("album-detail-list"), state = state,
             contentPadding = PaddingValues(20.dp, padding.calculateTopPadding() + 12.dp, 20.dp, bottom), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             item("cover") {
                 val detach by rememberUpdatedState(onCoverDetached)
                 DisposableEffect(album.id) { onDispose { detach() } }
                 Box(Modifier.fillMaxWidth().animateContentSize(), contentAlignment = Alignment.Center) {
                     Card(
-                        modifier = Modifier.widthIn(max = 360.dp).fillMaxWidth()
+                        modifier = Modifier.widthIn(max = coverWidth).fillMaxWidth()
                             .aspectRatio(coverRatio.coerceIn(.65f, 1.8f)),
                         cornerRadius = 12.dp,
                         pressFeedbackType = PressFeedbackType.Tilt,
@@ -242,6 +243,7 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
                     SourceLink(AppText.get(R.string.ui_view_website), album.sourceUrl)
                 }
             }
+        }
         }
     }
 }

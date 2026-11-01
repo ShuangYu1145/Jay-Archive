@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -29,19 +30,27 @@ import love.yu.jaychou.data.*
 import love.yu.jaychou.ui.designsystem.Card
 import love.yu.jaychou.ui.designsystem.Text
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import love.yu.jaychou.ui.designsystem.couiContentColumn
+import love.yu.jaychou.ui.designsystem.rememberCouiWindowMetrics
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
 @Composable
 fun HomeScreen(catalog: AlbumCatalog, state: LazyListState, bottom: androidx.compose.ui.unit.Dp, onAlbum: (Album, AlbumOrigin) -> Unit, onAlbums: () -> Unit,
     profile: AppSettings = AppSettings(),
 ) {
-    val pageInset = if (ArchiveUiTheme.isCoui) 16.dp else 24.dp
-    val groupSpacing = if (ArchiveUiTheme.isCoui) 16.dp else 20.dp
+    val coui = ArchiveUiTheme.isCoui
+    val metrics = rememberCouiWindowMetrics()
+    val pageInset = if (coui) metrics.pageInset else 24.dp
+    val groupSpacing = if (coui) metrics.groupSpacing else 20.dp
+    val heroHeight = if (coui) metrics.homeHeroHeight else 118.dp
     val behavior = love.yu.jaychou.ui.designsystem.rememberArchiveScrollBehavior()
     ArchiveScaffold(AppText.get(R.string.ui_home), behavior = behavior,
+        contentMaxWidth = if (coui) metrics.homeMaxWidth else null,
         actions = { HomeProfileButton(profile) },
     ) { padding ->
-    LazyColumn(modifier = Modifier.nestedScroll(behavior.nestedScrollConnection), state = state, contentPadding = PaddingValues(start = pageInset, end = pageInset, top = padding.calculateTopPadding() + 12.dp, bottom = bottom), verticalArrangement = Arrangement.spacedBy(groupSpacing)) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+    LazyColumn(modifier = Modifier.couiContentColumn(if (coui) metrics.homeMaxWidth else null)
+        .nestedScroll(behavior.nestedScrollConnection).testTag("home-list"), state = state, contentPadding = PaddingValues(start = pageInset, end = pageInset, top = padding.calculateTopPadding() + 12.dp, bottom = bottom), verticalArrangement = Arrangement.spacedBy(groupSpacing)) {
         item("heading") {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(AppText.get(R.string.ui_jay_archive_music_archive), color = ArchiveUiTheme.colorScheme.primary, fontSize = 12.sp, letterSpacing = 2.sp)
@@ -55,7 +64,7 @@ fun HomeScreen(catalog: AlbumCatalog, state: LazyListState, bottom: androidx.com
                     insideMargin = PaddingValues(0.dp),
                     pressFeedbackType = PressFeedbackType.Tilt, showIndication = false,
                 ) {
-                Box(Modifier.fillMaxWidth().height(118.dp)) {
+                Box(Modifier.fillMaxWidth().height(heroHeight)) {
                     CatalogImage(AlbumRepository.portraitUrl, AppText.get(R.string.ui_official_jay_chou_portrait_source_jvr_music), Modifier.fillMaxSize())
                     Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color.Black.copy(alpha = .8f)), startY = 180f)))
                     Column(
@@ -128,6 +137,7 @@ fun HomeScreen(catalog: AlbumCatalog, state: LazyListState, bottom: androidx.com
                 }
             }
         }
+    }
     }
     }
 }

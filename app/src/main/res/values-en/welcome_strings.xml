@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">Welcome to Jay Archive</string>
+    <string name="welcome_subtitle">A pocket archive of the music you know by heart.</string>
+    <string name="welcome_features">Browse albums and songs, and explore their stories.\nRead lyrics and discover the details.\nFollow tour dates and look forward to the next show.</string>
+    <string name="welcome_statement">Usage &amp; privacy</string>
+    <string name="welcome_statement_subtitle">A few things to know before you begin.</string>
+    <string name="welcome_statement_summary">Jay Archive is an unofficial fan archive for release information, lyrics and concert schedules. Some features use the internet. Please read the details before continuing.</string>
+    <string name="welcome_read_details">Read the full details</string>
+    <string name="welcome_agreement">I have read and understood the usage and privacy information</string>
+    <string name="welcome_appearance">Make it yours</string>
+    <string name="welcome_appearance_subtitle">Three styles, one archive. You can change these later in Settings.</string>
+    <string name="welcome_miuix">Rounded surfaces and the familiar HyperOS feel</string>
+    <string name="welcome_coui">Soft layers inspired by ColorOS</string>
+    <string name="welcome_material">Material Design 3, expressive and fluid</string>
+    <string name="welcome_color_mode">Appearance</string>
+    <string name="welcome_ready">You’re all set</string>
+    <string name="welcome_ready_subtitle">Start with an album. Rediscover Jay Chou.</string>
+    <string name="welcome_ready_note">Your appearance choices will be saved when you enter.\nBrowse the album catalog offline. Lyrics lookup, artwork and concert information use the internet.</string>
+    <string name="welcome_policy_subtitle">These details are available offline.</string>
+    <string name="welcome_policy_local">Local data\nNo account is required. Appearance preferences, profile details, and imported images and lyrics are stored on your device. System backups may include app data. You can clear app data in system settings.</string>
+    <string name="welcome_policy_network">Online content\nOnline lyrics queries send song or artist information to VKeys. Concert details and images access sources such as JVR and Damai. Update checks connect to GitHub. These services can receive request contents and network information such as your IP address. Automatic update checks can be turned off in Settings.</string>
+    <string name="welcome_policy_scope">About this archive\nThis app is not affiliated with Jay Chou or the relevant rights holders. It does not provide music playback, downloads or ticket transactions. Content belongs to its respective rights holders. Check official sources for the latest show times, seating and ticket details.</string>
+    <string name="welcome_previous">Previous</string>
+    <string name="welcome_back">Back</string>
+    <string name="welcome_saving">Saving…</string>
+    <string name="welcome_begin">Get started</string>
+    <string name="welcome_enter">Explore the archive</string>
+    <string name="welcome_next">Next</string>
+</resources>

@@ -197,6 +197,7 @@ fun BackButton(onClick: () -> Unit, label: String = AppText.get(R.string.ui_back
         return
     }
     Box(Modifier.size(48.dp).clip(CircleShape)
+        .then(if (ArchiveUiTheme.isMaterial) Modifier.background(androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer) else Modifier)
         .clickable(role = Role.Button, onClickLabel = label, onClick = onClick)
         .semantics { contentDescription = label }, contentAlignment = Alignment.Center) {
         ArchiveGlyph(Glyph.BACK)

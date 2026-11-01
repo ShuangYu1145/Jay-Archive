@@ -3,6 +3,7 @@ package love.yu.jaychou.ui.navigation
 import love.yu.jaychou.ui.effects.LocalNavigationBackdrop
 import love.yu.jaychou.ui.effects.liquid.lens
 import love.yu.jaychou.ui.effects.navigationSurfaceBlur
+import love.yu.jaychou.ui.effects.couiFrostedSurface
 import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -40,7 +41,7 @@ internal fun ArchiveBottomNavigationBar(
         val liquid = settings.floatingBottomBar && settings.liquidGlass &&
             Build.VERSION.SDK_INT >= 33 && backdrop != null
         val tint = androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainer
-        val blurred = settings.floatingBottomBar && !liquid && settings.blur &&
+        val blurred = !liquid && settings.blur &&
             Build.VERSION.SDK_INT >= 33 && backdrop != null
         val entries: @Composable RowScope.() -> Unit = {
             rootNavigationItems().forEachIndexed { index, item ->
@@ -75,7 +76,10 @@ internal fun ArchiveBottomNavigationBar(
                         }
                     }
                     else -> androidx.compose.material3.NavigationBar(
-                        Modifier.testTag("standard-navigation"), content = entries)
+                        (if (blurred) Modifier.navigationSurfaceBlur(backdrop, RectangleShape, tint) else Modifier)
+                            .testTag("standard-navigation"),
+                        containerColor = if (blurred) Color.Transparent else tint,
+                        tonalElevation = 0.dp, content = entries)
                 }
             }
         }
@@ -83,10 +87,8 @@ internal fun ArchiveBottomNavigationBar(
     }
     if (settings.uiStyle == UiStyle.COUI) {
         val backdrop = LocalNavigationBackdrop.current
-        val colors = io.github.suqi8.coui.kmp.theme.COUITheme.colorScheme
         val liquid = settings.floatingBottomBar && settings.liquidGlass &&
             Build.VERSION.SDK_INT >= 33 && backdrop != null
-        val blurred = !liquid && settings.blur && Build.VERSION.SDK_INT >= 33 && backdrop != null
         Box(modifier.testTag("bottom-navigation")) {
             Box(Modifier.testTag("coui-navigation")) {
                 when {
@@ -100,10 +102,9 @@ internal fun ArchiveBottomNavigationBar(
                         CouiFloatingNavigationBar(selectedIndex, onSelect, enabled, blur = settings.blur)
                     }
                     else -> {
-                        val tint = colors.background
-                        val surface = if (blurred) Modifier.navigationSurfaceBlur(backdrop, RectangleShape, tint) else Modifier
+                        val surface = Modifier.couiFrostedSurface(settings.blur, RectangleShape, floating = false)
                         io.github.suqi8.coui.kmp.basic.NavigationBar(surface.testTag("standard-navigation"),
-                            color = if (blurred) Color.Transparent else tint) {
+                            color = Color.Transparent) {
                             rootNavigationItems().forEachIndexed { index, item ->
                                 CouiNavigationBarItem(selected = selectedIndex == index, onClick = { onSelect(index) },
                                     icon = requireNotNull(item.icon), label = item.label, enabled = enabled,

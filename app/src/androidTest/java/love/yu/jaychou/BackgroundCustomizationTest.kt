@@ -76,6 +76,7 @@ class BackgroundCustomizationTest {
                     }
                 }
             }
+            app.onNodeWithTag("theme-settings").performClick()
             app.onNodeWithTag("settings-list").performScrollToNode(hasTestTag("custom-background"))
             app.onNodeWithTag("custom-background").performClick()
             app.waitUntil(10_000) { runBlocking { repository.settings.first().customBackgroundPath != null } }

@@ -37,6 +37,7 @@ import love.yu.jaychou.ui.components.*
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import love.yu.jaychou.ui.designsystem.Card
 import love.yu.jaychou.ui.designsystem.Text
+import love.yu.jaychou.ui.designsystem.rememberCouiWindowMetrics
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Close
 import top.yukonga.miuix.kmp.icon.extended.Search
@@ -46,6 +47,8 @@ import top.yukonga.miuix.kmp.utils.PressFeedbackType
 fun CompositionsScreen(layout: AlbumLayout, bottom: Dp, active: Boolean, onDetailVisibility: (Boolean) -> Unit) {
     val context = LocalContext.current.applicationContext
     val focus = LocalFocusManager.current
+    val compositionMetrics = rememberCouiWindowMetrics()
+    val compositionInset = if (ArchiveUiTheme.isCoui) compositionMetrics.pageInset else 12.dp
     LaunchedEffect(active) { if (!active) focus.clearFocus() }
     val language = AppLanguage.contentTag(LocalConfiguration.current.locales)
     var catalog by remember { mutableStateOf<CompositionCatalog?>(null) }
@@ -62,16 +65,17 @@ fun CompositionsScreen(layout: AlbumLayout, bottom: Dp, active: Boolean, onDetai
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     val selected = catalog?.songs?.find { it.id == selectedId }
     val callback by rememberUpdatedState(onDetailVisibility)
-    LaunchedEffect(selected) { callback(selected != null) }
-    DisposableEffect(Unit) { onDispose { callback(false) } }
-    BackHandler(active && (selected != null || searching)) {
-        if (selected != null) selectedId = null else { searching = false; query = "" }
+    BackHandler(active && selected == null && searching) {
+        searching = false; query = ""
     }
     val songs = remember(catalog, query) { catalog?.songs.orEmpty().filter { it.matches(query) } }
     val states = rememberSaveableStateHolder()
 
-    Box(Modifier.fillMaxSize()) {
-        Box(Modifier.fillMaxSize().then(if (selected != null) Modifier.clearAndSetSemantics {} else Modifier)) {
+    love.yu.jaychou.ui.animation.SecondaryPageHost(
+        page = selected, enabled = active, onBack = { selectedId = null },
+        onVisibilityChanged = { callback(it) },
+        root = {
+        Box(Modifier.fillMaxSize()) {
         val inlineSectionHeader = love.yu.jaychou.ui.components.LocalInlineSectionHeader.current
         ArchiveScaffold(AppText.get(R.string.ui_compositions), sectionHeader = true, actions = {
             ArchiveIconButton(if (searching) MiuixIcons.Close else MiuixIcons.Search,
@@ -81,8 +85,8 @@ fun CompositionsScreen(layout: AlbumLayout, bottom: Dp, active: Boolean, onDetai
             BoxWithConstraints(Modifier.fillMaxSize()) {
                 val columns = when (layout) {
                     AlbumLayout.LIST -> 1
-                    AlbumLayout.GRID -> maxOf(2, ((maxWidth - 24.dp + 14.dp) / 194.dp).toInt())
-                    AlbumLayout.LARGE -> maxOf(1, ((maxWidth - 24.dp + 14.dp) / 374.dp).toInt())
+                    AlbumLayout.GRID -> maxOf(2, ((maxWidth - compositionInset * 2 + 14.dp) / 194.dp).toInt())
+                    AlbumLayout.LARGE -> maxOf(1, ((maxWidth - compositionInset * 2 + 14.dp) / 374.dp).toInt())
                 }
                 states.SaveableStateProvider("${layout.name}-${if (searching) "search" else "catalog"}") {
                     val state = rememberLazyGridState()
@@ -91,8 +95,8 @@ fun CompositionsScreen(layout: AlbumLayout, bottom: Dp, active: Boolean, onDetai
                         modifier = Modifier.fillMaxSize().imePadding().testTag("compositions-grid")
                             .semantics { stateDescription = layout.label },
                         contentPadding = PaddingValues(
-                if (ArchiveUiTheme.isCoui) 16.dp else 12.dp, padding.calculateTopPadding() + 8.dp,
-                if (ArchiveUiTheme.isCoui) 16.dp else 12.dp, bottom),
+                compositionInset, padding.calculateTopPadding() + 8.dp,
+                compositionInset, bottom),
                         horizontalArrangement = Arrangement.spacedBy(14.dp),
                         verticalArrangement = Arrangement.spacedBy(if (layout == AlbumLayout.LIST) 12.dp else 18.dp),
                     ) {
@@ -127,8 +131,9 @@ fun CompositionsScreen(layout: AlbumLayout, bottom: Dp, active: Boolean, onDetai
             }
         }
         }
-        if (selected != null) CompositionDetail(selected, language, catalog!!.sourceUrl) { selectedId = null }
-    }
+        },
+        content = { song -> CompositionDetail(song, language, catalog!!.sourceUrl) { selectedId = null } },
+    )
 }
 
 @Composable

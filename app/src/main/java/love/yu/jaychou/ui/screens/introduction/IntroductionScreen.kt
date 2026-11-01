@@ -25,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import love.yu.jaychou.R
 import love.yu.jaychou.data.AppText
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import love.yu.jaychou.ui.designsystem.rememberCouiWindowMetrics
 
 /** A sibling capture keeps the top lens out of the backdrop it samples. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,8 +46,9 @@ fun IntroductionScreen(
     val background = ArchiveUiTheme.colorScheme.background
     val coui = ArchiveUiTheme.isCoui
     val material = ArchiveUiTheme.isMaterial
-    val progressive = LocalArchiveBlur.current && (coui || (!material &&
-        love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE))
+    val metrics = rememberCouiWindowMetrics()
+    val progressive = LocalArchiveBlur.current && (coui ||
+        love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE)
     val scene: @Composable (Modifier, Modifier, Modifier) -> Unit = { capture, glass, header ->
         Box(Modifier.fillMaxSize()) {
             HorizontalPager(
@@ -61,13 +63,13 @@ fun IntroductionScreen(
             if (headerVisible && coui) CouiIntroductionHeader(
                 sections, pager.currentPage, onSelect, enabled,
                 modifier = header.fillMaxWidth().statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .padding(horizontal = metrics.pageInset, vertical = metrics.headerVerticalPadding)
                     .pointerInput(enabled) {
                         if (enabled) detectHorizontalDragGestures { change, _ -> change.consume() }
                     },
             ) { actionHosts[pager.currentPage].content?.value?.invoke(this) }
             else if (headerVisible) Row(
-                (if (material) Modifier.fillMaxWidth().background(background).statusBarsPadding()
+                (if (material) header.fillMaxWidth().statusBarsPadding()
                     .height(74.dp).padding(horizontal = 8.dp)
                 else header.fillMaxWidth().statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 8.dp).heightIn(min = 58.dp))
@@ -80,6 +82,7 @@ fun IntroductionScreen(
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     if (material) androidx.compose.material3.PrimaryTabRow(
                         selectedTabIndex = pager.currentPage,
+                        containerColor = androidx.compose.ui.graphics.Color.Transparent,
                         modifier = Modifier.testTag("introduction-tabs"),
                     ) {
                         sections.forEachIndexed { index, (key, label) ->
@@ -104,17 +107,19 @@ fun IntroductionScreen(
             }
         }
     }
-    if (coui && Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current) {
-        love.yu.jaychou.ui.effects.HeaderGlassLayer(background, progressive = true, content = { capture, header ->
+    if ((coui || material) && Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current) {
+        love.yu.jaychou.ui.effects.HeaderGlassLayer(background, progressive = progressive, content = { capture, header ->
             scene(capture, Modifier, header)
         })
     } else if (Build.VERSION.SDK_INT >= 33 && (LocalArchiveBlur.current || LocalArchiveLiquidGlass.current)) {
         GlassLayer(background) { capture, glass ->
-            if (progressive && headerVisible) love.yu.jaychou.ui.effects.HeaderGlassLayer(
+            // Keep the pager at the same composition location when a detail hides the header.
+            // Switching this wrapper discarded the concert snapshot and immediately closed it.
+            if (progressive) love.yu.jaychou.ui.effects.HeaderGlassLayer(
                 background, progressive = true, content = { headerCapture, header ->
                     scene(capture.then(headerCapture), glass, header)
                 },
             ) else scene(capture, glass, Modifier)
         }
-    } else scene(Modifier, Modifier.background(ArchiveUiTheme.colorScheme.surfaceContainer), Modifier)
+    } else scene(Modifier, Modifier.background(ArchiveUiTheme.colorScheme.surfaceContainer), Modifier.background(background))
 }

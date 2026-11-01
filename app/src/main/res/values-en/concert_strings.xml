@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="concert_damai_cover">Damai show poster</string>
+    <string name="concert_damai_content">Show details · Damai</string>
+    <string name="concert_damai_search">Find Jay Chou shows on Damai</string>
+    <string name="concert_media_loading">Loading show details from Damai…</string>
+    <string name="concert_media_failed">Damai details are unavailable. Retry or visit Damai.</string>
+    <string name="concert_media_missing">No Damai details match this city and date yet.</string>
+    <string name="concert_media_source_note">Details retrieved from Damai. Check Damai for the latest schedule and seating layout.</string>
+    <string name="concert_seating_plan">Seating plan</string>
+    <string name="concert_introduction">About the show</string>
+    <string name="concert_no_seating_plan">No seating plan has been published on Damai.</string>
+    <string name="concert_no_introduction">No show introduction has been published on Damai.</string>
+    <string name="concert_zoom_hint">Tap to view · Double tap or pinch to zoom</string>
+    <string name="concert_image_failed">Image unavailable. Tap to retry in the viewer.</string>
+    <string name="concert_close_image">Close image</string>
+    <string name="concert_expand">Read more</string>
+    <string name="concert_collapse">Show less</string>
+</resources>

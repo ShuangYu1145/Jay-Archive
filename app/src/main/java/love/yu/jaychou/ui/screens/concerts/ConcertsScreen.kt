@@ -7,6 +7,8 @@ import love.yu.jaychou.ui.components.BackButton
 import love.yu.jaychou.ui.components.QuietText
 import love.yu.jaychou.ui.components.SectionTitle
 import love.yu.jaychou.ui.components.SourceLink
+import love.yu.jaychou.ui.designsystem.couiContentColumn
+import love.yu.jaychou.ui.designsystem.rememberCouiWindowMetrics
 import love.yu.jaychou.data.AppText
 import love.yu.jaychou.R
 import android.content.ActivityNotFoundException
@@ -19,10 +21,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.foundation.background
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -64,10 +67,16 @@ import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
 @Composable
-fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHeader: Boolean = false) {
+fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHeader: Boolean = false,
+    loadSchedule: suspend () -> ConcertSnapshot = { ConcertRepository.load() },
+    loadMedia: suspend () -> List<DamaiConcert> = { DamaiConcertRepository.load() },
+) {
     val scope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val behavior = rememberArchiveScrollBehavior()
+    val concertMetrics = rememberCouiWindowMetrics()
+    val concertInset = if (ArchiveUiTheme.isCoui) concertMetrics.pageInset else 16.dp
+    val concertMaxWidth = if (ArchiveUiTheme.isCoui) concertMetrics.listMaxWidth else null
     var loadAttempt by remember { mutableIntStateOf(0) }
     var snapshot by remember { mutableStateOf<ConcertSnapshot?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -78,7 +87,6 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
     var country by rememberSaveable { mutableStateOf("all") }
     var city by rememberSaveable { mutableStateOf("all_cities") }
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
-    var detailConcert by remember { mutableStateOf<Concert?>(null) }
     var now by remember { mutableStateOf(ZonedDateTime.now()) }
 
     LaunchedEffect(Unit) {
@@ -92,7 +100,7 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
         loading = true
         error = null
         try {
-            snapshot = ConcertRepository.load()
+            snapshot = loadSchedule()
             refreshNote = null
         } catch (cancelled: CancellationException) {
             throw cancelled
@@ -103,26 +111,35 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
         }
     }
 
+    var media by remember { mutableStateOf<List<DamaiConcert>>(emptyList()) }
+    var mediaLoading by remember { mutableStateOf(true) }
+    var mediaFailed by remember { mutableStateOf(false) }
+    var mediaAttempt by remember { mutableIntStateOf(0) }
+    LaunchedEffect(mediaAttempt) {
+        mediaLoading = true
+        mediaFailed = false
+        try { media = loadMedia() }
+        catch (cancelled: CancellationException) { throw cancelled }
+        catch (_: Exception) { mediaFailed = true }
+        finally { mediaLoading = false }
+    }
+    val callback by rememberUpdatedState(onDetailVisibility)
     val selected = snapshot?.concerts?.firstOrNull { it.id == selectedId }
     LaunchedEffect(selectedId, selected, snapshot) {
         if (selectedId != null && snapshot != null && selected == null) selectedId = null
-        if (selected != null) detailConcert = selected
-        onDetailVisibility(selected != null)
     }
-    DisposableEffect(Unit) {
-        onDispose { onDetailVisibility(false) }
-    }
-    BackHandler(enabled = selected != null) { selectedId = null }
 
     val refreshNow: () -> Unit = {
         val base = snapshot
         if (base == null) {
             loadAttempt++
+            mediaAttempt++
         } else if (!refreshing) {
             scope.launch {
+                mediaAttempt++
                 refreshing = true
                 try {
-                    snapshot = ConcertRepository.load()
+                    snapshot = loadSchedule()
                     refreshNote = null
                 } catch (cancelled: CancellationException) {
                     throw cancelled
@@ -135,12 +152,16 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
         }
     }
 
-    Box(Modifier.fillMaxSize()) {
+    love.yu.jaychou.ui.animation.SecondaryPageHost(
+        page = selected, onBack = { selectedId = null }, onVisibilityChanged = { callback(it) },
+        root = {
         val inlineSectionHeader = love.yu.jaychou.ui.components.LocalInlineSectionHeader.current
+        Box(Modifier.fillMaxSize().then(if (selected != null) Modifier.clearAndSetSemantics { } else Modifier)) {
         ArchiveScaffold(
             AppText.get(R.string.ui_concerts),
             behavior = behavior,
             sectionHeader = sectionHeader,
+            contentMaxWidth = concertMaxWidth,
             actions = {
                 if (sectionHeader) {
                     Box(
@@ -169,13 +190,14 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
                 }
             },
         ) { padding ->
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.couiContentColumn(concertMaxWidth)
                     .then(if (sectionHeader) Modifier else Modifier.nestedScroll(behavior.nestedScrollConnection))
                     .testTag("concerts-list"),
                 contentPadding = PaddingValues(
-                    start = 16.dp, end = 16.dp,
+                    start = concertInset, end = concertInset,
                     top = padding.calculateTopPadding() + 12.dp,
                     bottom = bottom + 20.dp,
                 ),
@@ -183,11 +205,11 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
             ) {
                 if (inlineSectionHeader != null) item("section-header") { inlineSectionHeader() }
                 item("concert-intro") {
-                    ConcertIntro(
+                    ConcertReveal { ConcertIntro(
                         updated = snapshot?.updatedLabel,
                         refreshing = refreshing,
                         refreshNote = refreshNote,
-                    )
+                    ) }
                 }
 
                 if (loading) {
@@ -226,7 +248,9 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
                     val next = data.next(now)
                     if (next != null) {
                         item("concert-featured") {
-                            FeaturedConcertCard(next, now) { detailConcert = next; selectedId = next.id }
+                            ConcertReveal(1) {
+                                FeaturedConcertCard(next, now, media.firstOrNull { it.matches(next) }) { selectedId = next.id }
+                            }
                         }
                     } else if (!loading) {
                         item("concert-none") {
@@ -304,7 +328,7 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
                             }
                             item("concert-${concert.id}") {
                                 Box(Modifier.animateItem()) {
-                                    ConcertRow(concert, now) { detailConcert = concert; selectedId = concert.id }
+                                    ConcertReveal { ConcertRow(concert, now, media.firstOrNull { it.matches(concert) }) { selectedId = concert.id } }
                                 }
                             }
                         }
@@ -315,28 +339,26 @@ fun ConcertsScreen(bottom: Dp, onDetailVisibility: (Boolean) -> Unit, sectionHea
                             QuietText(AppText.get(R.string.ui_schedules_are_read_from_jvr_announcements_from_the_past_six_mont))
                             SourceLink(AppText.get(R.string.ui_official_jvr_schedule), ConcertRepository.source)
                             CompactSourceLink(AppText.get(R.string.ui_live_photos_jvr_music), concertPhotoSource)
+                            SourceLink(AppText.get(R.string.concert_damai_search), DamaiConcertRepository.searchUrl)
                         }
                     }
                 }
             }
-        }
-
-        AnimatedVisibility(
-            visible = selected != null,
-            enter = fadeIn(tween(180)) + scaleIn(initialScale = .96f, animationSpec = tween(220)),
-            exit = fadeOut(tween(150)) + scaleOut(targetScale = .98f, animationSpec = tween(180)),
-            modifier = Modifier.fillMaxSize().zIndex(4f),
-        ) {
-            detailConcert?.let { concert ->
-                ConcertDetailScreen(
-                    concert = concert,
-                    updatedLabel = snapshot?.updatedLabel ?: concert.updatedLabel,
-                    now = now,
-                    onBack = { selectedId = null },
-                )
             }
         }
-    }
+
+        }
+        },
+        content = { concert ->
+            ConcertDetailScreen(
+                concert = concert,
+                updatedLabel = snapshot?.updatedLabel ?: concert.updatedLabel,
+                now = now, media = media.firstOrNull { it.matches(concert) },
+                mediaLoading = mediaLoading, mediaFailed = mediaFailed,
+                onRetryMedia = { mediaAttempt++ }, onBack = { selectedId = null },
+            )
+        },
+    )
 }
 
 @Composable
@@ -364,7 +386,7 @@ private fun ConcertIntro(updated: String?, refreshing: Boolean, refreshNote: Str
 }
 
 @Composable
-private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: () -> Unit) {
+private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, media: DamaiConcert?, onClick: () -> Unit) {
     val uriHandler = LocalUriHandler.current
     val status = concert.status(now)
     Card(
@@ -378,6 +400,10 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
                 fontWeight = FontWeight.SemiBold, color = ArchiveUiTheme.colorScheme.primary)
             Spacer(Modifier.weight(1f))
             ConcertStatusChip(concert, now)
+        }
+        media?.cover?.let {
+            Spacer(Modifier.height(14.dp))
+            ConcertRemoteImage(ConcertImage(it, .75f), AppText.get(R.string.concert_damai_cover), Modifier.heightIn(max = 300.dp), allowPreview = false)
         }
         Spacer(Modifier.height(14.dp))
         Row(verticalAlignment = Alignment.Bottom) {
@@ -431,7 +457,7 @@ private fun FeaturedConcertCard(concert: Concert, now: ZonedDateTime, onClick: (
 }
 
 @Composable
-private fun ConcertRow(concert: Concert, now: ZonedDateTime, onClick: () -> Unit) {
+private fun ConcertRow(concert: Concert, now: ZonedDateTime, media: DamaiConcert?, onClick: () -> Unit) {
     val status = concert.status(now)
     Card(
         onClick = onClick,
@@ -440,6 +466,7 @@ private fun ConcertRow(concert: Concert, now: ZonedDateTime, onClick: () -> Unit
         pressFeedbackType = PressFeedbackType.Sink,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            media?.cover?.let { ConcertRemoteImage(ConcertImage(it, .75f), AppText.get(R.string.concert_damai_cover), Modifier.width(54.dp), allowPreview = false) }
             Column(Modifier.width(52.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(concert.date.month.getDisplayName(TextStyle.SHORT, AppText.locale), fontSize = 11.sp,
                     color = ArchiveUiTheme.colorScheme.primary)
@@ -538,18 +565,24 @@ private fun ConcertDetailScreen(
     concert: Concert,
     updatedLabel: String,
     now: ZonedDateTime,
+    media: DamaiConcert?,
+    mediaLoading: Boolean,
+    mediaFailed: Boolean,
+    onRetryMedia: () -> Unit,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
     val status = concert.status(now)
     val timeText = concertTime(concert, now)
+    val detailState = rememberLazyListState()
         ArchiveScaffold(
         AppText.get(R.string.ui_show_details_92), small = true,
-        navigationIcon = { BackButton(onBack, AppText.get(R.string.ui_back_to_concerts)) },
+        navigationIcon = { Box(Modifier.testTag("concert-detail-back")) { BackButton(onBack, AppText.get(R.string.ui_back_to_concerts)) } },
     ) { padding ->
         love.yu.jaychou.ui.effects.CustomBackgroundImage()
         LazyColumn(
+            state = detailState,
             modifier = Modifier.fillMaxSize().testTag("concert-detail"),
             contentPadding = PaddingValues(
                 start = 20.dp, end = 20.dp,
@@ -559,8 +592,19 @@ private fun ConcertDetailScreen(
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             item("concert-detail-photo") {
-                ConcertPhoto(Modifier.fillMaxWidth().height(240.dp))
-                CompactSourceLink(AppText.get(R.string.ui_official_tour_photo_jvr_music), concertPhotoSource)
+                ConcertReveal {
+                    Column(Modifier.graphicsLayer {
+                        if (detailState.firstVisibleItemIndex == 0) translationY = detailState.firstVisibleItemScrollOffset * .18f
+                    }) {
+                        if (media?.cover != null) {
+                            ConcertRemoteImage(ConcertImage(media.cover, .75f), AppText.get(R.string.concert_damai_cover))
+                            CompactSourceLink(AppText.get(R.string.concert_damai_cover), media.sourceUrl)
+                        } else {
+                            ConcertPhoto(Modifier.fillMaxWidth().height(240.dp))
+                            CompactSourceLink(AppText.get(R.string.ui_official_tour_photo_jvr_music), concertPhotoSource)
+                        }
+                    }
+                }
             }
             item("concert-detail-hero") {
                 Column(Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
@@ -591,8 +635,8 @@ private fun ConcertDetailScreen(
                     DetailValue(AppText.get(R.string.ui_date), concert.dateLabel)
                     DetailValue(AppText.get(R.string.ui_local_time), timeText)
                     DetailValue(AppText.get(R.string.ui_time_zone), concert.zoneLabel)
-                    DetailValue(AppText.get(R.string.ui_venue), "${AppText.fromOriginal(concert.venue.name)} · ${AppText.fromOriginal(concert.venue.country)}")
-                    DetailValue(AppText.get(R.string.ui_address), concert.venue.address.ifBlank { AppText.get(R.string.ui_not_provided_in_the_official_schedule) })
+                    DetailValue(AppText.get(R.string.ui_venue), "${media?.venue?.takeIf { it.isNotBlank() } ?: AppText.fromOriginal(concert.venue.name)} · ${AppText.fromOriginal(concert.venue.country)}")
+                    DetailValue(AppText.get(R.string.ui_address), media?.address?.takeIf { it.isNotBlank() } ?: concert.venue.address.ifBlank { AppText.get(R.string.ui_not_provided_in_the_official_schedule) })
                     if (concert.venue.latitude != null && concert.venue.longitude != null) {
                         Spacer(Modifier.height(14.dp))
                         Button(onClick = {
@@ -639,8 +683,8 @@ private fun ConcertDetailScreen(
                         concert.ticketState == TicketState.SOLD_OUT ->
                             Text(AppText.get(R.string.ui_this_show_is_sold_out_check_official_announcements_for_extra_dat), fontSize = 13.sp,
                                 color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
-                        concert.ticketUrl != null ->
-                            Button(onClick = { uriHandler.openUri(concert.ticketUrl) },
+                        concert.ticketUrl != null || media != null ->
+                            Button(onClick = { uriHandler.openUri(concert.ticketUrl ?: media!!.sourceUrl) },
                                 modifier = Modifier.testTag("concert-ticket")) {
                                 Text(
                                     if (concert.ticketState == TicketState.ON_SALE) {
@@ -662,11 +706,54 @@ private fun ConcertDetailScreen(
                 }
             }
 
+            item("concert-detail-media-status") {
+                ConcertReveal(1) { DetailCard(AppText.get(R.string.concert_damai_content)) {
+                    if (mediaLoading) Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator()
+                        Text(AppText.get(R.string.concert_media_loading), fontSize = 13.sp)
+                    } else if (media == null) {
+                        Text(AppText.get(if (mediaFailed) R.string.concert_media_failed else R.string.concert_media_missing), fontSize = 13.sp)
+                        TextButton(AppText.get(R.string.ui_retry), onRetryMedia)
+                    } else {
+                        Text(AppText.get(R.string.concert_media_source_note), fontSize = 12.sp)
+                    }
+                    SourceLink(AppText.get(R.string.concert_damai_search), DamaiConcertRepository.searchUrl)
+                    media?.let { SourceLink(AppText.get(R.string.concert_damai_content), it.sourceUrl) }
+                } }
+            }
+            if (media != null) {
+                item("concert-detail-seats") {
+                    ConcertReveal(2) { DetailCard(AppText.get(R.string.concert_seating_plan)) {
+                        Text(AppText.get(R.string.concert_zoom_hint), fontSize = 12.sp)
+                        if (media.seats.isEmpty()) Text(AppText.get(R.string.concert_no_seating_plan), fontSize = 13.sp)
+                        media.seats.forEach { ConcertRemoteImage(it, AppText.get(R.string.concert_seating_plan)) }
+                    } }
+                }
+                item("concert-detail-introduction") {
+                    DetailCard(AppText.get(R.string.concert_introduction)) {
+                        if (media.introduction.isBlank() && media.introductionImages.isEmpty())
+                            Text(AppText.get(R.string.concert_no_introduction), fontSize = 13.sp)
+                        if (media.introduction.isNotBlank()) {
+                            var expanded by remember { mutableStateOf(false) }
+                            Text(media.introduction, Modifier.animateContentSize(), fontSize = 14.sp, lineHeight = 23.sp,
+                                maxLines = if (expanded) Int.MAX_VALUE else 6, overflow = TextOverflow.Ellipsis)
+                            TextButton(AppText.get(if (expanded) R.string.concert_collapse else R.string.concert_expand), { expanded = !expanded })
+                        }
+                    }
+                }
+                media.introductionImages.forEachIndexed { index, image ->
+                    item("concert-introduction-image-$index") {
+                        ConcertReveal { ConcertRemoteImage(image, AppText.get(R.string.concert_introduction)) }
+                    }
+                }
+            }
+
             item("concert-detail-source") {
                 DetailCard(AppText.get(R.string.ui_organizer_and_sources)) {
                     DetailValue(AppText.get(R.string.ui_organizer), concert.organizer ?: AppText.get(R.string.ui_organizer_not_listed_in_public_sources))
                     val sources = buildList {
                         addAll(concert.sourceUrls)
+                        media?.sourceUrl?.let { add(it) }
                         concert.officialUrl?.let { add(it) }
                     }.distinctBy(::concertSourceLabel)
                     if (sources.isNotEmpty()) {

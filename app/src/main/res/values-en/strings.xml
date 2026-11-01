@@ -434,4 +434,14 @@
     <string name="ui_top_app_bar_blur_summary">Gaussian blurs evenly; Progressive fades from blurred at the top to clear at the bottom</string>
     <string name="ui_support_motivation">Your support keeps this project going</string>
     <string name="ui_support_qr">QR code to support the developer</string>
+    <string name="ui_theme_settings">Theme</string>
+    <string name="ui_settings_back">Back to settings</string>
+    <string name="ui_settings_language">Language</string>
+    <string name="ui_predictive_animation">Predictive back animation</string>
+    <string name="ui_animation_none">None</string>
+    <string name="ui_animation_classic">Classic</string>
+    <string name="ui_predictive_exit_direction">Exit direction</string>
+    <string name="ui_exit_follow_gesture">Follow gesture</string>
+    <string name="ui_exit_always_right">Always right</string>
+    <string name="ui_exit_always_left">Always left</string>
 </resources>

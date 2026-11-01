@@ -49,6 +49,8 @@ class ArchiveNavigationTest {
 
     private fun selectTheme(label: String) {
         // Position the entire settings group above the floating navigation overlay.
+        if (app.onAllNodesWithTag("theme-settings").fetchSemanticsNodes().isNotEmpty())
+            app.onNodeWithTag("theme-settings").performClick()
         app.onNodeWithTag("settings-list").performScrollToIndex(5)
         val selector = app.onNodeWithTag("theme-mode").performScrollTo()
         if (app.onAllNodesWithText(label).fetchSemanticsNodes().isNotEmpty()) return
@@ -86,8 +88,9 @@ class ArchiveNavigationTest {
         val monet = app.onNodeWithContentDescription("启用 Monet 动态配色")
         monet.performScrollTo()
         val monetBounds = monet.fetchSemanticsNode().boundsInRoot
-        val navigationBounds = app.onNodeWithTag("floating-navigation").fetchSemanticsNode().boundsInRoot
-        assertTrue("The setting must be fully above the floating bar", monetBounds.bottom < navigationBounds.top)
+        val listBounds = app.onNodeWithTag("settings-list").fetchSemanticsNode().boundsInRoot
+        app.onNodeWithTag("floating-navigation").assertDoesNotExist()
+        assertTrue("The setting must be fully inside the theme page", monetBounds.bottom <= listBounds.bottom)
         if (Build.VERSION.SDK_INT >= 31) {
             // Establish an explicit saved state independent of prior test runs.
             if (monet.fetchSemanticsNode().config[androidx.compose.ui.semantics.SemanticsProperties.ToggleableState] != androidx.compose.ui.state.ToggleableState.On) monet.performClick()
@@ -107,11 +110,17 @@ class ArchiveNavigationTest {
 
     private fun chooseAlbumLayout(layout: AlbumLayout) {
         app.onNodeWithTag("tab-SETTINGS").performClick()
+        if (app.onAllNodesWithTag("theme-settings").fetchSemanticsNodes().isNotEmpty())
+            app.onNodeWithTag("theme-settings").performClick()
         app.onNodeWithTag("settings-list").performScrollToIndex(1)
-        if (app.onAllNodesWithText(layout.label).fetchSemanticsNodes().isNotEmpty()) return
+        if (app.onAllNodesWithText(layout.label).fetchSemanticsNodes().isNotEmpty()) {
+            app.onNodeWithTag("settings-back").performClick()
+            return
+        }
         app.onNodeWithTag("album-layout").performClick()
         app.onNodeWithText(layout.label).performClick()
         app.onNodeWithText(layout.label).assertIsDisplayed()
+        app.onNodeWithTag("settings-back").performClick()
     }
 
     private fun catalogScrollPosition(): Float = app.onNodeWithTag("albums-grid")
@@ -327,6 +336,8 @@ class ArchiveNavigationTest {
 
     @Test fun customColorNativePickerPersistsAndCanBeReset() {
         app.onNodeWithTag("tab-SETTINGS").performClick()
+        if (app.onAllNodesWithTag("theme-settings").fetchSemanticsNodes().isNotEmpty())
+            app.onNodeWithTag("theme-settings").performClick()
         app.onNodeWithTag("settings-list").performScrollToIndex(5)
         val selector = app.onNodeWithTag("custom-color").performScrollTo()
         val barTop = app.onNodeWithTag("floating-navigation").fetchSemanticsNode().boundsInRoot.top

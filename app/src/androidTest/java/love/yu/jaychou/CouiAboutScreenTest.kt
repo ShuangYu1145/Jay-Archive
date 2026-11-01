@@ -49,6 +49,7 @@ class CouiAboutScreenTest {
         capture("coui-about-dark")
         app.runOnIdle { fontScale = 1.5f }
         capture("coui-about-large-font")
+        app.onRoot(useUnmergedTree = true).printToLog("ABOUT_TREE")
         app.onNodeWithTag("about-list").performScrollToNode(hasTestTag("about-support-qr"))
         app.onNodeWithTag("about-support-qr").assertIsDisplayed()
         val qr = app.onNodeWithTag("about-support-qr").getUnclippedBoundsInRoot()

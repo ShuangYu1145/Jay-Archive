@@ -434,4 +434,14 @@
     <string name="ui_top_app_bar_blur_summary">Gaussian은 균일한 흐림, Progressive는 위에서 아래로 점차 선명해지는 흐림</string>
     <string name="ui_support_motivation">여러분의 응원이 가장 큰 힘입니다</string>
     <string name="ui_support_qr">개발자 후원 QR 코드</string>
+    <string name="ui_theme_settings">테마</string>
+    <string name="ui_settings_back">설정으로 돌아가기</string>
+    <string name="ui_settings_language">언어</string>
+    <string name="ui_predictive_animation">예측 뒤로 가기 애니메이션</string>
+    <string name="ui_animation_none">없음</string>
+    <string name="ui_animation_classic">클래식</string>
+    <string name="ui_predictive_exit_direction">나가기 방향</string>
+    <string name="ui_exit_follow_gesture">제스처 따라가기</string>
+    <string name="ui_exit_always_right">항상 오른쪽</string>
+    <string name="ui_exit_always_left">항상 왼쪽</string>
 </resources>

@@ -1,4 +1,6 @@
 package love.yu.jaychou.ui.updates
+import love.yu.jaychou.ui.effects.materialFrostedSurface
+import love.yu.jaychou.ui.effects.materialSurfaceBlurEnabled
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,10 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import love.yu.jaychou.BuildConfig
 import love.yu.jaychou.R
 import love.yu.jaychou.data.AppText
@@ -63,7 +62,12 @@ internal fun UpdateDialog(
     }
     if (ArchiveUiTheme.isMaterial) {
         androidx.compose.material3.AlertDialog(
-            onDismissRequest = onDismiss, modifier = Modifier.testTag("update-dialog-material"),
+            onDismissRequest = onDismiss, modifier = Modifier.testTag("update-dialog-material").materialFrostedSurface(
+                androidx.compose.material3.AlertDialogDefaults.shape,
+                androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh),
+            containerColor = if (materialSurfaceBlurEnabled()) androidx.compose.ui.graphics.Color.Transparent
+                else androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 0.dp,
             title = { Text(title) }, text = body, confirmButton = confirm,
             dismissButton = if (update == null) null else dismiss,
         )
@@ -88,19 +92,21 @@ internal fun UpdateDialog(
             }
         }
     } else {
-        Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
-            top.yukonga.miuix.kmp.basic.Card(
-                Modifier.padding(horizontal = 24.dp).widthIn(max = 420.dp).fillMaxWidth().testTag("update-dialog-miuix"),
-                cornerRadius = 32.dp, insideMargin = PaddingValues(24.dp),
-            ) {
-                Text(title, Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                    style = ArchiveUiTheme.textStyles.title2, textAlign = TextAlign.Center)
-                body()
-                Row(Modifier.fillMaxWidth().padding(top = 16.dp), verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    if (update != null) Box(Modifier.weight(1f)) { dismiss() }
-                    Box(Modifier.weight(1f)) { confirm() }
-                }
+        MiuixBottomDialog(
+            show = true, title = title, onDismissRequest = onDismiss,
+            modifier = Modifier.testTag("update-dialog-miuix"),
+        ) {
+            body()
+            Row(Modifier.fillMaxWidth().padding(top = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (update != null) Box(Modifier.weight(1f)) { dismiss() }
+                top.yukonga.miuix.kmp.basic.TextButton(
+                    text = AppText.get(if (update == null) R.string.ui_ok else R.string.ui_update_download),
+                    onClick = if (update == null) onDismiss else onDownload,
+                    enabled = !saving,
+                    modifier = Modifier.weight(1f).testTag("update-confirm"),
+                    colors = top.yukonga.miuix.kmp.basic.ButtonDefaults.textButtonColorsPrimary(),
+                )
             }
         }
     }

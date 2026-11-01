@@ -13,6 +13,12 @@ import kotlinx.coroutines.launch
 import love.yu.jaychou.BuildConfig
 import love.yu.jaychou.R
 import love.yu.jaychou.data.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import love.yu.jaychou.ui.effects.GlassLayer
+import love.yu.jaychou.ui.components.LocalArchiveBlur
+import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 
 @Composable
 internal fun UpdateHost(
@@ -50,32 +56,41 @@ internal fun UpdateHost(
         }
     }
     CompositionLocalProvider(LocalUpdateController provides controller) {
-        content()
-        val notice = controller.notice
-        if (notice != null) {
-            val uri = LocalUriHandler.current
-            var saving by remember { mutableStateOf(false) }
-            var saveError by remember(notice) { mutableStateOf<String?>(null) }
-            UpdateDialog(
-                notice = notice, autoCheckEnabled = settings.autoCheckUpdates,
-                saving = saving, saveError = saveError,
-                onDismiss = controller::dismiss,
-                onDownload = {
-                    val update = (notice.result as? UpdateResult.Available)?.update
-                    if (update != null) {
-                        try { uri.openUri(update.downloadUrl); controller.dismiss() }
-                        catch (_: RuntimeException) { controller.downloadFailed() }
-                    }
-                },
-                onDisableAutomatic = {
-                    if (!saving) scope.launch {
-                        saving = true
-                        try { disable(); controller.dismiss() }
-                        catch (_: IOException) { saveError = AppText.get(R.string.ui_unable_to_save_settings_please_try_again) }
-                        finally { saving = false }
-                    }
-                },
-            )
+        val scene: @Composable (Modifier) -> Unit = { capture ->
+            Box(Modifier.fillMaxSize().then(capture)) { content() }
+            val notice = controller.notice
+            if (notice != null) {
+                val uri = LocalUriHandler.current
+                var saving by remember { mutableStateOf(false) }
+                var saveError by remember(notice) { mutableStateOf<String?>(null) }
+                UpdateDialog(
+                    notice = notice, autoCheckEnabled = settings.autoCheckUpdates,
+                    saving = saving, saveError = saveError,
+                    onDismiss = controller::dismiss,
+                    onDownload = {
+                        val update = (notice.result as? UpdateResult.Available)?.update
+                        if (update != null) {
+                            try { uri.openUri(update.downloadUrl); controller.dismiss() }
+                            catch (_: RuntimeException) { controller.downloadFailed() }
+                        }
+                    },
+                    onDisableAutomatic = {
+                        if (!saving) scope.launch {
+                            saving = true
+                            try { disable(); controller.dismiss() }
+                            catch (_: IOException) { saveError = AppText.get(R.string.ui_unable_to_save_settings_please_try_again) }
+                            finally { saving = false }
+                        }
+                    },
+                )
+            }
+        }
+        // Updates are siblings of the app, so they need their own backdrop scope.
+        CompositionLocalProvider(LocalArchiveBlur provides settings.blur) {
+            // Keep this wrapper stable across style changes so the active page survives.
+            if (Build.VERSION.SDK_INT >= 33) {
+                GlassLayer(ArchiveUiTheme.colorScheme.background) { capture, _ -> scene(capture) }
+            } else scene(Modifier)
         }
     }
 }

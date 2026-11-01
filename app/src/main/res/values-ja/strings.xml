@@ -434,4 +434,14 @@
     <string name="ui_top_app_bar_blur_summary">Gaussian は均一なぼかし、Progressive は上から下へ徐々に鮮明になるぼかし</string>
     <string name="ui_support_motivation">皆さまの応援が制作の励みです</string>
     <string name="ui_support_qr">開発者支援用のQRコード</string>
+    <string name="ui_theme_settings">テーマ</string>
+    <string name="ui_settings_back">設定に戻る</string>
+    <string name="ui_settings_language">言語</string>
+    <string name="ui_predictive_animation">予測型「戻る」アニメーション</string>
+    <string name="ui_animation_none">なし</string>
+    <string name="ui_animation_classic">クラシック</string>
+    <string name="ui_predictive_exit_direction">終了方向</string>
+    <string name="ui_exit_follow_gesture">ジェスチャーに従う</string>
+    <string name="ui_exit_always_right">常に右</string>
+    <string name="ui_exit_always_left">常に左</string>
 </resources>

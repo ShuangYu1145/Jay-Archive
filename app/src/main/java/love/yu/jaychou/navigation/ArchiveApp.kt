@@ -1,5 +1,6 @@
 package love.yu.jaychou.navigation
 
+import love.yu.jaychou.ui.animation.applySecondaryBackTransform
 import love.yu.jaychou.ui.animation.AlbumOrigin
 import love.yu.jaychou.ui.animation.AlbumSourcePreview
 import love.yu.jaychou.ui.animation.LocalMovingAlbumId
@@ -69,6 +70,8 @@ import love.yu.jaychou.ui.designsystem.Button
 import love.yu.jaychou.ui.designsystem.Card
 import love.yu.jaychou.ui.designsystem.Text
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import love.yu.jaychou.ui.designsystem.CouiWindowMetrics
+import love.yu.jaychou.ui.designsystem.LocalCouiWindowMetrics
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -129,7 +132,9 @@ fun ArchiveApp(
     BoxWithConstraints(Modifier.fillMaxSize()) {
     // Use the current window, so rotation and tablet split-screen resize immediately.
     val useNavigationRail = maxWidth >= 600.dp || maxWidth > maxHeight
-    val useBlur = settings.uiStyle != UiStyle.MATERIAL3 && settings.blur
+    // COUI reads one orientation-aware set of measurements on every screen.
+    val couiMetrics = CouiWindowMetrics.of(maxWidth, maxHeight)
+    val useBlur = settings.blur
     val homeState = rememberLazyListState()
     val albumStateHolder = rememberSaveableStateHolder()
     val categories = settings.albumCategories
@@ -142,6 +147,7 @@ fun ArchiveApp(
     val introductionMotion = remember(introductionPager, scope) { PageMotion(introductionPager, scope) }
     var detailId by rememberSaveable { mutableStateOf<String?>(null) }
     var searchTrackNumber by rememberSaveable { mutableStateOf<Int?>(null) }
+    var settingsDetailOpen by remember { mutableStateOf(false) }
     var albumSearchOpen by remember { mutableStateOf(false) }
     var lastDetailId by rememberSaveable { mutableStateOf<String?>(null) }
     val detail = catalog.find(lastDetailId)
@@ -152,6 +158,8 @@ fun ArchiveApp(
     var hostSize by remember { mutableStateOf(IntSize.Zero) }
     val expansion = remember { Animatable(if (detailId != null) 1f else 0f) }
     val backProgress = remember { Animatable(0f) }
+    var backEdge by remember { mutableFloatStateOf(1f) }
+    var backPivotY by remember { mutableFloatStateOf(.5f) }
     var concertDetailOpen by remember { mutableStateOf(false) }
     var compositionDetailOpen by remember { mutableStateOf(false) }
     var lyricNumber by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -164,14 +172,25 @@ fun ArchiveApp(
     val lyricTrack = detail?.tracks?.find { it.number == lastLyricNumber }
     val detailShown by remember { derivedStateOf { detailId != null || expansion.value > 0f } }
     val navigationVisible by remember {
-        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen }
+        derivedStateOf { (detailId == null || expansion.value < .999f) && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen && !settingsDetailOpen }
     }
-    val predictiveSupported = Build.VERSION.SDK_INT >= 34 && settings.predictiveBack
+    val bottomReveal = remember { Animatable(if (navigationVisible) 1f else 0f) }
+    LaunchedEffect(navigationVisible) {
+        if (navigationVisible) bottomReveal.animateTo(1f, tween(320))
+        else bottomReveal.snapTo(0f)
+    }
+    val predictiveSupported = Build.VERSION.SDK_INT >= 34 && settings.predictiveBack && settings.predictiveBackAnimation != PredictiveBackAnimation.NONE
     val background = ArchiveUiTheme.colorScheme.background
     val density = LocalDensity.current
     val navInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     var navHeightPx by remember { mutableIntStateOf(with(density) { (96.dp + navInset).roundToPx() }) }
     var railWidthPx by remember { mutableIntStateOf(with(density) { 81.dp.roundToPx() }) }
+    // Avoid a one-frame inset jump when COUI changes orientation or width bucket.
+    LaunchedEffect(settings.uiStyle, couiMetrics.railWidth) {
+        railWidthPx = with(density) {
+            (if (settings.uiStyle == UiStyle.COUI) couiMetrics.railWidth else 81.dp).roundToPx()
+        }
+    }
     val bottom = if (useNavigationRail) navInset + 16.dp else with(density) { navHeightPx.toDp() } + 16.dp
     val liquidGlass = settings.liquidGlass && settings.floatingBottomBar && Build.VERSION.SDK_INT >= 33
 
@@ -191,20 +210,24 @@ fun ArchiveApp(
 
     LaunchedEffect(detailId) {
         if (detailId != null) {
+            backEdge = 1f; backPivotY = .5f
             expansion.animateTo(1f, spring(dampingRatio = .88f, stiffness = 320f))
         } else {
-            expansion.snapTo((expansion.value - backProgress.value * .25f).coerceIn(0f, 1f))
-            backProgress.snapTo(0f)
+            if (backProgress.value == 0f) backEdge = 1f
             expansion.animateTo(0f, tween(360))
+            backProgress.snapTo(0f)
             albumSource = null
         }
     }
     LaunchedEffect(lyricNumber) {
-        if (lyricNumber != null) lyricExpansion.animateTo(1f, spring(dampingRatio = .88f, stiffness = 320f))
+        if (lyricNumber != null) {
+            backEdge = 1f; backPivotY = .5f
+            lyricExpansion.animateTo(1f, spring(dampingRatio = .88f, stiffness = 320f))
+        }
         else {
-            lyricExpansion.snapTo((lyricExpansion.value - lyricBack.value * .25f).coerceIn(0f, 1f))
-            lyricBack.snapTo(0f)
+            if (lyricBack.value == 0f) backEdge = 1f
             lyricExpansion.animateTo(0f, tween(360))
+            lyricBack.snapTo(0f)
             lyricSource = null
         }
     }
@@ -217,6 +240,8 @@ fun ArchiveApp(
         val progress = if (lyricNumber != null) lyricBack else backProgress
         try {
             events.collect { event ->
+                backEdge = if (event.swipeEdge == 0) 1f else -1f
+                backPivotY = ((event.touchY - hostOrigin.y) / hostSize.height.coerceAtLeast(1)).coerceIn(.1f, .9f)
                 progress.snapTo(event.progress)
             }
             closeTop()
@@ -232,7 +257,7 @@ fun ArchiveApp(
             .onGloballyPositioned { hostOrigin = it.positionInWindow(); hostSize = it.size }) {
             Box(Modifier.fillMaxSize().then(capture)) {
                 Box(Modifier.fillMaxSize()
-                    .padding(start = if (useNavigationRail && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen)
+                    .padding(start = if (useNavigationRail && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen && !settingsDetailOpen)
                         with(density) { railWidthPx.toDp() } else 0.dp)
                     .graphicsLayer {
                     val depth = (expansion.value - backProgress.value * .25f).coerceIn(0f, 1f)
@@ -244,8 +269,9 @@ fun ArchiveApp(
                     } else null
                 }.then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier)) {
                     RootPager(
-                        state = pager, vertical = useNavigationRail,
-                        userScrollEnabled = !detailShown && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen,
+                        state = pager, vertical = useNavigationRail && settings.uiStyle != UiStyle.COUI,
+                        userScrollEnabled = !(useNavigationRail && settings.uiStyle == UiStyle.COUI) &&
+                            !detailShown && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen && !settingsDetailOpen,
                     ) { page ->
                         Box(Modifier.fillMaxSize().background(ArchiveUiTheme.pageBackground).testTag("page-${RootPage.entries[page].name}")) {
                             when (RootPage.entries[page]) {
@@ -255,7 +281,7 @@ fun ArchiveApp(
                                 }, profile = settings)
                                 RootPage.INTRODUCTION -> IntroductionScreen(
                                     pager = introductionPager,
-                                    enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen,
+                                    enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen && !albumSearchOpen && !settingsDetailOpen,
                                     headerVisible = !albumSearchOpen && !concertDetailOpen && !compositionDetailOpen,
                                     onSelect = introductionMotion::select,
                                 ) { section ->
@@ -286,7 +312,8 @@ fun ArchiveApp(
                                 }
                                 RootPage.SETTINGS -> SettingsScreen(settings, settingsState, bottom,
                                     onTheme, onMonet, onBlur, onPredictive, onAlbumLayout, onCustomColor,
-                                    onLiquidGlass, onFloatingBottomBar, onUiStyle, onTopAppBarBlur)
+                                    onLiquidGlass, onFloatingBottomBar, onUiStyle, onTopAppBarBlur,
+                                    onDetailVisibility = { settingsDetailOpen = it })
                                 RootPage.ABOUT -> AboutScreen(aboutState, bottom, active = pager.currentPage == page)
                             }
                         }
@@ -307,7 +334,8 @@ fun ArchiveApp(
                             hostSize, Modifier.graphicsLayer {
                                 scaleX = 1f - lyricExpansion.value * .035f
                                 scaleY = 1f - lyricExpansion.value * .035f
-                            }.then(if (lyricShown) Modifier.clearAndSetSemantics { } else Modifier)) { coverMotion, bodyMotion, onCoverDetached ->
+                            }.then(if (lyricShown) Modifier.clearAndSetSemantics { } else Modifier),
+                            swipeEdge = backEdge, pivotY = backPivotY, exiting = detailId == null) { coverMotion, bodyMotion, onCoverDetached ->
                             AlbumDetailScreen(detail, detailState, navInset + 28.dp, onBack = {
                                 if (!lyricShown) detailId = null
                             }, coverModifier = coverMotion, bodyModifier = bodyMotion, onCoverDetached = onCoverDetached,
@@ -325,7 +353,8 @@ fun ArchiveApp(
                     if (lyricShown && lyricTrack != null) {
                         key(detail.id, lyricTrack.number) {
                             AnimatedAlbumPanel(detail, lyricExpansion, lyricBack, lyricOrigin, lyricSource,
-                                hostOrigin, hostSize, track = lyricTrack, tag = "lyrics-detail") { coverMotion, bodyMotion, onCoverDetached ->
+                                hostOrigin, hostSize, track = lyricTrack, tag = "lyrics-detail",
+                                swipeEdge = backEdge, pivotY = backPivotY, exiting = lyricNumber == null) { coverMotion, bodyMotion, onCoverDetached ->
                                 LyricsScreen(detail, lyricTrack, onBack = { lyricNumber = null },
                                     coverModifier = coverMotion, bodyModifier = bodyMotion, onCoverDetached = onCoverDetached)
                             }
@@ -340,6 +369,7 @@ fun ArchiveApp(
                         selectedIndex = pager.targetPage,
                         onSelect = pageMotion::select,
                         enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen,
+                        metrics = couiMetrics,
                         modifier = Modifier.align(Alignment.CenterStart)
                             .onSizeChanged { railWidthPx = it.width }
                             .graphicsLayer { alpha = 1f - expansion.value.coerceIn(0f, 1f) }
@@ -354,7 +384,10 @@ fun ArchiveApp(
                     enabled = !detailShown && !concertDetailOpen && !compositionDetailOpen,
                     modifier = Modifier.align(Alignment.BottomCenter)
                         .onSizeChanged { navHeightPx = it.height }
-                        .graphicsLayer { alpha = 1f - expansion.value.coerceIn(0f, 1f); translationY = expansion.value * 24.dp.toPx() }
+                        .graphicsLayer {
+                            alpha = bottomReveal.value * (1f - expansion.value.coerceIn(0f, 1f))
+                            translationY = (1f - bottomReveal.value) * size.height
+                        }
                         .then(if (detailShown) Modifier.clearAndSetSemantics { } else Modifier),
                 )
                 }
@@ -368,6 +401,10 @@ fun ArchiveApp(
         }
     }
     CompositionLocalProvider(
+        love.yu.jaychou.ui.animation.LocalSecondaryPredictiveBack provides settings.predictiveBack,
+        love.yu.jaychou.ui.animation.LocalSecondaryBackAnimation provides settings.predictiveBackAnimation,
+        love.yu.jaychou.ui.animation.LocalSecondaryExitDirection provides settings.predictiveBackExitDirection,
+        LocalCouiWindowMetrics provides couiMetrics,
         LocalArchiveBlur provides useBlur,
         love.yu.jaychou.ui.effects.LocalTopAppBarBlur provides settings.topAppBarBlur,
         LocalArchiveLiquidGlass provides liquidGlass,
@@ -396,44 +433,60 @@ private fun AnimatedAlbumPanel(
     modifier: Modifier = Modifier,
     track: Track? = null,
     tag: String = "album-detail",
+    swipeEdge: Float = 1f, pivotY: Float = .5f, exiting: Boolean = false,
     content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
 ) {
     var destination by remember(album.id, track?.number) { mutableStateOf<Rect?>(null) }
+    var pageCoordinates by remember { mutableStateOf<androidx.compose.ui.layout.LayoutCoordinates?>(null) }
     val density = LocalDensity.current
     val background = ArchiveUiTheme.colorScheme.background
-    val progress = { (expansion.value - back.value * .25f).coerceIn(0f, 1f) }
+    val progress = { expansion.value.coerceIn(0f, 1f) }
+    val artworkProgress = { (expansion.value - back.value * .25f).coerceIn(0f, 1f) }
+    val backStyle = love.yu.jaychou.ui.animation.LocalSecondaryBackAnimation.current
+    val exitDirection = love.yu.jaychou.ui.animation.LocalSecondaryExitDirection.current
     // Shield the pager while leaving the detail and its own scrolling interactive.
     Box(Modifier.fillMaxSize().pointerInput(Unit) {
         awaitPointerEventScope { while (true) awaitPointerEvent() }
     })
     Box(modifier.fillMaxSize().testTag(tag)) {
-        Box(Modifier.fillMaxSize().graphicsLayer {
-            val q = progress()
-            alpha = q
-            translationY = (1f - q) * 48.dp.toPx()
-        }.background(background)) { CustomBackgroundImage() }
-        val coverMotion = Modifier.onGloballyPositioned {
-            val bounds = it.boundsInWindow()
-            destination = bounds.translate(-hostOrigin)
-        }.graphicsLayer {
-            // Keep this node laid out so the independent artwork always has a real destination.
-            alpha = if (progress() >= .999f || destination == null) 1f else 0f
+        // Only the page surface and body follow the directional exit transform.
+        Box(Modifier.fillMaxSize().testTag("$tag-page").graphicsLayer {
+            val exitProgress = if (exiting) 1f - expansion.value.coerceIn(0f, 1f) else 0f
+            val scaleProgress = if (exiting && back.value > 0f) back.value + (1f - back.value) * exitProgress else back.value
+            applySecondaryBackTransform(backStyle, scaleProgress, swipeEdge, pivotY, exitDirection)
+            translationX += exitDirection.sign(swipeEdge) * exitProgress * size.width
+        }.onGloballyPositioned { pageCoordinates = it }) {
+            Box(Modifier.fillMaxSize().graphicsLayer {
+                val q = progress()
+                alpha = q
+                translationY = (1f - q) * 48.dp.toPx()
+            }.background(background)) { CustomBackgroundImage() }
+            val coverMotion = Modifier.onGloballyPositioned {
+                // Measure in the page's local space, excluding its back/exit transform.
+                destination = pageCoordinates?.takeIf { page -> page.isAttached }
+                    ?.localBoundingBoxOf(it, clipBounds = false)
+                    ?: it.boundsInWindow().translate(-hostOrigin)
+            }.graphicsLayer {
+                // Keep this node laid out so the independent artwork always has a real destination.
+                alpha = if (artworkProgress() >= .999f || destination == null) 1f else 0f
+            }
+            val bodyMotion = Modifier.graphicsLayer {
+                val q = progress()
+                alpha = ((q - .12f) / .88f).coerceIn(0f, 1f)
+                translationY = (1f - q) * 64.dp.toPx()
+            }
+            Box(Modifier.fillMaxSize().graphicsLayer { alpha = progress() }) {
+                content(coverMotion, bodyMotion) { destination = null }
+            }
         }
-        val bodyMotion = Modifier.graphicsLayer {
-            val q = progress()
-            alpha = ((q - .12f) / .88f).coerceIn(0f, 1f)
-            translationY = (1f - q) * 64.dp.toPx()
-        }
-        Box(Modifier.fillMaxSize().graphicsLayer { alpha = progress() }) {
-            content(coverMotion, bodyMotion) { destination = null }
-        }
+        // Sibling overlay: the artwork never inherits the page translation or scale.
         val target = destination
-        if (target != null && target.width > 0f && target.height > 0f && progress() < .999f) {
+        if (target != null && target.width > 0f && target.height > 0f && artworkProgress() < .999f) {
             // Draw at destination resolution and transform only the artwork, never the whole page.
             Box(
                 Modifier.requiredSize(with(density) { target.width.toDp() }, with(density) { target.height.toDp() })
                     .graphicsLayer {
-                        val q = progress()
+                        val q = artworkProgress()
                         // Follow the actual source as the pager depth and press feedback settle.
                         val start = source?.currentCoverBounds()?.translate(-hostOrigin)
                             ?: Rect(origin[0] * hostSize.width, origin[1] * hostSize.height,
@@ -452,14 +505,14 @@ private fun AnimatedAlbumPanel(
                     track?.artwork?.coverUrl ?: album.coverUrl,
                     AppText.get(R.string.ui_artwork_232, track?.title ?: album.title),
                     Modifier.fillMaxSize().graphicsLayer {
-                        alpha = if (sourceLayer == null) 1f else progress()
+                        alpha = if (sourceLayer == null) 1f else artworkProgress()
                     },
                     contentScale = if (track == null) ContentScale.Fit else ContentScale.Crop,
                     crossfade = false,
                     showStatus = track == null,
                 )
                 // At the list endpoint this is the original rendering, including its crop.
-                AlbumSourcePreview(sourceLayer) { 1f - progress() }
+                AlbumSourcePreview(sourceLayer) { 1f - artworkProgress() }
             }
         }
     }

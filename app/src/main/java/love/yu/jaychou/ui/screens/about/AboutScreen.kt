@@ -1,4 +1,6 @@
 package love.yu.jaychou.ui.screens.about
+import love.yu.jaychou.ui.effects.materialFrostedSurface
+import love.yu.jaychou.ui.effects.materialSurfaceBlurEnabled
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -235,6 +237,7 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
             "1008" -> "庭庭，不管怎样，我会永远爱你的"
             "庭庭" -> "永远爱你哟"
             "度蜜月卡" -> "蜜蜜蜜蜜"
+            "啾啾啾" -> "啾啾啾啾"
             "同性恋" -> "我理解你可能出于信仰、传统或对陌生事物的不安而持有不同看法，你可以保留自己的道德或宗教观点；但请把“不认同”停留在个人信念层面，而不是变成对身边人的羞辱、排斥、歧视或要求剥夺他们平等生活、工作和相爱的权利。同性恋者和你一样，是努力生活、爱家人、希望被尊重的普通人，他们相爱的方式并没有伤害你。社会可以有不同的声音，但文明底线是不因一个人爱谁而否定他的人格与尊严。你可以不祝福，但请别伤害；如果愿意，先听一个真实的人讲讲他的生活，很多敌意会变成理解。"
             else -> null
         }
@@ -243,9 +246,12 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
     val dismissLabel = if (message == null) AppText.get(R.string.ui_cancel) else AppText.get(R.string.ui_confirm)
     if (ArchiveUiTheme.isMaterial) {
         if (show) androidx.compose.material3.AlertDialog(
-            modifier = Modifier.testTag("about-easter-egg-dialog"),
+            modifier = Modifier.testTag("about-easter-egg-dialog").materialFrostedSurface(
+                androidx.compose.material3.AlertDialogDefaults.shape,
+                androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh),
             onDismissRequest = onDismiss,
-            containerColor = if (ArchiveUiTheme.colorScheme.background.luminance() < .5f) Color.Black
+            containerColor = if (materialSurfaceBlurEnabled()) Color.Transparent
+                else if (ArchiveUiTheme.colorScheme.background.luminance() < .5f) Color.Black
                 else androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerHigh,
             tonalElevation = 0.dp,
             title = { androidx.compose.material3.Text(message ?: "彩蛋") },
@@ -287,7 +293,7 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
         }
         return
     }
-    CenteredEasterEggDialog(
+    MiuixEasterEggDialog(
         show = show,
         title = message ?: "彩蛋",
         onDismissRequest = onDismiss,
@@ -312,40 +318,17 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
 }
 
 @Composable
-private fun CenteredEasterEggDialog(
+private fun MiuixEasterEggDialog(
     show: Boolean,
     title: String,
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    if (!show) return
-    val colors = top.yukonga.miuix.kmp.theme.MiuixTheme.colorScheme
-    // Miuix WindowDialog aligns to the bottom on phones. A platform dialog host
-    // centers the same native Miuix surface and controls at every window size.
-    androidx.compose.ui.window.Dialog(
-        onDismissRequest = onDismissRequest,
-        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false),
-    ) {
-        top.yukonga.miuix.kmp.basic.Card(
-            modifier = Modifier.padding(horizontal = 24.dp).widthIn(max = 420.dp)
-                .fillMaxWidth().testTag("about-easter-egg-dialog"),
-            cornerRadius = 32.dp,
-            insideMargin = PaddingValues(24.dp),
-            colors = top.yukonga.miuix.kmp.basic.CardDefaults.defaultColors(
-                color = if (colors.background.luminance() < .5f) Color.Black
-                    else top.yukonga.miuix.kmp.layout.DialogDefaults.backgroundColor(),
-            ),
-        ) {
-            top.yukonga.miuix.kmp.basic.Text(
-                text = title,
-                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-            )
-            content()
-        }
-    }
+    love.yu.jaychou.ui.designsystem.MiuixBottomDialog(
+        show = show, title = title, onDismissRequest = onDismissRequest,
+        modifier = Modifier.testTag("about-easter-egg-dialog"),
+        content = content,
+    )
 }
 
 @Composable

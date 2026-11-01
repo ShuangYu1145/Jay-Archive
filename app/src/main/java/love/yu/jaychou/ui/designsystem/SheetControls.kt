@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
+import love.yu.jaychou.ui.effects.materialFrostedSurface
+import love.yu.jaychou.ui.effects.materialSurfaceBlurEnabled
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,6 +32,7 @@ fun WindowBottomSheet(show: Boolean, title: String, onDismissRequest: () -> Unit
             return
         }
         top.yukonga.miuix.kmp.window.WindowBottomSheet(show, title = title,
+            backgroundColor = ArchiveUiTheme.colorScheme.surfaceContainer,
             onDismissRequest = onDismissRequest, startAction = startAction, endAction = endAction,
             content = { Column(content = content) })
         return
@@ -37,6 +40,11 @@ fun WindowBottomSheet(show: Boolean, title: String, onDismissRequest: () -> Unit
     if (!show) return
     val maxHeight = LocalConfiguration.current.screenHeightDp.dp * .8f
     androidx.compose.material3.ModalBottomSheet(
+        modifier = Modifier.materialFrostedSurface(androidx.compose.material3.BottomSheetDefaults.ExpandedShape,
+            androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLow),
+        containerColor = if (materialSurfaceBlurEnabled()) Color.Transparent
+            else androidx.compose.material3.MaterialTheme.colorScheme.surfaceContainerLow,
+        tonalElevation = 0.dp,
         onDismissRequest = onDismissRequest,
         sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {

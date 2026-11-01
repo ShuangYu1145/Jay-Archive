@@ -45,12 +45,13 @@ class UpdateFlowTest {
             .put("assets", assets)).toString()
     }
     private fun waitForDialog(tag: String) {
-        app.waitUntil(5_000) { app.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
-        app.onNodeWithTag(tag).assertIsDisplayed()
+        // Miuix's outside-tap dismiss area merges the dialog surface into its semantics.
+        app.waitUntil(5_000) { app.onAllNodesWithTag(tag, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty() }
+        app.onNodeWithTag(tag, useUnmergedTree = true).assertIsDisplayed()
     }
     private fun screenshot(tag: String, name: String) {
         File(context.getExternalFilesDir(null), name).outputStream().use {
-            app.onNodeWithTag(tag).captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
+            app.onNodeWithTag(tag, useUnmergedTree = true).captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
         }
     }
 

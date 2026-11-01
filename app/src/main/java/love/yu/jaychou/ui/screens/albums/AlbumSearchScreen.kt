@@ -43,7 +43,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
+import love.yu.jaychou.ui.animation.LocalSecondaryPageReady
 import love.yu.jaychou.data.*
 import love.yu.jaychou.ui.designsystem.Card
 import love.yu.jaychou.ui.designsystem.Text
@@ -72,7 +72,16 @@ internal fun AlbumSearchScreen(
     val list = rememberLazyListState()
     val focus = remember { FocusRequester() }
     val keyboard = LocalSoftwareKeyboardController.current
-    LaunchedEffect(Unit) { delay(200); focus.requestFocus() }
+    val pageReady = LocalSecondaryPageReady.current
+    var initialFocusRequested by remember { mutableStateOf(false) }
+    // Requesting focus while this page is translated makes the enclosing introduction
+    // pager scroll to reveal the field, exposing the neighbouring concerts page.
+    LaunchedEffect(pageReady) {
+        if (pageReady && !initialFocusRequested) {
+            focus.requestFocus()
+            initialFocusRequested = true
+        }
+    }
     LaunchedEffect(query) { list.scrollToItem(0) }
     // The search overlay is inside the introduction's capture. Its toolbar must
     // sample a separate background, never that ancestor layer containing itself.

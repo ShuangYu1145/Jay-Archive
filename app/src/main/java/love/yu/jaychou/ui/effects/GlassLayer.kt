@@ -19,6 +19,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
+import androidx.compose.ui.draw.drawBehind
 import top.yukonga.miuix.kmp.blur.*
 import love.yu.jaychou.ui.effects.liquid.rememberCombinedBackdrop
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
@@ -67,7 +68,8 @@ fun GlassLayer(
 /** Includes the status-bar inset in the sampled, tinted header surface. */
 @RequiresApi(33)
 @Composable
-fun HeaderGlassLayer(tint: Color, content: @Composable (Modifier, Modifier) -> Unit, progressive: Boolean = false) {
+fun HeaderGlassLayer(tint: Color, content: @Composable (Modifier, Modifier) -> Unit,
+                     progressive: Boolean = false, surfaceProgress: () -> Float = { 1f }) {
     val backdrop = rememberLayerBackdrop()
     val composite = withWallpaper(backdrop)
     val surfaceTint = if (LocalFloatingBottomBar.current && backgroundCardBlurEnabled())
@@ -80,17 +82,22 @@ fun HeaderGlassLayer(tint: Color, content: @Composable (Modifier, Modifier) -> U
         effects = {
             if (progressive) progressiveHeaderBlur(22.dp.toPx()) else nativeBackdropBlur(22.dp.toPx())
         }, onDrawBackdrop = { draw ->
-            if (progressive) {
+            val progress = surfaceProgress().coerceIn(0f, 1f)
+            if (progress > 0f && (progressive || progress < 1f)) {
                 // Fade the sampled image itself, not just its tint. Never mask toolbar content.
                 drawContext.canvas.saveLayer(Rect(Offset.Zero, size), maskPaint)
                 draw()
-                drawRect(Brush.verticalGradient(0f to Color.White, .55f to Color.White,
-                    1f to Color.Transparent), blendMode = BlendMode.DstIn)
+                if (progressive) drawRect(Brush.verticalGradient(0f to Color.White.copy(alpha = progress),
+                    .55f to Color.White.copy(alpha = progress), 1f to Color.Transparent), blendMode = BlendMode.DstIn)
+                else drawRect(Color.White.copy(alpha = progress), blendMode = BlendMode.DstIn)
                 drawContext.canvas.restore()
-            } else draw()
+            } else if (progress > 0f) draw()
         })
-        .then(if (progressive) Modifier.background(androidx.compose.ui.graphics.Brush.verticalGradient(
-            listOf(surfaceTint, Color.Transparent))) else Modifier.background(surfaceTint))
+        .drawBehind {
+            val color = surfaceTint.copy(alpha = surfaceTint.alpha * surfaceProgress().coerceIn(0f, 1f))
+            if (progressive) drawRect(Brush.verticalGradient(listOf(color, Color.Transparent)))
+            else drawRect(color)
+        }
         .then(if (progressive) Modifier.headerContentInset() else Modifier)
     CompositionLocalProvider(LocalNavigationBackdrop provides composite) {
         content(Modifier.layerBackdrop(backdrop), header)

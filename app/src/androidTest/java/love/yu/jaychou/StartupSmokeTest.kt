@@ -21,7 +21,7 @@ class StartupSmokeTest {
             // Avoid ActivityScenario's wait-for-idle gate: glass can keep producing frames.
             context.startActivity(Intent(context, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
-            awaitHome("initial launch")
+            awaitAppContent("initial launch")
             screenshot("startup-home.png")
             val previous = resumedActivity()!!
             instrumentation.runOnMainSync { previous.recreate() }
@@ -32,12 +32,12 @@ class StartupSmokeTest {
                 SystemClock.sleep(100)
             }
             assertTrue("Activity must be recreated", resumedActivity()?.let { it !== previous } == true)
-            awaitHome("Activity recreation")
+            awaitAppContent("Activity recreation")
             instrumentation.uiAutomation.executeShellCommand("input keyevent KEYCODE_HOME").close()
             SystemClock.sleep(500)
             context.startActivity(Intent(context, MainActivity::class.java)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP))
-            awaitHome("resume")
+            awaitAppContent("resume")
         } finally {
             val current = resumedActivity()
             instrumentation.runOnMainSync { current?.finish() }
@@ -53,14 +53,15 @@ class StartupSmokeTest {
         return activity
     }
 
-    private fun awaitHome(phase: String) {
-        val labels = setOf("介绍", "Explore", "介紹", "紹介", "소개")
+    private fun awaitAppContent(phase: String) {
+        // A fresh installation shows the welcome gate; returning users see home navigation.
+        val labels = setOf("介绍", "Explore", "介紹", "紹介", "소개", "欢迎来到杰作", "Welcome to Jay Archive")
         val deadline = SystemClock.uptimeMillis() + 20_000
         while (SystemClock.uptimeMillis() < deadline) {
             if (labels.any(::hasText)) return
             SystemClock.sleep(100)
         }
-        assertTrue("Home navigation must be visible after $phase", labels.any(::hasText))
+        assertTrue("Welcome or home content must be visible after $phase", labels.any(::hasText))
     }
 
     private fun hasText(label: String): Boolean {

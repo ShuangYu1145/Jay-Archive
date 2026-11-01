@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="welcome_title">欢迎来到杰作</string>
+    <string name="welcome_subtitle">把熟悉的旋律，收进一本口袋档案。</string>
+    <string name="welcome_features">翻阅专辑与曲目，重温创作足迹。\n阅读歌词，发现熟悉旋律里的细节。\n关注巡演行程，期待下一次相遇。</string>
+    <string name="welcome_statement">使用说明与隐私</string>
+    <string name="welcome_statement_subtitle">开始之前，先了解这本档案。</string>
+    <string name="welcome_statement_summary">杰作是一款非官方粉丝档案应用，提供作品资料、歌词阅读与演唱会信息。部分功能需要联网，使用前请阅读详细说明。</string>
+    <string name="welcome_read_details">查看完整说明</string>
+    <string name="welcome_agreement">我已阅读并了解以上使用说明与隐私信息</string>
+    <string name="welcome_appearance">选择你的风格</string>
+    <string name="welcome_appearance_subtitle">三种界面，同一本杰作。以后也能在设置中调整。</string>
+    <string name="welcome_miuix">简洁圆润，熟悉的 HyperOS 体验</string>
+    <string name="welcome_coui">柔和层次，ColorOS 风格</string>
+    <string name="welcome_material">Material Design 3，自然灵动</string>
+    <string name="welcome_color_mode">显示模式</string>
+    <string name="welcome_ready">准备就绪</string>
+    <string name="welcome_ready_subtitle">从第一张专辑开始，再遇见周杰伦。</string>
+    <string name="welcome_ready_note">外观选择将在开始探索时保存。\n专辑目录可离线翻阅；歌词查询、封面与巡演资料等在线内容需要网络连接。</string>
+    <string name="welcome_policy_subtitle">这些说明也可以离线查看。</string>
+    <string name="welcome_policy_local">本地数据\n无需注册账号。外观偏好、个人资料及导入的图片和歌词文件保存在设备上；系统备份可能包含应用数据。可通过系统设置清除应用数据。</string>
+    <string name="welcome_policy_network">联网内容\n在线歌词查询会向 VKeys 接口发送歌曲或歌手等查询信息；巡演资料和图片会访问 JVR、大麦等来源；检查更新会连接 GitHub。相关服务可获得请求内容及 IP 地址等网络信息。自动检查更新可在设置中关闭。</string>
+    <string name="welcome_policy_scope">资料与使用范围\n本应用与周杰伦及相关权利方无官方关联，不提供音乐播放、下载或票务交易。作品与图片等内容的权利归各自权利方所有；演出时间、座位与票务信息请以官方来源最新公告为准。</string>
+    <string name="welcome_previous">上一步</string>
+    <string name="welcome_back">返回</string>
+    <string name="welcome_saving">正在保存…</string>
+    <string name="welcome_begin">开启杰作</string>
+    <string name="welcome_enter">开始探索</string>
+    <string name="welcome_next">下一步</string>
+</resources>

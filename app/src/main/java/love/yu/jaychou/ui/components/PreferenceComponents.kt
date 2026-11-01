@@ -3,6 +3,7 @@ package love.yu.jaychou.ui.components
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
@@ -18,7 +19,12 @@ internal fun PreferenceTitle(text: String) {
 
 @Composable
 internal fun PreferenceCard(content: @Composable ColumnScope.() -> Unit) {
-    Card(insideMargin = PaddingValues(0.dp), content = content)
+    if (ArchiveUiTheme.isMaterial) {
+        androidx.compose.foundation.layout.Column(
+            Modifier.fillMaxWidth().then(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(28.dp))),
+            verticalArrangement = Arrangement.spacedBy(2.dp), content = content,
+        )
+    } else Card(insideMargin = PaddingValues(0.dp), content = content)
 }
 
 @Composable

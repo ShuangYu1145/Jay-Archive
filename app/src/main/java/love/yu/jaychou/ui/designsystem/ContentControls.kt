@@ -64,7 +64,8 @@ fun Card(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val blurCards = backgroundCardBlurEnabled()
-    val cardModifier = if (blurCards) modifier.backgroundCardBlur(RoundedCornerShape(cornerRadius)) else modifier
+    val cardShape = RoundedCornerShape(cornerRadius)
+    val cardModifier = if (blurCards) modifier.backgroundCardBlur(cardShape) else modifier
     // The native surface owns its tint even when the backdrop isn't ready or cannot draw.
     val cardColors = if (blurCards) CardColors(colors.color.copy(alpha = BackgroundBlurSurfaceAlpha), colors.contentColor) else colors
     if (ArchiveUiTheme.isMaterial) {

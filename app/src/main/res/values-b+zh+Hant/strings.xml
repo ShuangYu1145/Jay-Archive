@@ -434,4 +434,14 @@
     <string name="ui_top_app_bar_blur_summary">Gaussian 為均勻高斯模糊，Progressive 為由上到下逐漸清晰的漸變模糊</string>
     <string name="ui_support_motivation">你們的支持是我最大的動力</string>
     <string name="ui_support_qr">支持作者 QR 碼</string>
+    <string name="ui_theme_settings">主題</string>
+    <string name="ui_settings_back">返回設定</string>
+    <string name="ui_settings_language">語言</string>
+    <string name="ui_predictive_animation">預測性返回動畫</string>
+    <string name="ui_animation_none">無</string>
+    <string name="ui_animation_classic">經典</string>
+    <string name="ui_predictive_exit_direction">退出方向</string>
+    <string name="ui_exit_follow_gesture">跟隨手勢</string>
+    <string name="ui_exit_always_right">始終向右</string>
+    <string name="ui_exit_always_left">始終向左</string>
 </resources>

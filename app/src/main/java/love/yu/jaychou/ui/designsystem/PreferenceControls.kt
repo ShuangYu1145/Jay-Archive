@@ -1,5 +1,8 @@
 package love.yu.jaychou.ui.designsystem
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +23,9 @@ import androidx.compose.ui.unit.dp
 import love.yu.jaychou.R
 import love.yu.jaychou.data.AppText
 import top.yukonga.miuix.kmp.preference.CheckboxLocation
+import love.yu.jaychou.ui.effects.materialFrostedSurface
+import love.yu.jaychou.ui.effects.materialSurfaceBlurEnabled
+import love.yu.jaychou.ui.effects.materialCardSurface
 
 @Composable
 fun BasicComponent(
@@ -30,11 +36,14 @@ fun BasicComponent(
 ) {
     if (ArchiveUiTheme.isMaterial) {
         androidx.compose.material3.ListItem(
-            headlineContent = { androidx.compose.material3.Text(title) },
-            supportingContent = summary?.let { { androidx.compose.material3.Text(it) } },
+            headlineContent = { androidx.compose.material3.Text(title, style = MaterialTheme.typography.titleMedium) },
+            supportingContent = summary?.let { { androidx.compose.material3.Text(it, style = MaterialTheme.typography.bodyMedium) } },
             leadingContent = startAction,
             trailingContent = endActions?.let { { Row(content = it) } },
-            modifier = modifier.then(if (onClick != null) Modifier.clickable(enabled = enabled, onClick = onClick) else Modifier)
+            modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(4.dp))
+                .materialCardSurface(RoundedCornerShape(4.dp), MaterialTheme.colorScheme.surfaceContainerHigh)
+                .heightIn(min = if (summary == null) 64.dp else 80.dp)
+                .then(if (onClick != null) Modifier.clickable(enabled = enabled, onClick = onClick) else Modifier)
                 .then(if (enabled) Modifier else Modifier.alpha(.38f)),
             colors = androidx.compose.material3.ListItemDefaults.colors(containerColor = Color.Transparent),
         )
@@ -67,7 +76,8 @@ fun SwitchPreference(title: String, summary: String, checked: Boolean, onChecked
                      enabled: Boolean = true, modifier: Modifier = Modifier) {
     if (ArchiveUiTheme.isMaterial) BasicComponent(title,
         modifier.toggleable(checked, enabled = enabled, role = Role.Switch, onValueChange = onCheckedChange), summary,
-        endActions = { androidx.compose.material3.Switch(checked, onCheckedChange = null, enabled = enabled) },
+        endActions = { androidx.compose.material3.Switch(checked, onCheckedChange = null, enabled = enabled,
+            thumbContent = if (checked) ({ androidx.compose.material3.Text("✓", style = MaterialTheme.typography.labelSmall) }) else null) },
         enabled = enabled)
     else if (ArchiveUiTheme.isCoui) io.github.suqi8.coui.kmp.preference.SwitchPreference(title = title, summary = summary,
         checked = checked, onCheckedChange = onCheckedChange, enabled = enabled,
@@ -93,10 +103,10 @@ fun CheckboxPreference(title: String, summary: String, checked: Boolean, onCheck
 @Composable
 fun OverlayDropdownPreference(title: String, items: List<String>, selectedIndex: Int,
                               onSelectedIndexChange: (Int) -> Unit, modifier: Modifier = Modifier,
-                              summary: String? = null) {
+                              summary: String? = null, startAction: (@Composable () -> Unit)? = null) {
     if (ArchiveUiTheme.isCoui) {
         io.github.suqi8.coui.kmp.preference.OverlayDropdownPreference(title = title, items = items,
-            selectedIndex = selectedIndex, onSelectedIndexChange = onSelectedIndexChange,
+            selectedIndex = selectedIndex, onSelectedIndexChange = onSelectedIndexChange, startAction = startAction,
             modifier = modifier.heightIn(min = CouiLayout.RowMinHeight),
             insideMargin = CouiLayout.RowPadding,
             bottomAction = summary?.let { { CouiPreferenceSummary(it) } })
@@ -104,14 +114,18 @@ fun OverlayDropdownPreference(title: String, items: List<String>, selectedIndex:
     }
     if (!ArchiveUiTheme.isMaterial) {
         top.yukonga.miuix.kmp.preference.OverlayDropdownPreference(title = title, items = items,
-            selectedIndex = selectedIndex, onSelectedIndexChange = onSelectedIndexChange, modifier = modifier, summary = summary)
+            selectedIndex = selectedIndex, onSelectedIndexChange = onSelectedIndexChange, modifier = modifier, summary = summary, startAction = startAction)
         return
     }
     var expanded by rememberSaveable { mutableStateOf(false) }
-    BasicComponent(title, modifier.semantics { stateDescription = items.getOrElse(selectedIndex) { "" } }, summary,
-        endActions = { Text(items.getOrElse(selectedIndex) { "" }, color = MaterialTheme.colorScheme.primary) },
+    BasicComponent(title, modifier.semantics { stateDescription = items.getOrElse(selectedIndex) { "" } },
+        listOfNotNull(items.getOrNull(selectedIndex), summary).joinToString("\n"), startAction = startAction,
         onClick = { expanded = true })
     if (expanded) androidx.compose.material3.AlertDialog(
+        modifier = Modifier.materialFrostedSurface(androidx.compose.material3.AlertDialogDefaults.shape,
+            MaterialTheme.colorScheme.surfaceContainerHigh),
+        containerColor = if (materialSurfaceBlurEnabled()) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh,
+        tonalElevation = 0.dp,
         onDismissRequest = { expanded = false },
         title = { androidx.compose.material3.Text(title) },
         text = {
