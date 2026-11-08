@@ -1,7 +1,6 @@
 package love.yu.jaychou
 
 import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -110,50 +109,28 @@ class UiStyleSwitchTest {
         screenshot("miuix-settings.png")
     }
 
-    @Test fun materialCategoriesSearchAlbumAndLyricsUseTheSameCatalog() = categoriesSearchAlbumAndLyrics(UiStyle.MATERIAL3)
+    @Test fun materialCategoriesSearchAndAlbumUseTheSameCatalog() = categoriesSearchAndAlbum(UiStyle.MATERIAL3)
 
-    @Test fun couiCategoriesSearchAlbumAndLyricsUseTheSameCatalog() = categoriesSearchAlbumAndLyrics(UiStyle.COUI)
+    @Test fun couiCategoriesSearchAndAlbumUseTheSameCatalog() = categoriesSearchAndAlbum(UiStyle.COUI)
 
-    private fun categoriesSearchAlbumAndLyrics(style: UiStyle) {
+    private fun categoriesSearchAndAlbum(style: UiStyle) {
         val album = AlbumRepository.load(context).find("1152151605810958336")!!
-        val track = album.tracks[1]
-        val original = runBlocking { LyricsRepository.local(context, album, track) }
-        val fixture = File(context.cacheDir, "material-lyrics-preview.txt")
-        fixture.writeText("界面预览用示例文字\n\n原文在独立阅读卡片中自然换行\n每段之间保留舒适的阅读间距\n\n这里只用于检查字号、留白和封面圆角\n歌词页面不显示主打星标\n")
-        runBlocking { LyricsRepository.import(context, album, track, Uri.fromFile(fixture)) }
-        try {
-            show(style)
-            app.onNodeWithTag("tab-INTRODUCTION").performClick()
-            app.onNodeWithTag("tab-ALBUMS").performClick()
-            app.onNodeWithTag("release-filter").performClick()
-            app.onNodeWithTag("category-SINGLE").performClick()
-            app.onNode(hasText(AppText.get(R.string.ui_confirm)) or hasContentDescription(AppText.get(R.string.ui_confirm))).performClick()
-            app.onAllNodesWithTag("category-sheet").assertCountEquals(0)
-            app.onNodeWithTag("album-search-open").performClick()
-            app.onNodeWithTag("album-search-input").performTextInput("Common")
-            app.onNodeWithTag("search-album-${album.id}").performClick()
-            app.onNodeWithTag("album-detail").assertIsDisplayed()
-            app.onNodeWithTag("album-detail-list").performScrollToIndex(4)
-            app.onNodeWithTag("track-2").assertIsDisplayed()
-            screenshot("${style.name}-tracks.png")
-            app.onNodeWithTag("track-2").performClick()
-            app.onNodeWithTag("lyrics-song-card").assertIsDisplayed()
-            app.onNodeWithTag("lyrics-list").assertIsDisplayed()
-            app.onNodeWithText("界面预览用示例文字").assertIsDisplayed()
-            app.onAllNodesWithText("🌟").assertCountEquals(0)
-            screenshot("${style.name}-lyrics.png")
-            app.onNodeWithContentDescription(AppText.get(R.string.ui_back_to_album_details)).performClick()
-            app.onNodeWithTag("track-2").assertIsDisplayed()
-        } finally {
-            runBlocking {
-                if (original == null) LyricsRepository.removeLocal(context, album, track)
-                else {
-                    fixture.writeText(original)
-                    LyricsRepository.import(context, album, track, Uri.fromFile(fixture))
-                }
-            }
-            fixture.delete()
-        }
+        show(style)
+        app.onNodeWithTag("tab-INTRODUCTION").performClick()
+        app.onNodeWithTag("tab-ALBUMS").performClick()
+        app.onNodeWithTag("release-filter").performClick()
+        app.onNodeWithTag("category-SINGLE").performClick()
+        app.onNode(hasText(AppText.get(R.string.ui_confirm)) or hasContentDescription(AppText.get(R.string.ui_confirm))).performClick()
+        app.onAllNodesWithTag("category-sheet").assertCountEquals(0)
+        app.onNodeWithTag("album-search-open").performClick()
+        app.onNodeWithTag("album-search-input").performTextInput("Common")
+        app.onNodeWithTag("search-album-${album.id}").performClick()
+        app.onNodeWithTag("album-detail").assertIsDisplayed()
+        app.onNodeWithTag("album-detail-list").performScrollToIndex(4)
+        app.onNodeWithTag("track-2").assertIsDisplayed()
+        screenshot("${style.name}-tracks.png")
+        app.onNodeWithTag("track-2").assertHasNoClickAction()
+        app.onNodeWithTag("lyrics-detail").assertDoesNotExist()
     }
 
     @Test fun appearanceProfilesPersistWithoutOverwritingEachOther() = runBlocking {
@@ -216,7 +193,7 @@ class UiStyleSwitchTest {
         app.onNodeWithTag("color-apply").performClick()
         app.onNodeWithTag("color-sheet").assertDoesNotExist()
         app.onNodeWithTag("settings-back").performClick()
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("about-settings").performScrollTo().performClick()
         app.onNodeWithTag("about-developer-card").performScrollTo()
         repeat(4) { app.onNodeWithTag("about-developer-card").performClick() }
         app.onNodeWithTag("about-easter-egg-input").performTextInput("0118")

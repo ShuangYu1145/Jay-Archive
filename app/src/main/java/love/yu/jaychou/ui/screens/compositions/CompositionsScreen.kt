@@ -84,7 +84,7 @@ fun CompositionsScreen(layout: AlbumLayout, bottom: Dp, active: Boolean, onDetai
         }) { padding ->
             BoxWithConstraints(Modifier.fillMaxSize()) {
                 val columns = when (layout) {
-                    AlbumLayout.LIST -> 1
+                    AlbumLayout.LIST, AlbumLayout.COVER_FLOW -> 1
                     AlbumLayout.GRID -> maxOf(2, ((maxWidth - compositionInset * 2 + 14.dp) / 194.dp).toInt())
                     AlbumLayout.LARGE -> maxOf(1, ((maxWidth - compositionInset * 2 + 14.dp) / 374.dp).toInt())
                 }

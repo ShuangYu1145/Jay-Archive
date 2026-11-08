@@ -68,7 +68,7 @@ class ArchiveNavigationTest {
         val navigationBounds = app.onNodeWithTag("floating-navigation").fetchSemanticsNode().boundsInRoot
         assertTrue("The clicked title must be above the floating bar", titleBounds.bottom < navigationBounds.top)
         app.onNodeWithText("范特西").assertIsDisplayed()
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
         openAlbums()
         app.onNodeWithText("范特西").assertIsDisplayed().performClick()
         app.onNodeWithTag("album-detail").assertIsDisplayed()
@@ -128,14 +128,17 @@ class ArchiveNavigationTest {
 
     @Test fun albumLayoutsAndIndependentSettingsSurviveRecreation() {
         ready()
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("about-settings").performScrollTo().performClick()
         app.onNodeWithText("JAY ARCHIVE").assertIsDisplayed()
         app.onAllNodes(hasText("主题模式") and hasAnyAncestor(hasTestTag("page-ABOUT"))).assertCountEquals(0)
+        app.onNodeWithTag("about-back").performClick()
         val albums = AlbumRepository.load(app.activity).albums.filter { it.category == ReleaseCategory.STUDIO }
         val first = "album-${albums.first().id}"
         val target = "album-${albums[6].id}"
         val saved = mutableMapOf<AlbumLayout, Float>()
-        AlbumLayout.entries.forEach { layout ->
+        val gridLayouts = AlbumLayout.entries.filter { it != AlbumLayout.COVER_FLOW }
+        gridLayouts.forEach { layout ->
             chooseAlbumLayout(layout)
             openAlbums()
             val card = app.onNodeWithTag(first).fetchSemanticsNode().boundsInRoot
@@ -148,6 +151,7 @@ class ArchiveNavigationTest {
                 }
                 AlbumLayout.LIST -> assertTrue("List rows are wide and compact", card.width > viewport.width * .9f && card.height < card.width * .6f)
                 AlbumLayout.LARGE -> assertTrue("Large cards feature a full-width square cover", card.width > viewport.width * .9f && card.height > card.width)
+                AlbumLayout.COVER_FLOW -> error("The 3D shelf is verified by AlbumCoverFlowTest")
             }
             app.onNodeWithTag("albums-grid").performScrollToIndex(7)
             app.onNodeWithTag(target).assertIsDisplayed()
@@ -168,7 +172,7 @@ class ArchiveNavigationTest {
             app.onNodeWithTag(target).assertIsDisplayed()
             assertTrue("Recreation preserves ${layout.label} position", kotlin.math.abs(catalogScrollPosition() - saved.getValue(layout)) < .001f)
         }
-        AlbumLayout.entries.forEach { layout ->
+        gridLayouts.forEach { layout ->
             chooseAlbumLayout(layout)
             openAlbums()
             app.onNodeWithTag(target).assertIsDisplayed()
@@ -185,14 +189,13 @@ class ArchiveNavigationTest {
             moveTo(Offset(width * 9f / 10f, centerY), 500)
             up()
         }
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         navigation.performTouchInput {
             down(Offset(width * 9f / 10f, centerY))
             moveTo(Offset(width / 10f, centerY), 500)
             cancel()
         }
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
-        app.onNodeWithTag("root-pager").performTouchInput { swipeRight() }
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         app.onNodeWithTag("root-pager").performTouchInput { swipeRight() }
         app.onNodeWithTag("tab-INTRODUCTION").assertIsSelected()
@@ -425,6 +428,7 @@ class ArchiveNavigationTest {
         app.onNodeWithTag("top-bar-首页").assertIsDisplayed()
         assertTrue("Header surface includes the status bar", app.onNodeWithTag("top-bar-首页").fetchSemanticsNode().boundsInRoot.top < 1f)
         openAlbums()
+        app.onNodeWithTag("about-back").performClick()
         val albums = AlbumRepository.load(app.activity).albums.filter { it.category == ReleaseCategory.STUDIO }
         val firstDate = app.onNodeWithTag("album-date-${albums[0].id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
         val secondDate = app.onNodeWithTag("album-date-${albums[1].id}", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot

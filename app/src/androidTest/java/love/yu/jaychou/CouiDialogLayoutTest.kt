@@ -3,6 +3,7 @@ package love.yu.jaychou
 import android.graphics.Bitmap
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.dp
@@ -25,10 +26,12 @@ class CouiDialogLayoutTest {
         var notice by mutableStateOf(UpdateNotice(result = UpdateResult.UpToDate, manual = true))
         var visible by mutableStateOf(true)
         app.setContent {
+            DeviceConfigurationOverride(DeviceConfigurationOverride.Locales(LocaleList("zh-CN"))) {
                 ArchiveTheme(AppSettings(uiStyle = UiStyle.COUI, theme = theme)) {
                     if (visible) UpdateDialog(notice, false, false, null,
                         onDismiss = { visible = false }, onDownload = { visible = false }, onDisableAutomatic = {})
                 }
+            }
         }
         val notes = (1..60).joinToString("\n") { "更新说明第 $it 行：检查正文留白与滚动，按钮始终可用。" }
         val cases = listOf(
@@ -52,6 +55,13 @@ class CouiDialogLayoutTest {
                     val confirm = app.onNodeWithText(AppText.get(if (index == 2) R.string.ui_update_download else R.string.ui_ok))
                     confirm.assertIsDisplayed()
                     if (index == 2) {
+                        val confirmBounds = app.onNodeWithTag("update-confirm").getUnclippedBoundsInRoot()
+                        val cancelBounds = app.onNodeWithTag("update-dismiss").getUnclippedBoundsInRoot()
+                        if (kotlin.math.abs((confirmBounds.top - cancelBounds.top).value) < 1f) {
+                            assertTrue("Short labels sit side by side with a gap", cancelBounds.right + 8.dp <= confirmBounds.left + 1.dp)
+                        } else {
+                            assertTrue("Stacked labels leave cancel last", confirmBounds.bottom + 8.dp <= cancelBounds.top + 1.dp)
+                        }
                         app.onNode(hasScrollAction()).performSemanticsAction(
                             androidx.compose.ui.semantics.SemanticsActions.ScrollBy) { it(0f, 500f) }
                         confirm.assertIsDisplayed()

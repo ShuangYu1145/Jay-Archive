@@ -1,0 +1,19 @@
+{
+  "name": "jaychou-music-services",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node qq-local.cjs",
+    "start:qq": "node qq-local.cjs",
+    "qq:background": "node qq-control.cjs start",
+    "qq:status": "node qq-control.cjs status",
+    "qq:stop": "node qq-control.cjs stop"
+  },
+  "dependencies": {
+    "@neteasecloudmusicapienhanced/api": "4.41.1",
+    "@yakult-green-tea/qq-music-api": "3.3.6"
+  }
+}

@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.Density
@@ -14,7 +13,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import java.io.File
 import love.yu.jaychou.data.*
 import love.yu.jaychou.ui.screens.albums.ReleaseCategorySheet
-import love.yu.jaychou.ui.screens.lyrics.LyricsReadingSheet
 import love.yu.jaychou.ui.screens.settings.SettingsScreen
 import love.yu.jaychou.ui.theme.ArchiveTheme
 import org.junit.Assert.*
@@ -59,26 +57,21 @@ class CouiPreferenceLayoutTest {
         capture("settings-large-font")
     }
 
-    @Test fun groupedCategoryAndReaderControlsPreserveSelections() {
+    @Test fun groupedCategoryControlsPreserveSelections() {
         val catalog = AlbumRepository.load(context)
         var categories by mutableStateOf(listOf(ReleaseCategory.STUDIO.name))
         var categorySheet by mutableStateOf(true)
-        var reader by mutableStateOf(LyricsReadingSettings())
         app.setContent {
             ArchiveTheme(AppSettings(uiStyle = UiStyle.COUI, theme = ThemeMode.LIGHT)) {
                 ReleaseCategorySheet(categorySheet, categories, catalog,
                     onDismiss = { categorySheet = false }, onApply = { categories = it })
-                LyricsReadingSheet(!categorySheet, reader, true, true,
-                    onChange = { value, _ -> reader = value }, onCommit = {}, onDismiss = {}, onCopy = {}, onSearch = {})
             }
         }
         app.onNodeWithTag("category-LIVE").performClick()
         capture("categories", "category-sheet")
         app.onNodeWithTag("category-apply").performClick()
         app.runOnIdle { assertTrue(ReleaseCategory.LIVE.name in categories) }
-        app.onNodeWithTag("reader-font-size").performSemanticsAction(SemanticsActions.SetProgress) { it(27f) }
-        app.runOnIdle { assertEquals(27f, reader.fontSize, .01f) }
-        capture("reader", "lyrics-reading-sheet")
+        app.onNodeWithTag("category-sheet").assertDoesNotExist()
     }
 
     private fun capture(name: String, tag: String? = null) {

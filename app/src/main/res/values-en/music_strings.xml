@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_song_title">Adorable Woman</string>
+    <string name="music_artist">Jay Chou</string>
+    <string name="music_play">Play</string>
+    <string name="music_pause">Pause</string>
+    <string name="music_playing">Playing · Online music</string>
+    <string name="music_paused">Paused · Online music</string>
+    <string name="music_loading">Preparing audio…</string>
+    <string name="music_error">Cannot play. Check connection, sign-in and playback permissions.</string>
+    <string name="music_seek">Playback position</string>
+    <string name="music_back_ten">−10 sec</string>
+    <string name="music_forward_ten">+10 sec</string>
+    <string name="music_restart">Restart</string>
+    <string name="music_repeat_off">Repeat off</string>
+    <string name="music_repeat_one">Repeat one</string>
+    <string name="music_speed">Speed %1$s×</string>
+    <string name="music_stop">Stop</string>
+    <string name="music_retry">Retry</string>
+    <string name="music_open_player_details">Open player details</string>
+    <string name="music_now_playing">Now Playing</string>
+    <string name="music_collapse_player">Collapse player</string>
+    <string name="music_cover_page">Artwork</string>
+    <string name="music_lyrics_page">Lyrics</string>
+    <string name="music_playback_settings">Playback settings</string>
+    <string name="music_no_next_track">No next track</string>
+    <string name="music_lyrics_loading">Loading lyrics…</string>
+    <string name="music_lyrics_error">Cannot load lyrics right now</string>
+    <string name="music_lyrics_empty">No lyrics available</string>
+</resources>

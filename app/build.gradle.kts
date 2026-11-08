@@ -65,6 +65,8 @@ tasks.matching { it.name == "assembleDebug" || it.name == "assembleRelease" }.co
 }
 
 dependencies {
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation(libs.compose.ui)
     implementation(libs.compose.foundation)
@@ -81,6 +83,7 @@ dependencies {
     implementation(libs.lifecycle.compose)
     implementation(libs.datastore)
     implementation(libs.coil.compose)
+    implementation("io.coil-kt:coil-svg:2.7.0")
     debugImplementation(libs.compose.tooling)
     debugImplementation(libs.compose.test.manifest)
     testImplementation(libs.junit)

@@ -78,7 +78,7 @@ class BottomNavigationModesTest {
             }
         }
         settle()
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
         settle()
 
         for (floating in listOf(true, false)) {
@@ -86,7 +86,7 @@ class BottomNavigationModesTest {
             for (blur in listOf(false, true)) {
                 app.runOnIdle { settings.value = AppSettings(uiStyle = style, floatingBottomBar = floating, liquidGlass = false, blur = blur) }
                 settle()
-                app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+                app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
                 app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
                 val tag = if (floating) "floating-navigation" else "standard-navigation"
                 val bitmap = screenshot(tag, "${if (floating) "floating" else "standard"}-${if (blur) "blur" else "solid"}.png")
@@ -94,7 +94,7 @@ class BottomNavigationModesTest {
                     // Material's standard bar keeps its native opaque surface; its floating bar supports blur.
                     // Sample the bar surface above the icons, between the middle two items.
                     val before = solid!!
-                    val x = bitmap.width / 2
+                    val x = bitmap.width / 3
                     val y = 5
                     val a = before.getPixel(x, y)
                     val b = bitmap.getPixel(x, y)
@@ -103,10 +103,10 @@ class BottomNavigationModesTest {
                     }
                     assertTrue("$tag must actually sample the colored background when blur is on: $delta", delta > 8)
                 }
-                app.onNodeWithTag("tab-SETTINGS").performClick()
+                app.onNodeWithTag("tab-INTRODUCTION").performClick()
                 settle()
-                app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
-                app.onNodeWithTag("tab-ABOUT").performClick()
+                app.onNodeWithTag("tab-INTRODUCTION").assertIsSelected()
+                app.onNodeWithTag("tab-SETTINGS").performClick()
                 settle()
             }
         }
@@ -115,14 +115,14 @@ class BottomNavigationModesTest {
             app.runOnIdle { settings.value = AppSettings(uiStyle = style, blur = blur) }
             settle()
             app.onNodeWithTag("navigation-indicator").assertIsDisplayed()
-            app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+            app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
             screenshot("floating-navigation", "liquid-${if (blur) "blur" else "solid"}.png")
         }
         app.runOnIdle { settings.value = AppSettings(uiStyle = style, floatingBottomBar = false, liquidGlass = true) }
         settle()
         app.onNodeWithTag("standard-navigation").assertIsDisplayed()
         app.onNodeWithTag("navigation-indicator").assertDoesNotExist()
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
     }
 
     @Test fun settingsSwitchesPersistIndependently() = verifyPersistence(UiStyle.MIUIX)

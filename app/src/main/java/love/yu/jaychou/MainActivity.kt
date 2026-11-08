@@ -25,9 +25,18 @@ import love.yu.jaychou.data.*
 import love.yu.jaychou.navigation.ArchiveApp
 
 class MainActivity : AppCompatActivity() {
+    private var openMusicPlayer by mutableStateOf(false)
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.getBooleanExtra("open_music_player", false)) openMusicPlayer = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_JayChou)
         super.onCreate(savedInstanceState)
+        openMusicPlayer = intent.getBooleanExtra("open_music_player", false)
         AppText.update(resources)
         var launchAnimationReady by mutableStateOf(false)
         if (android.os.Build.VERSION.SDK_INT >= 31) {
@@ -64,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+        volumeControlStream = android.media.AudioManager.STREAM_MUSIC
         enableEdgeToEdge()
         val systemDark = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
             Configuration.UI_MODE_NIGHT_YES
@@ -108,6 +118,11 @@ class MainActivity : AppCompatActivity() {
                             love.yu.jaychou.ui.updates.UpdateHost(current) {
                             ArchiveApp(
                                 catalog = data, settings = current,
+                                openMusicPlayer = openMusicPlayer,
+                                onMusicPlayerOpened = {
+                                    openMusicPlayer = false
+                                    intent.removeExtra("open_music_player")
+                                },
                                 onTheme = { save { repository.setTheme(it) } },
                                 onUiStyle = { save { repository.setUiStyle(it) } },
                                 onMonet = { save { repository.setMonet(it) } },

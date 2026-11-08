@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Blur is isolated in GlassLayer and only entered on API 33+. -->
     <uses-sdk tools:overrideLibrary="top.yukonga.miuix.kmp.blur" />
     <application android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/feature_graphic" android:label="@string/app_name"
@@ -13,6 +18,12 @@
         <service android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false" android:exported="false">
             <meta-data android:name="autoStoreLocales" android:value="true" />
+        </service>
+        <service android:name=".playback.MusicPlaybackService"
+            android:exported="true" android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
         </service>
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>

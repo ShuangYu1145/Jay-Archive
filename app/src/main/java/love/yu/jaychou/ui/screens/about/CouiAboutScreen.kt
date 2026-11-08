@@ -51,10 +51,13 @@ import love.yu.jaychou.ui.updates.LocalUpdateController
 
 /** ColorOS's grouped about layout, with application information in place of device specs. */
 @Composable
-internal fun CouiAboutScreen(state: LazyListState, bottom: Dp, active: Boolean = true, onDeveloperTap: () -> Unit) {
+internal fun CouiAboutScreen(state: LazyListState, bottom: Dp, active: Boolean = true, onBack: (() -> Unit)? = null, onDeveloperTap: () -> Unit) {
     val versionVisible by remember(state) { derivedStateOf { state.firstVisibleItemIndex == 0 } }
     val metrics = rememberCouiWindowMetrics()
     ArchiveScaffold(AppText.get(R.string.ui_about), small = true,
+        navigationIcon = { if (onBack != null) Box(Modifier.testTag("about-back")) {
+            love.yu.jaychou.ui.components.BackButton(onBack, AppText.get(R.string.ui_settings_back))
+        } },
         contentMaxWidth = metrics.aboutMaxWidth) { padding ->
         LazyColumn(
             state = state,

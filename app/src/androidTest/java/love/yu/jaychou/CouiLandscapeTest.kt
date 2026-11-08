@@ -85,7 +85,8 @@ class CouiLandscapeTest {
         val settings = AppSettings(uiStyle = UiStyle.COUI, blur = false, liquidGlass = false, theme = ThemeMode.LIGHT)
         show({ size }, { settings })
 
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("about-settings").performScrollTo().performClick()
         val portrait = bounds("about-identity")
         assertTrue("Portrait keeps the tall identity card", (portrait.bottom - portrait.top).value >= 300f)
 
@@ -94,12 +95,12 @@ class CouiLandscapeTest {
 
         val landscape = bounds("about-identity")
         val check = bounds("check-updates", unmerged = true)
-        val rail = bounds("side-navigation")
+        app.onNodeWithTag("side-navigation").assertDoesNotExist()
         val list = bounds("about-list")
         assertTrue("Landscape identity should be a strip, was ${(landscape.bottom - landscape.top).value}",
             (landscape.bottom - landscape.top).value <= 240f)
         assertTrue("Update pill must stay inside the banner", check.bottom <= landscape.bottom)
-        assertTrue("About list must start after the rail", list.left >= rail.right - 1.dp)
+        assertTrue("About list stays inside the window", list.left >= 0.dp)
         capture("coui-phone-landscape-about")
     }
 
@@ -178,7 +179,8 @@ class CouiLandscapeTest {
         assertTrue("Capped settings column should be centred: list=${settingsList.left.value}..${settingsList.right.value}, rail=${rail.right.value}, delta=${(settingsCenter - contentCenter).value}",
             kotlin.math.abs((settingsCenter - contentCenter).value) < 2f)
 
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("about-settings").performScrollTo().performClick()
         val about = bounds("about-identity")
         assertTrue("About banner must stay short on a wide screen: ${(about.bottom - about.top).value}",
             (about.bottom - about.top).value <= 241f)
@@ -186,6 +188,7 @@ class CouiLandscapeTest {
         assertTrue("About list must not be wider than 780dp: ${(aboutList.right - aboutList.left).value}",
             (aboutList.right - aboutList.left).value <= 781f)
 
+        app.onNodeWithTag("about-back").performClick()
         app.onNodeWithTag("tab-HOME").performClick()
         app.onNodeWithTag("coui-compact-title").assertExists()
         capture("coui-expanded-landscape-home")
@@ -195,14 +198,17 @@ class CouiLandscapeTest {
         AppText.update(context.resources)
         val settings = AppSettings(uiStyle = UiStyle.COUI, blur = false, liquidGlass = false)
         show({ DpSize(800.dp, 360.dp) }, { settings })
-        app.onNodeWithTag("tab-ABOUT").performClick()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("about-settings").performScrollTo().performClick()
         val before = bounds("about-identity").top
         app.onNodeWithTag("about-list").performTouchInput { swipeUp() }
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+        app.onNodeWithTag("page-ABOUT").assertIsDisplayed()
+        app.onNodeWithTag("side-navigation").assertDoesNotExist()
         val banners = app.onAllNodesWithTag("about-identity").fetchSemanticsNodes()
         if (banners.isNotEmpty()) assertTrue(bounds("about-identity").top < before)
         app.onNodeWithTag("about-list").performTouchInput { swipeDown() }
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+        app.onNodeWithTag("page-ABOUT").assertIsDisplayed()
+        app.onNodeWithTag("side-navigation").assertDoesNotExist()
     }
 
     @Test fun allRootListsConsumeLandscapeSwipesWithAndWithoutBlur() {
@@ -211,7 +217,7 @@ class CouiLandscapeTest {
         show({ DpSize(800.dp, 360.dp) }, { settings })
         for (blur in listOf(false, true)) {
             app.runOnIdle { settings = settings.copy(blur = blur) }
-            for ((tab, list) in listOf("HOME" to "home-list", "SETTINGS" to "settings-list", "ABOUT" to "about-list")) {
+            for ((tab, list) in listOf("HOME" to "home-list", "SETTINGS" to "settings-list")) {
                 app.onNodeWithTag("tab-$tab").performClick()
                 app.onNodeWithTag(list).performScrollToIndex(0)
                 fun position() = app.onNodeWithTag(list).fetchSemanticsNode().config[

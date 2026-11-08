@@ -18,10 +18,12 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import love.yu.jaychou.data.Album
-import love.yu.jaychou.data.Track
 
 val LocalMovingAlbumId = staticCompositionLocalOf<String?> { null }
-val LocalMovingTrack = staticCompositionLocalOf<Pair<String, Int>?> { null }
+
+/** Gesture preview and committed close share an endpoint without clamping there early. */
+internal fun albumTransitionProgress(expansion: Float, back: Float): Float =
+    (expansion.coerceIn(0f, 1f) * (1f - back.coerceIn(0f, 1f) * .25f)).coerceIn(0f, 1f)
 
 /** A live render-layer snapshot, never a bitmap allocation on the UI thread. */
 data class AlbumOrigin(
@@ -38,16 +40,6 @@ fun AlbumMotionSource(
     content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
 ) {
     CoverMotionSource(LocalMovingAlbumId.current == album.id, { onOpen(album, it) }, content)
-}
-
-@Composable
-fun TrackMotionSource(
-    album: Album,
-    track: Track,
-    onOpen: (AlbumOrigin) -> Unit,
-    content: @Composable (Modifier, Modifier, () -> Unit) -> Unit,
-) {
-    CoverMotionSource(LocalMovingTrack.current == (album.id to track.number), onOpen, content)
 }
 
 @Composable

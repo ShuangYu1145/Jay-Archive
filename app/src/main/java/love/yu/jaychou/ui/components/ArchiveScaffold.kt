@@ -60,6 +60,7 @@ fun ArchiveScaffold(
     sectionHeader: Boolean = false,
     progressiveBlur: Boolean = false,
     contentMaxWidth: androidx.compose.ui.unit.Dp? = null,
+    topBarVisible: Boolean = true,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val inlineHeader = LocalInlineSectionHeader.current.takeIf { sectionHeader }
@@ -74,7 +75,7 @@ fun ArchiveScaffold(
     val background = ArchiveUiTheme.colorScheme.background
     val pageBackground = ArchiveUiTheme.pageBackground
     if (ArchiveUiTheme.isMaterial) {
-        val blurred = Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader
+        val blurred = Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader && topBarVisible
         val materialScene: @Composable (Modifier, Modifier) -> Unit = { capture, header ->
             val barColors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
                 containerColor = if (blurred) Color.Transparent else background,
@@ -83,7 +84,7 @@ fun ArchiveScaffold(
             androidx.compose.material3.Scaffold(
                 modifier = Modifier.fillMaxSize().clipToBounds(),
                 containerColor = pageBackground, contentWindowInsets = WindowInsets(0),
-                topBar = {
+                topBar = { if (topBarVisible) {
                     val bar = header.testTag("top-bar-$title")
                     when {
                         sectionHeader -> Spacer(bar.fillMaxWidth().statusBarsPadding().height(74.dp))
@@ -99,7 +100,7 @@ fun ArchiveScaffold(
                             navigationIcon = navigationIcon, actions = actions, scrollBehavior = behavior?.material,
                             colors = barColors)
                     }
-                },
+                } },
             ) { padding ->
                 Box(Modifier.fillMaxSize().clipToBounds().then(capture).background(pageBackground)) { content(padding) }
             }
@@ -132,7 +133,7 @@ fun ArchiveScaffold(
             io.github.suqi8.coui.kmp.basic.Scaffold(
                 modifier = Modifier.fillMaxSize().clipToBounds().nestedScroll(scrollObserver),
                 containerColor = pageBackground, contentWindowInsets = WindowInsets(0),
-                topBar = {
+                topBar = { if (topBarVisible) {
                     val bar = header.testTag("top-bar-$title")
                     when {
                         inlineHeader != null -> Spacer(Modifier.fillMaxWidth().statusBarsPadding()
@@ -140,7 +141,7 @@ fun ArchiveScaffold(
                         sectionHeader -> Row(bar.fillMaxWidth().statusBarsPadding()
                             .height(metrics.sectionHeaderHeight),
                             horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-                            if (actionHost == null) SectionHeaderActions(actions)
+                            if (actionHost == null) SectionHeaderActions(content = actions)
                         }
                         // COUI SmallTopAppBar clips its children to the 52dp toolbar bounds,
                         // cutting off the frosted action's diffuse shadow. Keep actions outside that clip.
@@ -163,10 +164,10 @@ fun ArchiveScaffold(
                         else -> io.github.suqi8.coui.kmp.basic.TopAppBar(title, modifier = bar, color = Color.Transparent,
                             scrollBehavior = behavior?.coui, navigationIcon = navigationIcon, actions = actions)
                     }
-                },
+                } },
             ) { padding -> Box(Modifier.fillMaxSize().then(capture).background(pageBackground)) { content(padding) } }
         }
-        if (Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader)
+        if (topBarVisible && Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader)
             HeaderGlassLayer(ArchiveUiTheme.colorScheme.surfaceContainer, couiScene,
                 progressive = progressiveBlur || small, surfaceProgress = { headerProgress })
         else couiScene(Modifier, if (sectionHeader) Modifier else
@@ -177,7 +178,7 @@ fun ArchiveScaffold(
         Scaffold(
             modifier = Modifier.fillMaxSize().clipToBounds(),
             containerColor = pageBackground, contentWindowInsets = WindowInsets(0),
-            topBar = {
+            topBar = { if (topBarVisible) {
                 val bar = header.testTag("top-bar-$title")
                 if (sectionHeader) Row(
                     bar.fillMaxWidth().statusBarsPadding()
@@ -187,26 +188,26 @@ fun ArchiveScaffold(
                 ) {
                     // The shared section capsule is drawn above the introduction pager.
                     Spacer(Modifier.weight(1f))
-                    if (actionHost == null) SectionHeaderActions(actions)
+                    if (actionHost == null) SectionHeaderActions(content = actions)
                 }
                 else if (small) SmallTopAppBar(title, modifier = bar, color = Color.Transparent,
                     navigationIcon = navigationIcon, actions = actions, defaultWindowInsetsPadding = true)
                 else TopAppBar(title, modifier = bar, color = Color.Transparent,
                     scrollBehavior = behavior?.miuix, titlePadding = 24.dp,
                     navigationIcon = navigationIcon, actions = actions, defaultWindowInsetsPadding = true)
-            },
+            } },
         ) { padding ->
             Box(Modifier.fillMaxSize().clipToBounds().then(capture).background(pageBackground)) { content(padding) }
         }
     }
     // Section actions sample only the sibling list, never the toolbar containing themselves.
-    if (sectionHeader && actionHost == null && Build.VERSION.SDK_INT >= 33 && (LocalArchiveBlur.current || LocalArchiveLiquidGlass.current)) GlassLayer(background, scene)
-    else if (Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader) HeaderGlassLayer(background, scene, progressive = love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE)
+    if (topBarVisible && sectionHeader && actionHost == null && Build.VERSION.SDK_INT >= 33 && (LocalArchiveBlur.current || LocalArchiveLiquidGlass.current)) GlassLayer(background, scene)
+    else if (topBarVisible && Build.VERSION.SDK_INT >= 33 && LocalArchiveBlur.current && !sectionHeader) HeaderGlassLayer(background, scene, progressive = love.yu.jaychou.ui.effects.LocalTopAppBarBlur.current == love.yu.jaychou.data.TopAppBarBlur.PROGRESSIVE)
     else scene(Modifier, if (sectionHeader) Modifier else Modifier.background(background))
 }
 
 @Composable
-internal fun SectionHeaderActions(content: @Composable RowScope.() -> Unit) {
+internal fun SectionHeaderActions(singleButton: Boolean = false, content: @Composable RowScope.() -> Unit) {
     if (ArchiveUiTheme.isCoui) {
         val metrics = rememberCouiWindowMetrics()
         Row(Modifier.width(metrics.headerActionWidth).height(metrics.sectionHeaderHeight)
@@ -217,7 +218,8 @@ internal fun SectionHeaderActions(content: @Composable RowScope.() -> Unit) {
     }
     val backdrop = LocalNavigationBackdrop.current
     if (ArchiveUiTheme.isMaterial) {
-        Row(Modifier.width(96.dp).height(64.dp).testTag("introduction-actions"),
+        Row(Modifier.width(if (singleButton) 48.dp else 96.dp).height(if (singleButton) 48.dp else 64.dp)
+            .then(if (singleButton) Modifier else Modifier.testTag("introduction-actions")),
             verticalAlignment = Alignment.CenterVertically, content = content)
         return
     }
@@ -231,9 +233,10 @@ internal fun SectionHeaderActions(content: @Composable RowScope.() -> Unit) {
         else -> Modifier.background(tint, CircleShape)
     }
     Row(
-        Modifier.width(96.dp).height(58.dp)
+        Modifier.width(if (singleButton) 58.dp else 96.dp).height(58.dp)
             .dropShadow(CircleShape, Shadow(radius = 10.dp, color = Color.Black, alpha = if (dark) .2f else .1f))
-            .then(surface).clip(CircleShape).testTag("introduction-actions"),
+            .then(surface).clip(CircleShape)
+            .then(if (singleButton) Modifier else Modifier.testTag("introduction-actions")),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         content = content,

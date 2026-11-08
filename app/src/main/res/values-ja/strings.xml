@@ -50,7 +50,7 @@
     </plurals>
     <string name="ui_about_this_album">このアルバムについて</string>
     <string name="ui_track_list">収録曲</string>
-    <string name="ui_original_track_order_tap_a_song_to_read_its_lyrics">オリジナルの曲順 · 楽曲をタップすると歌詞を表示</string>
+    <string name="ui_original_track_order">オリジナルの曲順</string>
     <string name="ui_information_track_order_and_artwork_nrelease_type">情報、曲順、ジャケット：%1$s\n作品の種類 · %2$s</string>
     <string name="ui_view_website">ウェブページを開く</string>
     <string name="ui_close_search">検索を閉じる</string>
@@ -340,7 +340,7 @@
         <item quantity="one">楽曲 %1$d 件</item>
         <item quantity="other">楽曲 %1$d 件</item>
     </plurals>
-    <string name="ui_introduction">紹介</string>
+    <string name="ui_introduction">音楽</string>
     <string name="ui_edit_profile">プロフィールを編集</string>
     <string name="ui_profile_default_name">ジェイファン</string>
     <string name="ui_profile_name">名前</string>
@@ -444,4 +444,14 @@
     <string name="ui_exit_follow_gesture">ジェスチャーに従う</string>
     <string name="ui_exit_always_right">常に右</string>
     <string name="ui_exit_always_left">常に左</string>
+    <string name="ui_cover_flow_layout">3D アルバムウォール</string>
+    <string name="ui_cover_flow_description">スワイプで閲覧、中央のアルバムをタップして詳細を表示</string>
+    <string name="ui_cover_flow_selected">選択中</string>
+    <string name="ui_cover_flow_open">アルバムを開く</string>
+    <string name="ui_cover_flow_previous">前のアルバム</string>
+    <string name="ui_cover_flow_next">次のアルバム</string>
+    <string name="ui_cover_flow_empty">このカテゴリにはアルバムがありません</string>
+    <string name="ui_cover_flow_display">表示設定</string>
+    <string name="ui_cover_flow_show_header">上部バーを表示</string>
+    <string name="ui_cover_flow_show_navigation">ナビゲーションを表示</string>
 </resources>

@@ -52,6 +52,40 @@ class SettingsHierarchyTest {
         app.onNodeWithTag("theme-settings").assertIsDisplayed()
     }
 
+    @Test fun aboutIsASettingsDetailAndRestoresAcrossStylesAndRotation() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        AppText.update(context.resources)
+        val catalog = AlbumRepository.load(context)
+        var settings by mutableStateOf(AppSettings(blur = false, liquidGlass = false))
+        var size by mutableStateOf(DpSize(400.dp, 800.dp))
+        val restoration = StateRestorationTester(app)
+        restoration.setContent {
+            DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(size)) {
+                ArchiveTheme(settings) {
+                    ArchiveApp(catalog, settings, {}, {}, {}, {}, {}, {}, {}, null, {})
+                }
+            }
+        }
+        app.onNodeWithTag("tab-ABOUT").assertDoesNotExist()
+        app.onNodeWithTag("tab-SETTINGS").performClick()
+        app.onNodeWithTag("about-settings").performScrollTo().performClick()
+        restoration.emulateSavedInstanceStateRestore()
+        for (style in UiStyle.entries) {
+            app.runOnIdle { settings = settings.copy(uiStyle = style) }
+            for (viewport in listOf(DpSize(400.dp, 800.dp), DpSize(800.dp, 360.dp))) {
+                app.runOnIdle { size = viewport }
+                app.onNodeWithTag("page-ABOUT").assertIsDisplayed()
+                app.onNodeWithTag("about-back").assertIsDisplayed()
+                app.onNodeWithTag("bottom-navigation").assertDoesNotExist()
+                app.onNodeWithTag("side-navigation").assertDoesNotExist()
+            }
+        }
+        app.onNodeWithTag("about-back").performClick()
+        app.onNodeWithTag("side-navigation").assertIsDisplayed()
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
+        app.onNodeWithTag("about-settings").assertIsDisplayed()
+    }
+
     @Test fun materialThemeUsesGroupedRadioChoices() {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         AppText.update(context.resources)

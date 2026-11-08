@@ -2,18 +2,16 @@ package love.yu.jaychou.ui.screens.albums
 
 import love.yu.jaychou.ui.animation.AlbumMotionSource
 import love.yu.jaychou.ui.animation.AlbumOrigin
-import love.yu.jaychou.ui.animation.TrackMotionSource
 import love.yu.jaychou.ui.components.AlbumCoverShape
-import love.yu.jaychou.ui.components.ArchiveGlyph
 import love.yu.jaychou.ui.components.ArchiveIconButton
 import love.yu.jaychou.ui.components.ArchiveScaffold
 import love.yu.jaychou.ui.components.BackButton
 import love.yu.jaychou.ui.components.CatalogImage
-import love.yu.jaychou.ui.components.Glyph
 import love.yu.jaychou.ui.components.QuietText
 import love.yu.jaychou.ui.components.SectionTitle
 import love.yu.jaychou.ui.components.SourceLink
 import love.yu.jaychou.data.AppText
+import love.yu.jaychou.playback.MusicPlaybackState
 import love.yu.jaychou.R
 import androidx.compose.animation.animateContentSize
 import androidx.activity.compose.BackHandler
@@ -27,6 +25,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.*
@@ -71,6 +70,10 @@ fun AlbumsScreen(
     onSearchVisibility: (Boolean) -> Unit = {},
     searchInteractive: Boolean = true,
     sectionHeader: Boolean = false,
+    coverFlowHeaderHidden: Boolean = false,
+    coverFlowNavigationHidden: Boolean = false,
+    onCoverFlowHeaderHidden: (Boolean) -> Unit = {},
+    onCoverFlowNavigationHidden: (Boolean) -> Unit = {},
 ) {
     val behavior = rememberArchiveScrollBehavior()
     val coui = ArchiveUiTheme.isCoui
@@ -80,23 +83,44 @@ fun AlbumsScreen(
     var searching by rememberSaveable { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     val visibilityCallback by rememberUpdatedState(onSearchVisibility)
-    val albums = catalog.albums.filter { it.category.name in categories }
+    val albums = remember(catalog.albums, categories) { catalog.albums.filter { it.category.name in categories } }
     love.yu.jaychou.ui.animation.SecondaryPageHost(
         page = Unit.takeIf { searching }, enabled = searchInteractive,
         onBack = { searching = false }, onVisibilityChanged = { visibilityCallback(it) }, root = {
     val inlineSectionHeader = love.yu.jaychou.ui.components.LocalInlineSectionHeader.current
     ArchiveScaffold(AppText.get(R.string.ui_albums), behavior = behavior,
         sectionHeader = sectionHeader,
+        topBarVisible = !coverFlowHeaderHidden,
         actions = {
             ArchiveIconButton(MiuixIcons.Search, AppText.get(R.string.ui_search_albums_or_songs), { searching = true }, Modifier.testTag("album-search-open"))
             ArchiveIconButton(MiuixIcons.Filter, AppText.get(R.string.ui_filter_album_categories), { showCategories = true }, Modifier.testTag("release-filter"))
         },
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize()) {
+        if (layout == AlbumLayout.COVER_FLOW) {
+            val top = if (coverFlowHeaderHidden) WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                else padding.calculateTopPadding()
+            val wallScene: @Composable (Modifier) -> Unit = { wallCapture ->
+            Box(Modifier.fillMaxSize()) {
+                Column(Modifier.fillMaxSize().then(wallCapture).padding(top = top, bottom = bottom)) {
+                    if (inlineSectionHeader != null && !coverFlowHeaderHidden) inlineSectionHeader()
+                    love.yu.jaychou.ui.components.AlbumCoverFlow(albums, onAlbum, Modifier.fillMaxWidth().weight(1f))
+                }
+                love.yu.jaychou.ui.components.CoverFlowDisplayControls(
+                    coverFlowHeaderHidden, coverFlowNavigationHidden, onCoverFlowHeaderHidden, onCoverFlowNavigationHidden,
+                    Modifier.align(Alignment.TopEnd).padding(top = top + 8.dp, end = 12.dp))
+            }
+            }
+            if (android.os.Build.VERSION.SDK_INT >= 33) {
+                // The floating control samples the shelf, excluding its own frosted surface.
+                love.yu.jaychou.ui.effects.GlassLayer(ArchiveUiTheme.colorScheme.background) { capture, _ ->
+                    wallScene(capture)
+                }
+            } else wallScene(Modifier)
+        } else BoxWithConstraints(Modifier.fillMaxSize()) {
         val columns = when (layout) {
             AlbumLayout.GRID -> maxOf(2, ((maxWidth - pageInset * 2 + 14.dp) / 194.dp).toInt())
             AlbumLayout.LARGE -> maxOf(1, ((maxWidth - pageInset * 2 + 14.dp) / 374.dp).toInt())
-            AlbumLayout.LIST -> 1
+            AlbumLayout.LIST, AlbumLayout.COVER_FLOW -> 1
         }
         LazyVerticalGrid(
             modifier = Modifier.fillMaxSize()
@@ -173,11 +197,13 @@ private fun AlbumCatalogCard(album: Album, layout: AlbumLayout, capture: Modifie
 }
 
 @Composable
-fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: () -> Unit, onTrack: (Track, AlbumOrigin) -> Unit,
+fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: () -> Unit,
     coverModifier: Modifier = Modifier,
     bodyModifier: Modifier = Modifier,
     onCoverDetached: () -> Unit = {},
     highlightedTrack: Int? = null,
+    playback: MusicPlaybackState? = null,
+    onPlayTrack: (Track) -> Unit = {},
 ) {
     var coverRatio by remember(album.id) { mutableFloatStateOf(1f) }
     val detailMetrics = rememberCouiWindowMetrics()
@@ -198,7 +224,8 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
                 Box(Modifier.fillMaxWidth().animateContentSize(), contentAlignment = Alignment.Center) {
                     Card(
                         modifier = Modifier.widthIn(max = coverWidth).fillMaxWidth()
-                            .aspectRatio(coverRatio.coerceIn(.65f, 1.8f)),
+                            .aspectRatio(coverRatio.coerceIn(.65f, 1.8f))
+                            .testTag("album-detail-cover-surface").then(coverModifier),
                         cornerRadius = 12.dp,
                         pressFeedbackType = PressFeedbackType.Tilt,
                         showIndication = false,
@@ -206,7 +233,7 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
                     ) {
                         CatalogImage(album.coverUrl, AppText.get(R.string.ui_artwork_source, album.title, album.sourceLabel),
                             Modifier.fillMaxSize().testTag("album-detail-cover")
-                                .then(coverModifier).clip(AlbumCoverShape),
+                                .clip(AlbumCoverShape),
                             contentScale = ContentScale.Fit,
                             onAspectRatio = { coverRatio = it },
                         )
@@ -230,12 +257,13 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
                     QuietText(album.dateNote)
                 }
             }
-            item("tracks-title") { SectionTitle(AppText.get(R.string.ui_track_list), AppText.get(R.string.ui_original_track_order_tap_a_song_to_read_its_lyrics), bodyModifier) }
+            item("tracks-title") { SectionTitle(AppText.get(R.string.ui_track_list), AppText.get(R.string.ui_original_track_order), bodyModifier) }
             items(album.tracks, key = { "${album.id}-${it.number}" }, contentType = { "track" }) { track ->
-                TrackMotionSource(album, track, onOpen = { onTrack(track, it) }) { capture, coverCapture, open ->
-                    AlbumTrackCard(album, track, highlightedTrack == track.number,
-                        capture.then(bodyModifier), coverCapture, open)
-                }
+                AlbumTrackCard(album, track, highlightedTrack == track.number, bodyModifier,
+                    playback.takeIf { it?.currentSong?.provider == love.yu.jaychou.online.MusicProvider.QQ &&
+                        (it.currentSong?.title == track.originalTitle || it.currentSong?.title == track.title) &&
+                        (it.currentSong?.album == album.originalTitle || it.currentSong?.album == album.title) },
+                    onPlay = { onPlayTrack(track) })
             }
             item("source") {
                 Column(bodyModifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -249,16 +277,17 @@ fun AlbumDetailScreen(album: Album, state: LazyListState, bottom: Dp, onBack: ()
 }
 
 @Composable
-private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, modifier: Modifier, coverModifier: Modifier, onClick: () -> Unit) {
+private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, modifier: Modifier, playback: MusicPlaybackState?, onPlay: () -> Unit) {
     Card(
         modifier = modifier.fillMaxWidth().testTag("track-${track.number}"),
-        cornerRadius = 18.dp, onClick = onClick, pressFeedbackType = PressFeedbackType.Sink,
+        cornerRadius = 18.dp,
         colors = love.yu.jaychou.ui.designsystem.CardDefaults.defaultColors(
             color = if (highlighted) ArchiveUiTheme.colorScheme.primaryContainer else ArchiveUiTheme.colorScheme.surfaceContainer,
         ),
         insideMargin = PaddingValues(16.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().clickable(onClick = { if (playback != null) playback.toggle() else onPlay() }).testTag("music-track-toggle-${track.number}"),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             Text(if (album.tracks.any { it.disc > 1 }) "${track.disc}.${track.sourceTrackNumber}"
                 else track.number.toString().padStart(2, '0'),
                 modifier = Modifier.widthIn(min = 28.dp).testTag("track-number-${track.number}"),
@@ -267,7 +296,7 @@ private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, mod
             CatalogImage(
                 url = track.artwork?.coverUrl ?: album.coverUrl,
                 description = AppText.get(R.string.ui_album_artwork, track.title),
-                modifier = Modifier.size(48.dp).then(coverModifier).clip(RoundedCornerShape(8.dp)).testTag("track-cover-${track.number}"),
+                modifier = Modifier.size(48.dp).clip(RoundedCornerShape(8.dp)).testTag("track-cover-${track.number}"),
                 showStatus = false,
             )
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -275,7 +304,12 @@ private fun AlbumTrackCard(album: Album, track: Track, highlighted: Boolean, mod
                 Text(track.artistLabel, maxLines = 2, overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp, color = ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
             }
-            ArchiveGlyph(Glyph.LINK, Modifier.size(18.dp), ArchiveUiTheme.colorScheme.onSurfaceContainerVariant)
+            Text(AppText.get(if (playback?.playing == true) R.string.music_pause else R.string.music_play),
+                color = ArchiveUiTheme.colorScheme.primary, fontSize = 12.sp)
+        }
+        if (playback != null) {
+            Spacer(Modifier.height(12.dp))
+            AlbumMusicPlayer(playback)
         }
     }
 }

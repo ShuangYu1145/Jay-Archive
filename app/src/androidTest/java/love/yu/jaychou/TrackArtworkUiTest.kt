@@ -24,10 +24,9 @@ class TrackArtworkUiTest {
         AppText.update(context.resources)
         val album = AlbumRepository.load(context).find("1551833317039542272")!!
         val settings = mutableStateOf(AppSettings(blur = false, liquidGlass = false))
-        var clicked = false
         app.setContent {
             ArchiveTheme(settings.value) {
-                AlbumDetailScreen(album, rememberLazyListState(), 24.dp, {}, { _, _ -> clicked = true })
+                AlbumDetailScreen(album, rememberLazyListState(), 24.dp, {})
             }
         }
         for (style in UiStyle.entries) {
@@ -44,9 +43,7 @@ class TrackArtworkUiTest {
             File(folder, "$style.png").outputStream().use {
                 app.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it)
             }
-            app.runOnIdle { clicked = false }
-            app.onNodeWithTag("track-9").performClick()
-            app.runOnIdle { assertTrue("Song row still opens lyrics", clicked) }
+            app.onNodeWithTag("track-9").assertHasNoClickAction()
         }
     }
 }

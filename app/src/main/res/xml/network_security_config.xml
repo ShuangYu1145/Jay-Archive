@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <!-- This tunnel's self-signed certificate is valid for its DNS name, not its IP.
+         Keep normal hostname verification and limit this trust anchor to this exact domain. -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="false">frp-oil.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="@raw/sakura_frp_qq_2026" />
+        </trust-anchors>
+    </domain-config>
+</network-security-config>

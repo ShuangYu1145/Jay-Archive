@@ -44,7 +44,7 @@ import love.yu.jaychou.ui.designsystem.Text
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.Album
 import top.yukonga.miuix.kmp.icon.extended.Home
-import top.yukonga.miuix.kmp.icon.extended.Info
+import top.yukonga.miuix.kmp.icon.extended.Search
 import top.yukonga.miuix.kmp.icon.extended.Settings
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import kotlin.math.roundToInt
@@ -54,8 +54,8 @@ data class ArchiveNavigationItem(val key: String, val label: String, val icon: I
 internal fun rootNavigationItems() = listOf(
     ArchiveNavigationItem("HOME", AppText.get(R.string.ui_home), MiuixIcons.Home),
     ArchiveNavigationItem("INTRODUCTION", AppText.get(R.string.ui_introduction), MiuixIcons.Album),
+    ArchiveNavigationItem("ONLINE", AppText.get(R.string.online_title), MiuixIcons.Search),
     ArchiveNavigationItem("SETTINGS", AppText.get(R.string.ui_settings), MiuixIcons.Settings),
-    ArchiveNavigationItem("ABOUT", AppText.get(R.string.ui_about), MiuixIcons.Info),
 )
 
 /** Custom gesture/indicator shell over the real Miuix backdrop; not an iOS framework API. */

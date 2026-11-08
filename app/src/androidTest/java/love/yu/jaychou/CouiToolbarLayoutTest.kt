@@ -123,7 +123,7 @@ class CouiToolbarLayoutTest {
         app.setContent {
             ArchiveTheme(AppSettings(uiStyle = UiStyle.COUI, blur = true, liquidGlass = false)) {
                 CompositionLocalProvider(LocalArchiveBlur provides true) {
-                    AlbumDetailScreen(album, rememberLazyListState(), 24.dp, { backs++ }, { _, _ -> })
+                    AlbumDetailScreen(album, rememberLazyListState(), 24.dp, { backs++ })
                 }
             }
         }

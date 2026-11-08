@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.GraphicsLayerScope
 import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.shadow.Shadow
@@ -174,13 +175,14 @@ private val IndicatorSpecular = Highlight(
 @Composable
 internal fun Modifier.liquidGlassBackground(
     backdrop: Backdrop,
+    shape: Shape = CircleShape,
     layerBlock: (GraphicsLayerScope.() -> Unit)? = null,
 ): Modifier {
     val highlight = rememberGravityHighlight(IndicatorSpecular, -45f)
     val color = ArchiveUiTheme.colorScheme.surfaceContainer.copy(alpha = 0.4f)
     return drawBackdrop(
         backdrop = backdrop,
-        shape = { CircleShape },
+        shape = { shape },
         effects = {
             vibrancy()
             blur(4.dp.toPx(), 4.dp.toPx())

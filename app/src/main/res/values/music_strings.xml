@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="music_song_title">可爱女人</string>
+    <string name="music_artist">周杰伦</string>
+    <string name="music_play">播放</string>
+    <string name="music_pause">暂停</string>
+    <string name="music_playing">正在播放 · 在线音乐</string>
+    <string name="music_paused">已暂停 · 在线音乐</string>
+    <string name="music_loading">正在准备音乐…</string>
+    <string name="music_error">无法播放，请检查网络、登录状态与账号播放权限</string>
+    <string name="music_seek">播放进度</string>
+    <string name="music_back_ten">退后 10 秒</string>
+    <string name="music_forward_ten">前进 10 秒</string>
+    <string name="music_restart">重新播放</string>
+    <string name="music_repeat_off">循环关闭</string>
+    <string name="music_repeat_one">单曲循环</string>
+    <string name="music_speed">倍速 %1$s×</string>
+    <string name="music_stop">停止</string>
+    <string name="music_retry">重试</string>
+    <string name="music_open_player_details">打开播放详情</string>
+    <string name="music_now_playing">正在播放</string>
+    <string name="music_collapse_player">收起播放器</string>
+    <string name="music_cover_page">封面</string>
+    <string name="music_lyrics_page">歌词</string>
+    <string name="music_playback_settings">播放设置</string>
+    <string name="music_no_next_track">暂无下一首</string>
+    <string name="music_lyrics_loading">正在加载歌词…</string>
+    <string name="music_lyrics_error">暂时无法加载歌词</string>
+    <string name="music_lyrics_empty">暂无歌词</string>
+</resources>

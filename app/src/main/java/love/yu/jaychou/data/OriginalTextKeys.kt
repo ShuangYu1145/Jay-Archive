@@ -36,7 +36,7 @@ internal val originalTextKeys = mapOf(
     "%1\$s  ·  %2\$s 首曲目" to R.string.ui_tracks_29,
     "关于这张专辑" to R.string.ui_about_this_album,
     "完整曲目" to R.string.ui_track_list,
-    "原始曲序 · 点击歌曲查看歌词" to R.string.ui_original_track_order_tap_a_song_to_read_its_lyrics,
+    "原始曲序" to R.string.ui_original_track_order,
     "资料、曲序与封面：%1\$s\\n专辑类型 · %2\$s" to R.string.ui_information_track_order_and_artwork_nrelease_type,
     "查看网页" to R.string.ui_view_website,
     "退出搜索" to R.string.ui_close_search,

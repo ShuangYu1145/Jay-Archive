@@ -40,9 +40,8 @@ fun IntroductionScreen(
     val sections = listOf(
         ArchiveNavigationItem("ALBUMS", AppText.get(R.string.ui_albums)),
         ArchiveNavigationItem("CONCERTS", AppText.get(R.string.ui_concerts)),
-        ArchiveNavigationItem("COMPOSITIONS", AppText.get(R.string.ui_compositions)),
     )
-    val actionHosts = remember { List(3) { SectionActionHost() } }
+    val actionHosts = remember(sections.size) { List(sections.size) { SectionActionHost() } }
     val background = ArchiveUiTheme.colorScheme.background
     val coui = ArchiveUiTheme.isCoui
     val material = ArchiveUiTheme.isMaterial

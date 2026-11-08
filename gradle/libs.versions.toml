@@ -12,6 +12,8 @@ coil = "2.7.0"
 espresso = "3.7.0"
 
 [libraries]
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version = "1.11.1" }
+media3-session = { module = "androidx.media3:media3-session", version = "1.11.1" }
 coui-ui = { module = "io.github.suqi8.coui.kmp:coui-ui", version.ref = "coui" }
 coui-preference = { module = "io.github.suqi8.coui.kmp:coui-preference", version.ref = "coui" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }

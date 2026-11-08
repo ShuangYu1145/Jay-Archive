@@ -18,9 +18,9 @@
     <string name="welcome_ready_subtitle">从第一张专辑开始，再遇见周杰伦。</string>
     <string name="welcome_ready_note">外观选择将在开始探索时保存。\n专辑目录可离线翻阅；歌词查询、封面与巡演资料等在线内容需要网络连接。</string>
     <string name="welcome_policy_subtitle">这些说明也可以离线查看。</string>
-    <string name="welcome_policy_local">本地数据\n无需注册账号。外观偏好、个人资料及导入的图片和歌词文件保存在设备上；系统备份可能包含应用数据。可通过系统设置清除应用数据。</string>
-    <string name="welcome_policy_network">联网内容\n在线歌词查询会向 VKeys 接口发送歌曲或歌手等查询信息；巡演资料和图片会访问 JVR、大麦等来源；检查更新会连接 GitHub。相关服务可获得请求内容及 IP 地址等网络信息。自动检查更新可在设置中关闭。</string>
-    <string name="welcome_policy_scope">资料与使用范围\n本应用与周杰伦及相关权利方无官方关联，不提供音乐播放、下载或票务交易。作品与图片等内容的权利归各自权利方所有；演出时间、座位与票务信息请以官方来源最新公告为准。</string>
+    <string name="welcome_policy_local">本地数据\n浏览资料无需注册。外观偏好、个人资料和图片保存在设备上；音乐账号登录凭据加密保存，不参与系统备份。可通过系统设置清除应用数据。</string>
+    <string name="welcome_policy_network">联网内容\n使用在线音乐时，会向你配置的音乐服务发送扫码登录、搜索、歌单、歌词和播放请求及对应账号凭据。巡演与图片访问 JVR、大麦等来源；更新检查连接 GitHub。相关服务可获得请求内容与 IP 地址。自动更新检查可在设置中关闭。</string>
+    <string name="welcome_policy_scope">资料与使用范围\n本应用与周杰伦及相关权利方无官方关联。在线歌曲按平台与当前账号权限播放，不提供音乐下载或票务交易。作品与图片等内容的权利归各自权利方所有；演出信息请以官方来源最新公告为准。</string>
     <string name="welcome_previous">上一步</string>
     <string name="welcome_back">返回</string>
     <string name="welcome_saving">正在保存…</string>

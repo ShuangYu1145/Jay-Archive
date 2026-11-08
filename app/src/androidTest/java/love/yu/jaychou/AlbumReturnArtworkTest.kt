@@ -1,9 +1,13 @@
 package love.yu.jaychou
 
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.activity.BackEventCompat
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.DpSize
@@ -16,6 +20,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
+import java.io.File
 import kotlin.math.abs
 
 @OptIn(ExperimentalTestApi::class)
@@ -24,13 +29,20 @@ class AlbumReturnArtworkTest {
     private var style by mutableStateOf(UiStyle.MIUIX)
     private var direction by mutableStateOf(PredictiveBackExitDirection.FOLLOW_GESTURE)
 
-    private fun show(): String {
+    private fun show(coverUrl: String? = null, theme: ThemeMode = ThemeMode.SYSTEM,
+        animation: PredictiveBackAnimation = PredictiveBackAnimation.SCALE,
+    ): String {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         AppText.update(context.resources)
-        val catalog = AlbumRepository.load(context)
+        val loaded = AlbumRepository.load(context)
+        val album = loaded.albums.first { it.category == ReleaseCategory.STUDIO }
+        val catalog = if (coverUrl == null) loaded else loaded.copy(albums = loaded.albums.map {
+            if (it.id == album.id) it.copy(coverUrl = coverUrl) else it
+        })
         app.setContent {
             DeviceConfigurationOverride(DeviceConfigurationOverride.ForcedSize(DpSize(400.dp, 800.dp))) {
-                val settings = AppSettings(uiStyle = style, predictiveBackExitDirection = direction,
+                val settings = AppSettings(uiStyle = style, theme = theme, predictiveBackAnimation = animation,
+                    predictiveBackExitDirection = direction,
                     blur = false, liquidGlass = false)
                 ArchiveTheme(settings) { ArchiveApp(catalog, settings, {}, {}, {}, {}, {}, {}, {}, null, {}) }
             }
@@ -93,5 +105,66 @@ class AlbumReturnArtworkTest {
             app.onNodeWithContentDescription(AppText.get(R.string.ui_back_to_albums)).performClick()
             app.onNodeWithTag(albumTag).assertIsDisplayed()
         }
+    }
+
+    @Test fun predictiveBackMovesTheCoverBackgroundAndRestoresItOnCancellation() {
+        assumeTrue(Build.VERSION.SDK_INT >= 34)
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val file = File(context.cacheDir, "album-return-transparent-cover.png")
+        val bitmap = Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bitmap)
+        canvas.drawRect(60f, 60f, 140f, 140f,
+            android.graphics.Paint().apply { color = android.graphics.Color.GREEN })
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        bitmap.recycle()
+        try {
+            // A sideways page preview exposes the old surface separately from the artwork overlay.
+            val albumTag = show(file.toURI().toString(), ThemeMode.DARK, PredictiveBackAnimation.MIUIX)
+            for (theme in UiStyle.entries) {
+                app.runOnIdle { style = theme }
+                app.onNodeWithTag(albumTag).performClick()
+                val cover = app.onNodeWithTag("album-detail-cover", useUnmergedTree = true)
+                app.waitUntil(10_000) {
+                    val pixels = cover.captureToImage().toPixelMap()
+                    pixels[pixels.width / 2, pixels.height / 2] == Color.Green
+                }
+                val destination = cover.fetchSemanticsNode().boundsInRoot
+                val before = app.onRoot().captureToImage().toPixelMap()
+                val surfaceColor = before[(destination.left + destination.width * .08f).toInt(), destination.center.y.toInt()]
+                val pageColor = before[(destination.left - 5f).toInt(), destination.center.y.toInt()]
+                assertTrue("$theme fixture must expose the cover background", surfaceColor != pageColor)
+                app.runOnIdle {
+                    app.activity.onBackPressedDispatcher.dispatchOnBackStarted(BackEventCompat(0f, 400f, 0f, 0))
+                    app.activity.onBackPressedDispatcher.dispatchOnBackProgressed(BackEventCompat(150f, 410f, .6f, 0))
+                }
+                val stationary = app.onNodeWithTag("album-detail-cover-surface", useUnmergedTree = true)
+                    .fetchSemanticsNode().boundsInRoot
+                val flight = app.onNodeWithTag("album-detail-cover-flight", useUnmergedTree = true)
+                    .fetchSemanticsNode().boundsInRoot
+                val exposed = listOf(
+                    Offset(stationary.left + stationary.width * .08f, stationary.center.y),
+                    Offset(stationary.right - stationary.width * .08f, stationary.center.y),
+                    Offset(stationary.center.x, stationary.top + stationary.height * .08f),
+                    Offset(stationary.center.x, stationary.bottom - stationary.height * .08f),
+                ).first { !flight.inflate(4f).contains(it) }
+                val during = app.onRoot().captureToImage().toPixelMap()
+                fun assertColor(label: String, expected: Color, point: Offset) {
+                    val actual = during[point.x.toInt(), point.y.toInt()]
+                    assertTrue("$theme $label: expected $expected, got $actual at $point",
+                        abs(expected.red - actual.red) < .02f &&
+                            abs(expected.green - actual.green) < .02f &&
+                            abs(expected.blue - actual.blue) < .02f)
+                }
+                assertColor("must leave no stationary cover background", pageColor, exposed)
+                assertColor("moving transparent artwork must retain its background", surfaceColor,
+                    Offset(flight.left + flight.width * .08f, flight.center.y))
+                app.runOnIdle { app.activity.onBackPressedDispatcher.dispatchOnBackCancelled() }
+                app.onNodeWithTag("album-detail-cover-flight", useUnmergedTree = true).assertDoesNotExist()
+                val restored = app.onRoot().captureToImage().toPixelMap()
+                assertTrue("$theme cancellation must restore the cover background",
+                    restored[(destination.left + destination.width * .08f).toInt(), destination.center.y.toInt()] == surfaceColor)
+                app.onNodeWithContentDescription(AppText.get(R.string.ui_back_to_albums)).performClick()
+            }
+        } finally { file.delete() }
     }
 }

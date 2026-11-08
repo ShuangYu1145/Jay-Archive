@@ -50,7 +50,7 @@
     </plurals>
     <string name="ui_about_this_album">About this album</string>
     <string name="ui_track_list">Track list</string>
-    <string name="ui_original_track_order_tap_a_song_to_read_its_lyrics">Original track order · Tap a song to read its lyrics</string>
+    <string name="ui_original_track_order">Original track order</string>
     <string name="ui_information_track_order_and_artwork_nrelease_type">Information, track order and artwork: %1$s\nRelease type · %2$s</string>
     <string name="ui_view_website">View website</string>
     <string name="ui_close_search">Close search</string>
@@ -340,7 +340,7 @@
         <item quantity="one">%1$d song</item>
         <item quantity="other">%1$d songs</item>
     </plurals>
-    <string name="ui_introduction">Explore</string>
+    <string name="ui_introduction">Music</string>
     <string name="ui_edit_profile">Edit profile</string>
     <string name="ui_profile_default_name">Jay fan</string>
     <string name="ui_profile_name">Name</string>
@@ -444,4 +444,14 @@
     <string name="ui_exit_follow_gesture">Follow gesture</string>
     <string name="ui_exit_always_right">Always right</string>
     <string name="ui_exit_always_left">Always left</string>
+    <string name="ui_cover_flow_layout">3D album wall</string>
+    <string name="ui_cover_flow_description">Swipe through album covers; tap the center album for details</string>
+    <string name="ui_cover_flow_selected">Selected</string>
+    <string name="ui_cover_flow_open">Open album</string>
+    <string name="ui_cover_flow_previous">Previous album</string>
+    <string name="ui_cover_flow_next">Next album</string>
+    <string name="ui_cover_flow_empty">No albums in this category</string>
+    <string name="ui_cover_flow_display">Display controls</string>
+    <string name="ui_cover_flow_show_header">Show top bar</string>
+    <string name="ui_cover_flow_show_navigation">Show navigation bar</string>
 </resources>

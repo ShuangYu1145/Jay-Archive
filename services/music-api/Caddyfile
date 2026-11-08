@@ -1,0 +1,9 @@
+{$MUSIC_API_HOST} {
+    handle_path /netease/* {
+        reverse_proxy netease:3000
+    }
+    handle_path /qq/* {
+        reverse_proxy qq:3000
+    }
+    respond "Music API" 200
+}

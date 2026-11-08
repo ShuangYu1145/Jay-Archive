@@ -66,7 +66,7 @@ class LiquidNavigationTest {
         app.mainClock.advanceTimeBy(1500)
         app.mainClock.advanceTimeBy(1500)
         app.waitForIdle()
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         screenshot("liquid-idle.png")
         bar.performTouchInput {
             down(Offset(width * .9f, centerY))
@@ -75,7 +75,7 @@ class LiquidNavigationTest {
         }
         app.mainClock.advanceTimeBy(1500)
         app.waitForIdle()
-        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         app.onNodeWithTag("tab-INTRODUCTION").performClick()
         app.mainClock.advanceTimeBy(1500)
         app.waitForIdle()

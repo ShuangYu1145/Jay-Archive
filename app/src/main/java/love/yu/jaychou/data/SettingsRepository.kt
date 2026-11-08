@@ -66,9 +66,10 @@ enum class PredictiveBackExitDirection {
 enum class AlbumLayout(private val sourceLabel: String, private val sourceDescription: String) {
     LIST("横向列表", "小封面在左，专辑信息在右"),
     GRID("双列网格", "两列卡片并排，快速浏览全部专辑"),
-    LARGE("大封面卡片", "单列大封面，逐张欣赏专辑视觉");
-    val label: String get() = AppText.fromOriginal(sourceLabel)
-    val description: String get() = AppText.fromOriginal(sourceDescription)
+    LARGE("大封面卡片", "单列大封面，逐张欣赏专辑视觉"),
+    COVER_FLOW("3D 专辑墙", "滑动浏览立体封面，点击中央专辑查看详情");
+    val label: String get() = if (this == COVER_FLOW) AppText.get(love.yu.jaychou.R.string.ui_cover_flow_layout) else AppText.fromOriginal(sourceLabel)
+    val description: String get() = if (this == COVER_FLOW) AppText.get(love.yu.jaychou.R.string.ui_cover_flow_description) else AppText.fromOriginal(sourceDescription)
 }
 
 data class AppSettings(

@@ -50,7 +50,7 @@
     </plurals>
     <string name="ui_about_this_album">앨범 소개</string>
     <string name="ui_track_list">수록곡</string>
-    <string name="ui_original_track_order_tap_a_song_to_read_its_lyrics">원래 트랙 순서 · 노래를 누르면 가사 표시</string>
+    <string name="ui_original_track_order">원래 트랙 순서</string>
     <string name="ui_information_track_order_and_artwork_nrelease_type">정보, 트랙 순서 및 커버: %1$s\n발매 유형 · %2$s</string>
     <string name="ui_view_website">웹사이트 보기</string>
     <string name="ui_close_search">검색 닫기</string>
@@ -340,7 +340,7 @@
         <item quantity="one">노래 %1$d곡</item>
         <item quantity="other">노래 %1$d곡</item>
     </plurals>
-    <string name="ui_introduction">소개</string>
+    <string name="ui_introduction">음악</string>
     <string name="ui_edit_profile">프로필 편집</string>
     <string name="ui_profile_default_name">제이 팬</string>
     <string name="ui_profile_name">이름</string>
@@ -444,4 +444,14 @@
     <string name="ui_exit_follow_gesture">제스처 따라가기</string>
     <string name="ui_exit_always_right">항상 오른쪽</string>
     <string name="ui_exit_always_left">항상 왼쪽</string>
+    <string name="ui_cover_flow_layout">3D 앨범 월</string>
+    <string name="ui_cover_flow_description">스와이프로 탐색하고 가운데 앨범을 눌러 상세 정보 보기</string>
+    <string name="ui_cover_flow_selected">선택됨</string>
+    <string name="ui_cover_flow_open">앨범 열기</string>
+    <string name="ui_cover_flow_previous">이전 앨범</string>
+    <string name="ui_cover_flow_next">다음 앨범</string>
+    <string name="ui_cover_flow_empty">이 카테고리에 앨범이 없습니다</string>
+    <string name="ui_cover_flow_display">표시 설정</string>
+    <string name="ui_cover_flow_show_header">상단 바 표시</string>
+    <string name="ui_cover_flow_show_navigation">탐색 바 표시</string>
 </resources>

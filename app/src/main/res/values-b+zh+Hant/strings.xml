@@ -50,7 +50,7 @@
     </plurals>
     <string name="ui_about_this_album">關於這張專輯</string>
     <string name="ui_track_list">完整曲目</string>
-    <string name="ui_original_track_order_tap_a_song_to_read_its_lyrics">原始曲序 · 點選歌曲檢視歌詞</string>
+    <string name="ui_original_track_order">原始曲序</string>
     <string name="ui_information_track_order_and_artwork_nrelease_type">資料、曲序與封面：%1$s\n專輯型別 · %2$s</string>
     <string name="ui_view_website">檢視網頁</string>
     <string name="ui_close_search">退出搜尋</string>
@@ -340,7 +340,7 @@
         <item quantity="one">%1$d 首歌曲</item>
         <item quantity="other">%1$d 首歌曲</item>
     </plurals>
-    <string name="ui_introduction">介紹</string>
+    <string name="ui_introduction">音樂</string>
     <string name="ui_edit_profile">編輯資料</string>
     <string name="ui_profile_default_name">杰迷</string>
     <string name="ui_profile_name">名字</string>
@@ -444,4 +444,14 @@
     <string name="ui_exit_follow_gesture">跟隨手勢</string>
     <string name="ui_exit_always_right">始終向右</string>
     <string name="ui_exit_always_left">始終向左</string>
+    <string name="ui_cover_flow_layout">3D 專輯牆</string>
+    <string name="ui_cover_flow_description">滑動瀏覽立體封面，點擊中央專輯查看詳情</string>
+    <string name="ui_cover_flow_selected">已選取</string>
+    <string name="ui_cover_flow_open">查看專輯</string>
+    <string name="ui_cover_flow_previous">上一張專輯</string>
+    <string name="ui_cover_flow_next">下一張專輯</string>
+    <string name="ui_cover_flow_empty">此分類暫無專輯</string>
+    <string name="ui_cover_flow_display">顯示設定</string>
+    <string name="ui_cover_flow_show_header">顯示頂欄</string>
+    <string name="ui_cover_flow_show_navigation">顯示導覽列</string>
 </resources>

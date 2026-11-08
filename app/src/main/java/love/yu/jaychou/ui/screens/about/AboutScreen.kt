@@ -54,16 +54,32 @@ import love.yu.jaychou.ui.designsystem.Card
 import love.yu.jaychou.ui.designsystem.Text
 import love.yu.jaychou.ui.designsystem.ArrowPreference
 import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
+import love.yu.jaychou.ui.designsystem.CouiBottomDialog
+import love.yu.jaychou.ui.designsystem.CouiDialogActions
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
 @Composable
 fun AboutScreen(
-    state: LazyListState, bottom: Dp, active: Boolean = true,
+    state: LazyListState, bottom: Dp, active: Boolean = true, onBack: (() -> Unit)? = null,
+) {
+    Box(Modifier.fillMaxSize()) {
+        AboutContent(state, bottom, active, onBack)
+        if (!ArchiveUiTheme.isCoui && onBack != null) Box(
+            Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp).testTag("about-back"),
+        ) {
+            love.yu.jaychou.ui.components.BackButton(onBack, AppText.get(R.string.ui_settings_back))
+        }
+    }
+}
+
+@Composable
+private fun AboutContent(
+    state: LazyListState, bottom: Dp, active: Boolean, onBack: (() -> Unit)?,
 ) {
     var developerCardTaps by remember { mutableIntStateOf(0) }
     var showEasterEgg by rememberSaveable { mutableStateOf(false) }
     if (ArchiveUiTheme.isCoui) {
-        CouiAboutScreen(state, bottom, active) {
+        CouiAboutScreen(state, bottom, active, onBack = onBack) {
             developerCardTaps++
             if (developerCardTaps == 4) {
                 developerCardTaps = 0
@@ -276,21 +292,21 @@ private fun AboutEasterEggDialog(show: Boolean, onDismiss: () -> Unit) {
         return
     }
     if (ArchiveUiTheme.isCoui) {
-        io.github.suqi8.coui.kmp.window.WindowDialog(show = show, title = "彩蛋", summary = message,
-            modifier = Modifier.testTag("about-easter-egg-dialog"), onDismissRequest = onDismiss) {
-            Column {
-                if (message == null) Box(Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp)) {
-                    io.github.suqi8.coui.kmp.basic.TextField(
-                        value = code, onValueChange = onCodeChange, label = "输入彩蛋口令", singleLine = true,
-                        modifier = Modifier.fillMaxWidth().testTag("about-easter-egg-input"))
-                }
-                io.github.suqi8.coui.kmp.layout.DialogButtonBar(
-                    modifier = Modifier.testTag("about-easter-egg-dismiss"), negative = null,
+        CouiBottomDialog(show = show, title = "彩蛋", summary = message,
+            modifier = Modifier.testTag("about-easter-egg-dialog"), onDismissRequest = onDismiss,
+            content = if (message == null) ({
+                io.github.suqi8.coui.kmp.basic.TextField(
+                    value = code, onValueChange = onCodeChange, label = "输入彩蛋口令", singleLine = true,
+                    modifier = Modifier.fillMaxWidth().testTag("about-easter-egg-input"))
+            }) else null,
+            actions = {
+                CouiDialogActions(
+                    positiveModifier = Modifier.testTag("about-easter-egg-dismiss"),
                     positive = io.github.suqi8.coui.kmp.layout.DialogButtonBarAction(
                         text = dismissLabel, onClick = onDismiss),
                 )
-            }
-        }
+            },
+        )
         return
     }
     MiuixEasterEggDialog(

@@ -50,7 +50,7 @@
     </plurals>
     <string name="ui_about_this_album">关于这张专辑</string>
     <string name="ui_track_list">完整曲目</string>
-    <string name="ui_original_track_order_tap_a_song_to_read_its_lyrics">原始曲序 · 点击歌曲查看歌词</string>
+    <string name="ui_original_track_order">原始曲序</string>
     <string name="ui_information_track_order_and_artwork_nrelease_type">资料、曲序与封面：%1$s\n专辑类型 · %2$s</string>
     <string name="ui_view_website">查看网页</string>
     <string name="ui_close_search">退出搜索</string>
@@ -340,7 +340,7 @@
         <item quantity="one">%1$d 首歌曲</item>
         <item quantity="other">%1$d 首歌曲</item>
     </plurals>
-    <string name="ui_introduction">介绍</string>
+    <string name="ui_introduction">音乐</string>
     <string name="ui_edit_profile">编辑资料</string>
     <string name="ui_profile_default_name">杰迷</string>
     <string name="ui_profile_name">名字</string>
@@ -444,4 +444,14 @@
     <string name="ui_exit_follow_gesture">跟随手势</string>
     <string name="ui_exit_always_right">始终向右</string>
     <string name="ui_exit_always_left">始终向左</string>
+    <string name="ui_cover_flow_layout">3D 专辑墙</string>
+    <string name="ui_cover_flow_description">滑动浏览立体封面，点击中央专辑查看详情</string>
+    <string name="ui_cover_flow_selected">已选中</string>
+    <string name="ui_cover_flow_open">查看专辑</string>
+    <string name="ui_cover_flow_previous">上一张专辑</string>
+    <string name="ui_cover_flow_next">下一张专辑</string>
+    <string name="ui_cover_flow_empty">此分类暂无专辑</string>
+    <string name="ui_cover_flow_display">显示设置</string>
+    <string name="ui_cover_flow_show_header">显示顶栏</string>
+    <string name="ui_cover_flow_show_navigation">显示导航栏</string>
 </resources>

@@ -39,8 +39,8 @@ class AdaptiveNavigationTest {
             app.runOnIdle { settings = settings.copy(uiStyle = style) }
             app.onNodeWithTag("bottom-navigation").assertIsDisplayed()
             app.onNodeWithTag("side-navigation").assertDoesNotExist()
-            app.onNodeWithTag("tab-ABOUT").performClick()
-            app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+            app.onNodeWithTag("tab-SETTINGS").performClick()
+            app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
 
             // Tablet landscape, tablet portrait, and a phone landscape below 600dp.
             for (viewport in listOf(DpSize(1200.dp, 800.dp), DpSize(800.dp, 1200.dp), DpSize(560.dp, 360.dp))) {
@@ -52,18 +52,18 @@ class AdaptiveNavigationTest {
                     UiStyle.MATERIAL3 -> "material-navigation-rail"
                 }
                 app.onNodeWithTag(nativeTag).assertIsDisplayed()
-                app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+                app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
                 if (viewport.width == 1200.dp) {
                     app.onNodeWithTag("root-pager").performTouchInput { swipeDown() }
                     if (style == UiStyle.COUI) {
-                        app.onNodeWithTag("tab-ABOUT").assertIsSelected()
-                        app.onNodeWithTag("tab-SETTINGS").performClick()
-                    } else app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
+                        app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
+                        app.onNodeWithTag("tab-INTRODUCTION").performClick()
+                    } else app.onNodeWithTag("tab-INTRODUCTION").assertIsSelected()
                     app.mainClock.autoAdvance = false
                     try {
-                        app.onNodeWithTag("tab-ABOUT").performScrollTo().performClick()
+                        app.onNodeWithTag("tab-SETTINGS").performScrollTo().performClick()
                         app.mainClock.advanceTimeBy(96)
-                        val page = app.onNodeWithTag("page-ABOUT").getUnclippedBoundsInRoot()
+                        val page = app.onNodeWithTag("page-SETTINGS").getUnclippedBoundsInRoot()
                         val host = app.onNodeWithTag("root-pager").getUnclippedBoundsInRoot()
                         if (style == UiStyle.COUI) {
                             assertTrue("COUI rail navigation must slide horizontally", page.left > host.left)
@@ -89,11 +89,11 @@ class AdaptiveNavigationTest {
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
                     }
                 }
-                app.onNodeWithTag("tab-ABOUT").performScrollTo().performClick()
+                app.onNodeWithTag("tab-SETTINGS").performScrollTo().performClick()
             }
             app.runOnIdle { size = DpSize(400.dp, 800.dp) }
             app.onNodeWithTag("bottom-navigation").assertIsDisplayed()
-            app.onNodeWithTag("tab-ABOUT").assertIsSelected()
+            app.onNodeWithTag("tab-SETTINGS").assertIsSelected()
         }
     }
 

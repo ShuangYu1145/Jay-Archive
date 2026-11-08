@@ -24,7 +24,7 @@ import love.yu.jaychou.ui.designsystem.ArchiveUiTheme
 import love.yu.jaychou.ui.designsystem.Icon
 import love.yu.jaychou.ui.designsystem.Text
 
-/** A frosted central tab capsule flanked by the home and about destinations. */
+/** A frosted central tab capsule flanked by the home and settings destinations. */
 @Composable
 internal fun CouiFloatingNavigationBar(selectedIndex: Int, onSelect: (Int) -> Unit,
                                        enabled: Boolean, blur: Boolean) {
@@ -38,10 +38,10 @@ internal fun CouiFloatingNavigationBar(selectedIndex: Int, onSelect: (Int) -> Un
                 Modifier.size(CouiLayout.ActionSize).couiFrostedSurface(blur), showLabel = false)
             Row(Modifier.weight(1f).couiFrostedSurface(blur).padding(horizontal = 6.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically) {
-                for (index in 1..2) CouiNavigationDestination(items[index], selectedIndex == index,
+                for (index in 1 until items.lastIndex) CouiNavigationDestination(items[index], selectedIndex == index,
                     { onSelect(index) }, enabled, Modifier.weight(1f).heightIn(min = CouiLayout.ActionSize - 8.dp), showLabel = true)
             }
-            CouiNavigationDestination(items.last(), selectedIndex == 3, { onSelect(3) }, enabled,
+            CouiNavigationDestination(items.last(), selectedIndex == items.lastIndex, { onSelect(items.lastIndex) }, enabled,
                 Modifier.size(CouiLayout.ActionSize).couiFrostedSurface(blur), showLabel = false)
         }
     }

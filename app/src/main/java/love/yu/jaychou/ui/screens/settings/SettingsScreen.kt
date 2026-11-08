@@ -16,6 +16,7 @@ import love.yu.jaychou.ui.components.ArchiveGlyph
 import love.yu.jaychou.ui.components.Glyph
 import top.yukonga.miuix.kmp.icon.MiuixIcons
 import top.yukonga.miuix.kmp.icon.extended.ChevronForward
+import top.yukonga.miuix.kmp.icon.extended.Info
 import top.yukonga.miuix.kmp.icon.extended.Theme
 import top.yukonga.miuix.kmp.icon.extended.Translate
 import androidx.compose.animation.AnimatedVisibility
@@ -57,6 +58,7 @@ fun SettingsScreen(
     onUiStyle: (UiStyle) -> Unit = {},
     onTopAppBarBlur: (love.yu.jaychou.data.TopAppBarBlur) -> Unit = {},
     onDetailVisibility: (Boolean) -> Unit = {},
+    active: Boolean = true,
 ) {
     val settingsContext = androidx.compose.ui.platform.LocalContext.current
     val repository = remember(settingsContext) { SettingsRepository(settingsContext) }
@@ -64,6 +66,7 @@ fun SettingsScreen(
     var page by rememberSaveable { mutableStateOf("main") }
     val themeState = rememberLazyListState()
     val motionState = rememberLazyListState()
+    val aboutState = rememberLazyListState()
     val visibilityCallback by rememberUpdatedState(onDetailVisibility)
     val themeTitle = AppText.get(R.string.ui_theme_settings)
     val motionTitle = AppText.get(R.string.ui_animations_and_gestures)
@@ -120,6 +123,16 @@ fun SettingsScreen(
                     }
                     item("updates-title") { PreferenceTitle(AppText.get(R.string.ui_update_settings)) }
                     item("updates") { love.yu.jaychou.ui.updates.UpdatePreferences(settings) }
+                    item("about") {
+                        Column(Modifier.padding(top = if (coui) metrics.groupSpacing else 16.dp)) {
+                            PreferenceCard {
+                                BasicComponent(title = AppText.get(R.string.ui_about), modifier = Modifier.testTag("about-settings"),
+                                    startAction = { Icon(MiuixIcons.Info, null, Modifier.size(28.dp)) },
+                                    endActions = { Icon(MiuixIcons.ChevronForward, null, Modifier.size(20.dp), tint = ArchiveUiTheme.colorScheme.onBackgroundVariant) },
+                                    onClick = { page = "about" })
+                            }
+                        }
+                    }
                 }
                 if (currentPage == "theme") {
                     item("style-title") { PreferenceTitle(AppText.get(R.string.ui_interface_style)) }
@@ -270,7 +283,14 @@ fun SettingsScreen(
     love.yu.jaychou.ui.animation.SecondaryPageHost(
         page = page.takeUnless { it == "main" }, onBack = { page = "main" },
         onVisibilityChanged = { visibilityCallback(it) },
-        root = { screen("main") }, content = { screen(it) },
+        enabled = active,
+        root = { screen("main") }, content = {
+            if (it == "about") Box(Modifier.fillMaxSize().testTag("page-ABOUT")) {
+                love.yu.jaychou.ui.screens.about.AboutScreen(aboutState,
+                    WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 24.dp,
+                    active = active && page == "about", onBack = { page = "main" })
+            } else screen(it)
+        },
     )
     CustomColorSheet(colorPicker && customColorVisible, settings.customColor, { colorPicker = false }, onCustomColor)
 }
